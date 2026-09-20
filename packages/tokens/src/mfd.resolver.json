@@ -1,0 +1,89 @@
+{
+  "$schema": "https://www.designtokens.org/schemas/2025.10/resolver.json",
+  "name": "MFD Design System",
+  "version": "2025.10",
+  "description": "Canonical Atlas and Bloom design-token resolver.",
+  "sets": {
+    "reference-shared": {
+      "sources": [
+        {
+          "$ref": "reference/shared.tokens.json"
+        }
+      ]
+    },
+    "semantic-shared": {
+      "sources": [
+        {
+          "$ref": "semantic/shared.tokens.json"
+        }
+      ]
+    }
+  },
+  "modifiers": {
+    "brand": {
+      "description": "Tenant-resolved visual brand.",
+      "contexts": {
+        "atlas": [
+          {
+            "$ref": "reference/brand/atlas.tokens.json"
+          }
+        ],
+        "bloom": [
+          {
+            "$ref": "reference/brand/bloom.tokens.json"
+          }
+        ]
+      },
+      "default": "atlas"
+    },
+    "colorScheme": {
+      "description": "Resolved light or dark color scheme. System is a runtime preference, not a token context.",
+      "contexts": {
+        "light": [
+          {
+            "$ref": "semantic/color-scheme/light.tokens.json"
+          }
+        ],
+        "dark": [
+          {
+            "$ref": "semantic/color-scheme/dark.tokens.json"
+          }
+        ]
+      },
+      "default": "light"
+    },
+    "density": {
+      "description": "Coordinated application sizing and spacing density.",
+      "contexts": {
+        "comfortable": [
+          {
+            "$ref": "semantic/density/comfortable.tokens.json"
+          }
+        ],
+        "compact": [
+          {
+            "$ref": "semantic/density/compact.tokens.json"
+          }
+        ]
+      },
+      "default": "comfortable"
+    }
+  },
+  "resolutionOrder": [
+    {
+      "$ref": "#/sets/reference-shared"
+    },
+    {
+      "$ref": "#/modifiers/brand"
+    },
+    {
+      "$ref": "#/sets/semantic-shared"
+    },
+    {
+      "$ref": "#/modifiers/colorScheme"
+    },
+    {
+      "$ref": "#/modifiers/density"
+    }
+  ]
+}

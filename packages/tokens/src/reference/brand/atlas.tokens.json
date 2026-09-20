@@ -1,0 +1,548 @@
+{
+  "$schema": "https://www.designtokens.org/schemas/2025.10/format.json",
+  "reference": {
+    "color": {
+      "neutral-light": {
+        "1": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.988, 0.004, 230]
+          }
+        },
+        "2": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.972, 0.006, 230]
+          }
+        },
+        "3": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.948, 0.008, 230]
+          }
+        },
+        "4": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.918, 0.01, 230]
+          }
+        },
+        "5": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.884, 0.012, 230]
+          }
+        },
+        "6": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.835, 0.014, 230]
+          }
+        },
+        "7": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.765, 0.016, 230]
+          }
+        },
+        "8": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.645, 0.018, 230]
+          }
+        },
+        "9": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.56, 0.02, 230]
+          }
+        },
+        "10": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.505, 0.019, 230]
+          }
+        },
+        "11": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.43, 0.016, 230]
+          }
+        },
+        "12": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.235, 0.012, 230]
+          }
+        }
+      },
+      "neutral-dark": {
+        "1": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.145, 0.01, 230]
+          }
+        },
+        "2": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.175, 0.012, 230]
+          }
+        },
+        "3": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.205, 0.014, 230]
+          }
+        },
+        "4": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.24, 0.016, 230]
+          }
+        },
+        "5": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.275, 0.018, 230]
+          }
+        },
+        "6": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.32, 0.02, 230]
+          }
+        },
+        "7": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.38, 0.023, 230]
+          }
+        },
+        "8": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.505, 0.026, 230]
+          }
+        },
+        "9": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.64, 0.03, 230]
+          }
+        },
+        "10": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.7, 0.032, 230]
+          }
+        },
+        "11": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.79, 0.024, 230]
+          }
+        },
+        "12": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.94, 0.012, 230]
+          }
+        }
+      },
+      "accent-light": {
+        "1": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.988, 0.004, 225]
+          }
+        },
+        "2": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.972, 0.009, 225]
+          }
+        },
+        "3": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.948, 0.018, 225]
+          }
+        },
+        "4": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.918, 0.032, 225]
+          }
+        },
+        "5": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.884, 0.05, 225]
+          }
+        },
+        "6": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.835, 0.075, 225]
+          }
+        },
+        "7": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.765, 0.11, 225]
+          }
+        },
+        "8": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.645, 0.1, 225]
+          }
+        },
+        "9": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.55, 0.1, 225]
+          }
+        },
+        "10": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.5, 0.09, 225]
+          }
+        },
+        "11": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.425, 0.075, 225]
+          }
+        },
+        "12": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.235, 0.035, 225]
+          }
+        }
+      },
+      "accent-dark": {
+        "1": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.145, 0.012, 225]
+          }
+        },
+        "2": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.175, 0.02, 225]
+          }
+        },
+        "3": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.205, 0.03, 225]
+          }
+        },
+        "4": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.24, 0.04, 225]
+          }
+        },
+        "5": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.275, 0.045, 225]
+          }
+        },
+        "6": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.32, 0.055, 225]
+          }
+        },
+        "7": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.38, 0.065, 225]
+          }
+        },
+        "8": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.505, 0.09, 225]
+          }
+        },
+        "9": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.64, 0.11, 225]
+          }
+        },
+        "10": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.7, 0.12, 225]
+          }
+        },
+        "11": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.79, 0.12, 225]
+          }
+        },
+        "12": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.94, 0.03, 225]
+          }
+        }
+      }
+    },
+    "font": {
+      "family": {
+        "body": {
+          "$type": "fontFamily",
+          "$value": ["Geist Sans", "sans-serif"]
+        },
+        "display": {
+          "$type": "fontFamily",
+          "$value": ["Geist Sans", "sans-serif"]
+        },
+        "mono": {
+          "$type": "fontFamily",
+          "$value": ["Geist Mono", "monospace"]
+        }
+      }
+    },
+    "radius": {
+      "scale": {
+        "none": {
+          "$type": "dimension",
+          "$value": {
+            "value": 0,
+            "unit": "px"
+          }
+        },
+        "sm": {
+          "$type": "dimension",
+          "$value": {
+            "value": 4,
+            "unit": "px"
+          }
+        },
+        "md": {
+          "$type": "dimension",
+          "$value": {
+            "value": 6,
+            "unit": "px"
+          }
+        },
+        "lg": {
+          "$type": "dimension",
+          "$value": {
+            "value": 8,
+            "unit": "px"
+          }
+        },
+        "xl": {
+          "$type": "dimension",
+          "$value": {
+            "value": 12,
+            "unit": "px"
+          }
+        },
+        "full": {
+          "$type": "dimension",
+          "$value": {
+            "value": 9999,
+            "unit": "px"
+          }
+        }
+      }
+    },
+    "shadow": {
+      "elevation": {
+        "subtle": {
+          "$type": "shadow",
+          "$value": {
+            "color": {
+              "colorSpace": "oklch",
+              "components": [0, 0, 0],
+              "alpha": 0.12
+            },
+            "offsetX": {
+              "value": 0,
+              "unit": "px"
+            },
+            "offsetY": {
+              "value": 1,
+              "unit": "px"
+            },
+            "blur": {
+              "value": 2,
+              "unit": "px"
+            },
+            "spread": {
+              "value": 0,
+              "unit": "px"
+            }
+          },
+          "$description": "Atlas's restrained low elevation."
+        },
+        "overlay": {
+          "$type": "shadow",
+          "$value": [
+            {
+              "color": {
+                "colorSpace": "oklch",
+                "components": [0, 0, 0],
+                "alpha": 0.16
+              },
+              "offsetX": {
+                "value": 0,
+                "unit": "px"
+              },
+              "offsetY": {
+                "value": 4,
+                "unit": "px"
+              },
+              "blur": {
+                "value": 10,
+                "unit": "px"
+              },
+              "spread": {
+                "value": -2,
+                "unit": "px"
+              }
+            },
+            {
+              "color": {
+                "colorSpace": "oklch",
+                "components": [0, 0, 0],
+                "alpha": 0.08
+              },
+              "offsetX": {
+                "value": 0,
+                "unit": "px"
+              },
+              "offsetY": {
+                "value": 2,
+                "unit": "px"
+              },
+              "blur": {
+                "value": 4,
+                "unit": "px"
+              },
+              "spread": {
+                "value": 0,
+                "unit": "px"
+              }
+            }
+          ],
+          "$description": "Atlas's crisp overlay elevation."
+        },
+        "modal": {
+          "$type": "shadow",
+          "$value": [
+            {
+              "color": {
+                "colorSpace": "oklch",
+                "components": [0, 0, 0],
+                "alpha": 0.2
+              },
+              "offsetX": {
+                "value": 0,
+                "unit": "px"
+              },
+              "offsetY": {
+                "value": 12,
+                "unit": "px"
+              },
+              "blur": {
+                "value": 24,
+                "unit": "px"
+              },
+              "spread": {
+                "value": -6,
+                "unit": "px"
+              }
+            },
+            {
+              "color": {
+                "colorSpace": "oklch",
+                "components": [0, 0, 0],
+                "alpha": 0.1
+              },
+              "offsetX": {
+                "value": 0,
+                "unit": "px"
+              },
+              "offsetY": {
+                "value": 4,
+                "unit": "px"
+              },
+              "blur": {
+                "value": 8,
+                "unit": "px"
+              },
+              "spread": {
+                "value": 0,
+                "unit": "px"
+              }
+            }
+          ],
+          "$description": "Atlas's crisp modal elevation."
+        }
+      }
+    }
+  }
+}

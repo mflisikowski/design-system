@@ -1,0 +1,161 @@
+{
+  "$schema": "https://www.designtokens.org/schemas/2025.10/format.json",
+  "color": {
+    "bg": {
+      "canvas": {
+        "$type": "color",
+        "$value": "{reference.color.neutral-light.1}"
+      },
+      "surface": {
+        "$type": "color",
+        "$value": "{reference.color.neutral-light.2}"
+      },
+      "elevated": {
+        "$type": "color",
+        "$value": "{reference.color.neutral-light.3}"
+      },
+      "subtle": {
+        "$type": "color",
+        "$value": "{reference.color.neutral-light.4}"
+      }
+    },
+    "text": {
+      "primary": {
+        "$type": "color",
+        "$value": "{reference.color.neutral-light.12}"
+      },
+      "secondary": {
+        "$type": "color",
+        "$value": "{reference.color.neutral-light.11}"
+      },
+      "muted": {
+        "$type": "color",
+        "$value": "{reference.color.neutral-light.10}"
+      },
+      "inverse": {
+        "$type": "color",
+        "$value": "{reference.color.neutral-light.1}"
+      }
+    },
+    "border": {
+      "subtle": {
+        "$type": "color",
+        "$value": "{reference.color.neutral-light.6}"
+      },
+      "default": {
+        "$type": "color",
+        "$value": "{reference.color.neutral-light.7}"
+      },
+      "strong": {
+        "$type": "color",
+        "$value": "{reference.color.neutral-light.8}"
+      },
+      "focus": {
+        "$type": "color",
+        "$value": "{reference.color.accent-light.8}"
+      }
+    },
+    "accent": {
+      "bg": {
+        "$type": "color",
+        "$value": "{reference.color.accent-light.3}"
+      },
+      "bg-hover": {
+        "$type": "color",
+        "$value": "{reference.color.accent-light.4}"
+      },
+      "border": {
+        "$type": "color",
+        "$value": "{reference.color.accent-light.7}"
+      },
+      "solid": {
+        "$type": "color",
+        "$value": "{reference.color.accent-light.9}"
+      },
+      "solid-hover": {
+        "$type": "color",
+        "$value": "{reference.color.accent-light.10}"
+      },
+      "text": {
+        "$type": "color",
+        "$value": "{reference.color.accent-light.11}"
+      },
+      "on-solid": {
+        "$type": "color",
+        "$value": "{reference.color.neutral-light.1}"
+      }
+    },
+    "status": {
+      "danger": {
+        "bg": {
+          "$type": "color",
+          "$value": "{reference.color.danger-light.2}"
+        },
+        "border": {
+          "$type": "color",
+          "$value": "{reference.color.danger-light.7}"
+        },
+        "solid": {
+          "$type": "color",
+          "$value": "{reference.color.danger-light.9}"
+        },
+        "text": {
+          "$type": "color",
+          "$value": "{reference.color.danger-light.11}"
+        }
+      },
+      "success": {
+        "bg": {
+          "$type": "color",
+          "$value": "{reference.color.success-light.2}"
+        },
+        "border": {
+          "$type": "color",
+          "$value": "{reference.color.success-light.7}"
+        },
+        "solid": {
+          "$type": "color",
+          "$value": "{reference.color.success-light.9}"
+        },
+        "text": {
+          "$type": "color",
+          "$value": "{reference.color.success-light.11}"
+        }
+      },
+      "warning": {
+        "bg": {
+          "$type": "color",
+          "$value": "{reference.color.warning-light.2}"
+        },
+        "border": {
+          "$type": "color",
+          "$value": "{reference.color.warning-light.7}"
+        },
+        "solid": {
+          "$type": "color",
+          "$value": "{reference.color.warning-light.9}"
+        },
+        "text": {
+          "$type": "color",
+          "$value": "{reference.color.warning-light.11}"
+        }
+      }
+    },
+    "overlay": {
+      "backdrop": {
+        "$type": "color",
+        "$value": "{reference.color.overlay-light.backdrop}"
+      }
+    },
+    "selection": {
+      "bg": {
+        "$type": "color",
+        "$value": "{reference.color.accent-light.4}"
+      },
+      "text": {
+        "$type": "color",
+        "$value": "{reference.color.neutral-light.12}"
+      }
+    }
+  }
+}

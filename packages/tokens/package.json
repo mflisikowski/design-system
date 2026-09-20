@@ -1,0 +1,25 @@
+{
+  "name": "@mflisikowski/tokens",
+  "version": "0.0.0",
+  "description": "Canonical design tokens for MFD Design System",
+  "type": "module",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "test": "vitest run",
+    "tokens:check": "tz check",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@mflisikowski/typescript-config": "workspace:*",
+    "@terrazzo/cli": "catalog:",
+    "@terrazzo/parser": "catalog:",
+    "@types/node": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

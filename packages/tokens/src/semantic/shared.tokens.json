@@ -1,0 +1,216 @@
+{
+  "$schema": "https://www.designtokens.org/schemas/2025.10/format.json",
+  "typography": {
+    "display": {
+      "$type": "typography",
+      "$value": {
+        "fontFamily": "{reference.font.family.display}",
+        "fontSize": "{reference.font.size.display}",
+        "fontWeight": "{reference.font.weight.semi-bold}",
+        "letterSpacing": "{reference.font.letter-spacing.display}",
+        "lineHeight": "{reference.font.line-height.display}"
+      },
+      "$description": "Largest expressive text."
+    },
+    "title-lg": {
+      "$type": "typography",
+      "$value": {
+        "fontFamily": "{reference.font.family.display}",
+        "fontSize": "{reference.font.size.title-lg}",
+        "fontWeight": "{reference.font.weight.semi-bold}",
+        "letterSpacing": "{reference.font.letter-spacing.title-lg}",
+        "lineHeight": "{reference.font.line-height.title-lg}"
+      },
+      "$description": "Large page title."
+    },
+    "title": {
+      "$type": "typography",
+      "$value": {
+        "fontFamily": "{reference.font.family.display}",
+        "fontSize": "{reference.font.size.title}",
+        "fontWeight": "{reference.font.weight.semi-bold}",
+        "letterSpacing": "{reference.font.letter-spacing.title}",
+        "lineHeight": "{reference.font.line-height.title}"
+      },
+      "$description": "Section title."
+    },
+    "heading": {
+      "$type": "typography",
+      "$value": {
+        "fontFamily": "{reference.font.family.body}",
+        "fontSize": "{reference.font.size.heading}",
+        "fontWeight": "{reference.font.weight.semi-bold}",
+        "letterSpacing": "{reference.font.letter-spacing.heading}",
+        "lineHeight": "{reference.font.line-height.heading}"
+      },
+      "$description": "Content heading."
+    },
+    "body-lg": {
+      "$type": "typography",
+      "$value": {
+        "fontFamily": "{reference.font.family.body}",
+        "fontSize": "{reference.font.size.body-lg}",
+        "fontWeight": "{reference.font.weight.regular}",
+        "letterSpacing": "{reference.font.letter-spacing.body-lg}",
+        "lineHeight": "{reference.font.line-height.body-lg}"
+      },
+      "$description": "Large body copy and mobile form input text."
+    },
+    "body": {
+      "$type": "typography",
+      "$value": {
+        "fontFamily": "{reference.font.family.body}",
+        "fontSize": "{reference.font.size.body}",
+        "fontWeight": "{reference.font.weight.regular}",
+        "letterSpacing": "{reference.font.letter-spacing.body}",
+        "lineHeight": "{reference.font.line-height.body}"
+      },
+      "$description": "Default interface copy."
+    },
+    "label": {
+      "$type": "typography",
+      "$value": {
+        "fontFamily": "{reference.font.family.body}",
+        "fontSize": "{reference.font.size.label}",
+        "fontWeight": "{reference.font.weight.medium}",
+        "letterSpacing": "{reference.font.letter-spacing.label}",
+        "lineHeight": "{reference.font.line-height.label}"
+      },
+      "$description": "Control and field labels."
+    },
+    "caption": {
+      "$type": "typography",
+      "$value": {
+        "fontFamily": "{reference.font.family.body}",
+        "fontSize": "{reference.font.size.caption}",
+        "fontWeight": "{reference.font.weight.regular}",
+        "letterSpacing": "{reference.font.letter-spacing.caption}",
+        "lineHeight": "{reference.font.line-height.caption}"
+      },
+      "$description": "Supporting compact copy."
+    },
+    "code": {
+      "$type": "typography",
+      "$value": {
+        "fontFamily": "{reference.font.family.mono}",
+        "fontSize": "{reference.font.size.code}",
+        "fontWeight": "{reference.font.weight.regular}",
+        "letterSpacing": "{reference.font.letter-spacing.code}",
+        "lineHeight": "{reference.font.line-height.code}"
+      },
+      "$description": "Code and technical data."
+    }
+  },
+  "elevation": {
+    "subtle": {
+      "$type": "shadow",
+      "$value": "{reference.shadow.elevation.subtle}"
+    },
+    "overlay": {
+      "$type": "shadow",
+      "$value": "{reference.shadow.elevation.overlay}"
+    },
+    "modal": {
+      "$type": "shadow",
+      "$value": "{reference.shadow.elevation.modal}"
+    }
+  },
+  "motion": {
+    "duration": {
+      "none": {
+        "$type": "duration",
+        "$value": "{reference.motion.duration.none}"
+      },
+      "fast": {
+        "$type": "duration",
+        "$value": "{reference.motion.duration.fast}"
+      },
+      "moderate": {
+        "$type": "duration",
+        "$value": "{reference.motion.duration.moderate}"
+      },
+      "slow": {
+        "$type": "duration",
+        "$value": "{reference.motion.duration.slow}"
+      }
+    },
+    "easing": {
+      "standard": {
+        "$type": "cubicBezier",
+        "$value": "{reference.motion.easing.standard}"
+      }
+    },
+    "scale": {
+      "pressed": {
+        "$type": "number",
+        "$value": "{reference.motion.scale.pressed}"
+      }
+    }
+  },
+  "icon": {
+    "size": {
+      "sm": {
+        "$type": "dimension",
+        "$value": "{reference.dimension.icon.sm}"
+      },
+      "md": {
+        "$type": "dimension",
+        "$value": "{reference.dimension.icon.md}"
+      },
+      "lg": {
+        "$type": "dimension",
+        "$value": "{reference.dimension.icon.lg}"
+      }
+    }
+  },
+  "size": {
+    "hit-target": {
+      "minimum": {
+        "$type": "dimension",
+        "$value": "{reference.dimension.hit-target.minimum}"
+      }
+    }
+  },
+  "space": {
+    "inline": {
+      "xs": {
+        "$type": "dimension",
+        "$value": "{reference.dimension.spacing.half}"
+      },
+      "sm": {
+        "$type": "dimension",
+        "$value": "{reference.dimension.spacing.1}"
+      },
+      "md": {
+        "$type": "dimension",
+        "$value": "{reference.dimension.spacing.2}"
+      },
+      "lg": {
+        "$type": "dimension",
+        "$value": "{reference.dimension.spacing.3}"
+      }
+    },
+    "stack": {
+      "xs": {
+        "$type": "dimension",
+        "$value": "{reference.dimension.spacing.1}"
+      },
+      "sm": {
+        "$type": "dimension",
+        "$value": "{reference.dimension.spacing.2}"
+      },
+      "md": {
+        "$type": "dimension",
+        "$value": "{reference.dimension.spacing.3}"
+      },
+      "lg": {
+        "$type": "dimension",
+        "$value": "{reference.dimension.spacing.4}"
+      }
+    },
+    "section": {
+      "$type": "dimension",
+      "$value": "{reference.dimension.spacing.8}"
+    }
+  }
+}
