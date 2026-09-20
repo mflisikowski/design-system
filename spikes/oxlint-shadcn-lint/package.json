@@ -1,0 +1,16 @@
+{
+  "name": "mfd-oxlint-spike",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@10.28.2",
+  "scripts": {
+    "lint:valid": "oxlint src/valid.tsx",
+    "lint:invalid": "oxlint src/invalid.tsx"
+  },
+  "devDependencies": {
+    "@shadcn/lint": "0.1.1",
+    "oxlint": "1.80.0",
+    "tailwindcss": "4.3.3",
+    "typescript": "5.9.3"
+  }
+}
