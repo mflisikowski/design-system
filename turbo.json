@@ -1,0 +1,48 @@
+{
+  "$schema": "https://turborepo.dev/schema.json",
+  "globalEnv": ["CI"],
+  "tasks": {
+    "transit": {
+      "dependsOn": ["^transit"]
+    },
+    "build": {
+      "dependsOn": ["^build"],
+      "env": ["NEXT_PUBLIC_*"],
+      "outputs": [".next/**", "!.next/cache/**", "!.next/dev/**"]
+    },
+    "typecheck": {
+      "dependsOn": ["transit"],
+      "outputs": []
+    },
+    "format": {
+      "outputs": []
+    },
+    "format:write": {
+      "cache": false
+    },
+    "lint": {
+      "outputs": []
+    },
+    "test": {
+      "dependsOn": ["transit"],
+      "outputs": []
+    },
+    "tokens:check": {
+      "outputs": []
+    },
+    "registry:check": {
+      "outputs": []
+    },
+    "changeset": {
+      "cache": false
+    },
+    "changeset:check": {
+      "cache": false,
+      "env": ["CHANGESET_BASE_REF", "GITHUB_BASE_REF"]
+    },
+    "dev": {
+      "cache": false,
+      "persistent": true
+    }
+  }
+}

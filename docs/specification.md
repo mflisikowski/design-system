@@ -994,7 +994,7 @@ Working conventions:
 - Product name: MFD Design System.
 - Package scope: @mflisikowski.
 - Registry namespace: @mflisikowski.
-- Registry URL: https://design-system.mflisikowski.dev/r/{item}.json.
+- Registry URL: https://design-system.mflisikowski.dev/r/{name}.json.
 
 Availability of public names has not yet been verified.
 

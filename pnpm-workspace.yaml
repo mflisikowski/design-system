@@ -1,0 +1,24 @@
+packages:
+  - "apps/*"
+  - "packages/*"
+  - "registry/*"
+  - "tools/*"
+
+sharedWorkspaceLockfile: true
+linkWorkspacePackages: true
+preferWorkspacePackages: true
+saveExact: true
+
+catalog:
+  "@biomejs/biome": 2.5.14
+  "@changesets/cli": 3.0.3
+  "@types/node": 24.13.6
+  "@types/react": 19.3.0
+  "@types/react-dom": 19.3.0
+  next: 16.3.5
+  oxlint: 1.83.0
+  react: 19.3.0
+  react-dom: 19.3.0
+  turbo: 2.11.2
+  typescript: 7.0.2
+  vitest: 5.0.1

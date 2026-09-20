@@ -1,0 +1,15 @@
+{
+  "categories": {
+    "correctness": "error"
+  },
+  "plugins": ["import", "jsx-a11y", "react", "typescript", "unicorn"],
+  "ignorePatterns": [
+    "**/.next/**",
+    "**/.turbo/**",
+    "**/node_modules/**",
+    "apps/docs/public/r/**",
+    "coverage/**",
+    "dist/**",
+    "spikes/oxlint-shadcn-lint/**"
+  ]
+}

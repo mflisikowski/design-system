@@ -1,0 +1,22 @@
+{
+  "name": "@mflisikowski/quality",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "changeset": "node scripts/run-from-root.mjs changeset",
+    "changeset:check": "node scripts/check-changeset.mjs",
+    "format": "node scripts/run-from-root.mjs biome check .",
+    "format:write": "node scripts/run-from-root.mjs biome check --write .",
+    "lint": "node scripts/run-from-root.mjs oxlint --config .oxlintrc.json --deny-warnings .",
+    "registry:check": "node scripts/check-optional-gate.mjs registry",
+    "test": "vitest run",
+    "tokens:check": "node scripts/check-optional-gate.mjs tokens"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "catalog:",
+    "@changesets/cli": "catalog:",
+    "oxlint": "catalog:",
+    "vitest": "catalog:"
+  }
+}

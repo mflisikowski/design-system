@@ -1,0 +1,41 @@
+{
+  "name": "mfd-design-system",
+  "version": "0.0.0",
+  "private": true,
+  "packageManager": "pnpm@12.5.1",
+  "engines": {
+    "node": "24.21.0",
+    "pnpm": "12.5.1"
+  },
+  "devEngines": {
+    "runtime": {
+      "name": "node",
+      "version": "24.21.0",
+      "onFail": "download"
+    },
+    "packageManager": {
+      "name": "pnpm",
+      "version": "12.5.1",
+      "onFail": "download"
+    }
+  },
+  "scripts": {
+    "build": "turbo run build",
+    "changeset": "turbo run changeset --filter=@mflisikowski/quality",
+    "changeset:check": "turbo run changeset:check",
+    "dev": "turbo run dev",
+    "format": "turbo run format",
+    "format:write": "turbo run format:write",
+    "lint": "turbo run lint",
+    "registry:check": "turbo run registry:check",
+    "test": "turbo run test",
+    "tokens:check": "turbo run tokens:check",
+    "typecheck": "turbo run typecheck",
+    "verify": "turbo run format lint typecheck build test tokens:check registry:check changeset:check"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "catalog:",
+    "turbo": "catalog:",
+    "typescript": "catalog:"
+  }
+}
