@@ -1,0 +1,54 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "items": [
+    {
+      "name": "registry-sample-label",
+      "type": "registry:lib",
+      "title": "Registry Sample Label",
+      "description": "Formatting support for the MFD registry distribution sample.",
+      "dependencies": [],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "registry-sample-label.ts",
+          "type": "registry:lib",
+          "target": "@lib/registry-sample-label.ts"
+        }
+      ],
+      "docs": "Installed automatically with Registry Sample. It may also be installed directly when only the shared label formatter is needed.",
+      "meta": {
+        "maturity": "experimental",
+        "version": "0.0.0",
+        "visibility": "supporting",
+        "installation": {
+          "latest": "pnpm dlx shadcn@latest add @mflisikowski/registry-sample-label",
+          "snapshot": "pnpm dlx shadcn@latest add https://design-system.mflisikowski.dev/r/v/0.0.0/registry-sample-label.json"
+        }
+      }
+    },
+    {
+      "name": "registry-sample",
+      "type": "registry:ui",
+      "title": "Registry Sample",
+      "description": "A minimal semantic component that proves the MFD registry distribution path.",
+      "dependencies": ["@mflisikowski/tokens@0.0.0", "clsx@2.1.1"],
+      "registryDependencies": ["@mflisikowski/registry-sample-label"],
+      "files": [
+        {
+          "path": "registry-sample.tsx",
+          "type": "registry:ui",
+          "target": "@ui/registry-sample.tsx"
+        }
+      ],
+      "docs": "Import RegistrySample from the installed UI directory. The component is an experimental distribution proof, not a stable product primitive.",
+      "meta": {
+        "maturity": "experimental",
+        "version": "0.0.0",
+        "installation": {
+          "latest": "pnpm dlx shadcn@latest add @mflisikowski/registry-sample",
+          "snapshot": "pnpm dlx shadcn@latest add https://design-system.mflisikowski.dev/r/v/0.0.0/registry-sample.json"
+        }
+      }
+    }
+  ]
+}

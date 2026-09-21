@@ -1,0 +1,29 @@
+{
+  "name": "@mflisikowski/registry-release",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "node scripts/build-registry.mjs",
+    "registry:check": "node scripts/check-registry.mjs",
+    "registry:sync": "node scripts/sync-reference.mjs",
+    "release:sync": "node scripts/sync-release-version.mjs",
+    "snapshot:prepare": "node scripts/prepare-release-snapshot.mjs",
+    "test": "node scripts/build-registry.mjs && vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@mflisikowski/tokens": "workspace:*"
+  },
+  "devDependencies": {
+    "@mflisikowski/typescript-config": "workspace:*",
+    "@types/node": "catalog:",
+    "clsx": "catalog:",
+    "shadcn": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  }
+}

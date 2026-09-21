@@ -1,0 +1,10 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "mfd-design-system",
+  "homepage": "https://design-system.mflisikowski.dev",
+  "include": [
+    "registry/ui/registry.json",
+    "registry/blocks/registry.json",
+    "registry/themes/registry.json"
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "registry-sample-label",
+  "title": "Registry Sample Label",
+  "description": "Formatting support for the MFD registry distribution sample.",
+  "dependencies": [],
+  "registryDependencies": [],
+  "files": [
+    {
+      "path": "registry/ui/registry-sample-label.ts",
+      "content": "export function registrySampleLabel(brand: string) {\n  return `MFD registry connected for ${brand}`;\n}\n",
+      "type": "registry:lib",
+      "target": "@lib/registry-sample-label.ts"
+    }
+  ],
+  "meta": {
+    "maturity": "experimental",
+    "version": "0.0.0",
+    "visibility": "supporting",
+    "installation": {
+      "latest": "pnpm dlx shadcn@latest add @mflisikowski/registry-sample-label",
+      "snapshot": "pnpm dlx shadcn@latest add https://design-system.mflisikowski.dev/r/v/0.0.0/registry-sample-label.json"
+    }
+  },
+  "docs": "Installed automatically with Registry Sample. It may also be installed directly when only the shared label formatter is needed.",
+  "type": "registry:lib"
+}

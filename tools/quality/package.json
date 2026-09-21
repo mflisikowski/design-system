@@ -6,6 +6,7 @@
   "scripts": {
     "changeset": "node scripts/run-from-root.mjs changeset",
     "changeset:check": "node scripts/check-changeset.mjs",
+    "changeset:version": "node scripts/run-from-root.mjs changeset version",
     "format": "node scripts/run-from-root.mjs biome check .",
     "format:write": "node scripts/run-from-root.mjs biome check --write .",
     "lint": "node scripts/run-from-root.mjs oxlint --config .oxlintrc.json --deny-warnings .",

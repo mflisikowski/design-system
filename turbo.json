@@ -24,7 +24,7 @@
       "outputs": []
     },
     "test": {
-      "dependsOn": ["transit"],
+      "dependsOn": ["transit", "build"],
       "outputs": []
     },
     "test:browser": {
@@ -49,12 +49,15 @@
     "registry:check": {
       "outputs": []
     },
+    "registry:sync": {
+      "cache": false
+    },
     "changeset": {
       "cache": false
     },
     "changeset:check": {
       "cache": false,
-      "env": ["CHANGESET_BASE_REF", "GITHUB_BASE_REF"]
+      "env": ["CHANGESET_BASE_REF", "CHANGESET_RELEASE_PR", "GITHUB_BASE_REF"]
     },
     "dev": {
       "cache": false,

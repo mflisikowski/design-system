@@ -37,4 +37,15 @@ if (gate === "tokens") {
   }
 }
 
+if (gate === "registry") {
+  const packageManifestPath = path.join(repositoryRoot, "packages/registry-release/package.json");
+  if (existsSync(packageManifestPath)) {
+    const packageManifest = JSON.parse(readFileSync(packageManifestPath, "utf8"));
+    if (packageManifest.scripts?.["registry:check"]) {
+      console.log(`${definition.label}: delegated to the package-owned Turbo task.`);
+      process.exit(0);
+    }
+  }
+}
+
 console.log(`${definition.label}: source exists; placeholder coverage remains active.`);

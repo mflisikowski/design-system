@@ -13,7 +13,7 @@ The system is React-first and uses Base UI for behavioral primitives. Expo/React
 
 ## Status
 
-The project is in early implementation. A reproducible pnpm and Turborepo workspace now contains minimal Next.js applications for the documentation site and Reference CRM; design-system packages and product flows remain to be implemented from the approved specification.
+The project is in early implementation. A reproducible pnpm and Turborepo workspace contains the documentation and Reference CRM applications, canonical token sources, and the first shadcn-compatible registry distribution proof. Product flows remain to be implemented from the approved specification.
 
 The authoritative documents are:
 
@@ -39,7 +39,12 @@ apps/
   docs/
   reference-crm/
 packages/
+  lint-config/
+  registry-release/
+  tokens/
   typescript-config/
+registry/
+registry.json
 ~~~
 
 Install and verify the workspace with the pinned toolchain:
@@ -48,8 +53,7 @@ Install and verify the workspace with the pinned toolchain:
 corepack pnpm install --frozen-lockfile
 corepack pnpm typecheck
 corepack pnpm build
+corepack pnpm registry:check
 ~~~
 
 Run the complete local pull-request gate with `corepack pnpm verify`.
-
-Future packages and registry surfaces will be added only when their dependencies and open decisions are resolved.

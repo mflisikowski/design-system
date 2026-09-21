@@ -35,5 +35,6 @@ jobs:
       - name: Verify workspace
         env:
           CHANGESET_BASE_REF: origin/${{ github.base_ref }}
+          CHANGESET_RELEASE_PR: ${{ github.event.pull_request.head.repo.full_name == github.repository && startsWith(github.head_ref, 'changeset-release/') }}
           TURBO_TELEMETRY_DISABLED: "1"
         run: pnpm verify

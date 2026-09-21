@@ -28,6 +28,7 @@
     "format:write": "turbo run format:write",
     "lint": "turbo run lint",
     "registry:check": "turbo run registry:check",
+    "registry:sync": "turbo run registry:sync --filter=@mflisikowski/registry-release",
     "test": "turbo run test",
     "test:browser": "turbo run test:browser",
     "test:browser:release": "turbo run test:browser:release",
@@ -36,7 +37,8 @@
     "tokens:check": "turbo run tokens:check",
     "typecheck": "turbo run typecheck",
     "verify": "turbo run format lint typecheck build test test:browser test:e2e tokens:check registry:check changeset:check",
-    "verify:release": "turbo run format lint typecheck build test test:browser:release test:e2e:release tokens:check registry:check changeset:check"
+    "verify:release": "turbo run format lint typecheck build test test:browser:release test:e2e:release tokens:check registry:check changeset:check",
+    "version-packages": "corepack pnpm --filter @mflisikowski/quality changeset:version && corepack pnpm --filter @mflisikowski/registry-release release:sync && corepack pnpm --filter @mflisikowski/registry-release snapshot:prepare"
   },
   "devDependencies": {
     "@biomejs/biome": "catalog:",
