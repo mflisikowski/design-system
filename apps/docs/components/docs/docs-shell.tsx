@@ -76,7 +76,7 @@ export function DocsShell({ children, currentPage }: DocsShellProps) {
             <span>Design System</span>
           </span>
         </Link>
-        <span data-docs="release-label">Pre-release documentation</span>
+        <span data-docs="release-label">0.1.0 release documentation</span>
       </header>
 
       <details data-docs="mobile-navigation">

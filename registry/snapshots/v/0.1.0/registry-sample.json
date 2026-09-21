@@ -4,11 +4,11 @@
   "title": "Registry Sample",
   "description": "A minimal semantic component that proves the MFD registry distribution path.",
   "dependencies": [
-    "@mflisikowski/tokens@0.0.0",
+    "@mflisikowski/tokens@0.1.0",
     "clsx@2.1.1"
   ],
   "registryDependencies": [
-    "https://design-system.mflisikowski.dev/r/v/0.0.0/registry-sample-label.json"
+    "https://design-system.mflisikowski.dev/r/v/0.1.0/registry-sample-label.json"
   ],
   "files": [
     {
@@ -20,10 +20,10 @@
   ],
   "meta": {
     "maturity": "experimental",
-    "version": "0.0.0",
+    "version": "0.1.0",
     "installation": {
       "latest": "pnpm dlx shadcn@latest add @mflisikowski/registry-sample",
-      "snapshot": "pnpm dlx shadcn@latest add https://design-system.mflisikowski.dev/r/v/0.0.0/registry-sample.json"
+      "snapshot": "pnpm dlx shadcn@latest add https://design-system.mflisikowski.dev/r/v/0.1.0/registry-sample.json"
     }
   },
   "docs": "Import RegistrySample from the installed UI directory. The component is an experimental distribution proof, not a stable product primitive.",

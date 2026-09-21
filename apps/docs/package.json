@@ -30,6 +30,7 @@
   "devDependencies": {
     "@axe-core/playwright": "catalog:",
     "@mflisikowski/typescript-config": "workspace:*",
+    "@mflisikowski/registry-release": "workspace:*",
     "@playwright/test": "catalog:",
     "@types/mdx": "catalog:",
     "@types/node": "catalog:",

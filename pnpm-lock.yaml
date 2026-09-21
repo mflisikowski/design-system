@@ -350,6 +350,9 @@ importers:
       '@axe-core/playwright':
         specifier: 'catalog:'
         version: 4.13.0(playwright-core@1.63.0)
+      '@mflisikowski/registry-release':
+        specifier: workspace:*
+        version: link:../../packages/registry-release
       '@mflisikowski/typescript-config':
         specifier: workspace:*
         version: link:../../packages/typescript-config

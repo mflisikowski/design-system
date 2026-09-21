@@ -15,11 +15,11 @@
   ],
   "meta": {
     "maturity": "experimental",
-    "version": "0.0.0",
+    "version": "0.1.0",
     "visibility": "supporting",
     "installation": {
       "latest": "pnpm dlx shadcn@latest add @mflisikowski/registry-sample-label",
-      "snapshot": "pnpm dlx shadcn@latest add https://design-system.mflisikowski.dev/r/v/0.0.0/registry-sample-label.json"
+      "snapshot": "pnpm dlx shadcn@latest add https://design-system.mflisikowski.dev/r/v/0.1.0/registry-sample-label.json"
     }
   },
   "docs": "Installed automatically with Registry Sample. It may also be installed directly when only the shared label formatter is needed.",

@@ -1,4 +1,4 @@
-import { access, readdir, readFile } from "node:fs/promises";
+import { access, readdir, readFile, rm } from "node:fs/promises";
 import path from "node:path";
 
 /** @param {string} targetPath */
@@ -40,4 +40,21 @@ export async function directoriesEqual(left, right) {
     }),
   );
   return comparisons.every(Boolean);
+}
+
+/**
+ * Remove the mutable pre-release snapshot before creating the first immutable
+ * release. Version 0.0.0 is development output, not a historical release.
+ *
+ * @param {{ publicRoot: string; durableRoot: string; releaseVersion: string }} options
+ */
+export async function removeDevelopmentSnapshot({ publicRoot, durableRoot, releaseVersion }) {
+  if (releaseVersion === "0.0.0") {
+    return;
+  }
+
+  await Promise.all([
+    rm(path.join(publicRoot, "v", "0.0.0"), { force: true, recursive: true }),
+    rm(path.join(durableRoot, "0.0.0"), { force: true, recursive: true }),
+  ]);
 }

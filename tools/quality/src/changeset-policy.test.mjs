@@ -61,6 +61,7 @@ describe("changeset policy", () => {
       "packages/lint-config/CHANGELOG.md",
       "registry/ui/registry.json",
       "registry/snapshots/v/0.1.0/registry-sample.json",
+      "registry/snapshots/v/0.0.0/registry-sample.json",
     ];
     expect(generatedPaths.every((path) => isGeneratedReleasePublicPath(path, "0.1.0"))).toBe(true);
     expect(

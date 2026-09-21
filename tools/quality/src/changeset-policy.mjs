@@ -41,8 +41,12 @@ export function classifyPublicImpact(paths) {
 export function isGeneratedReleasePublicPath(path, releaseVersion) {
   const normalizedPath = normalizePath(path);
   const snapshotPrefix = `registry/snapshots/v/${releaseVersion}/`;
+  const developmentSnapshotPrefix = "registry/snapshots/v/0.0.0/";
   const snapshotFile = normalizedPath.startsWith(snapshotPrefix)
     ? normalizedPath.slice(snapshotPrefix.length)
+    : "";
+  const developmentSnapshotFile = normalizedPath.startsWith(developmentSnapshotPrefix)
+    ? normalizedPath.slice(developmentSnapshotPrefix.length)
     : "";
   const fixedPackageFiles = [
     "packages/tokens/package.json",
@@ -54,7 +58,10 @@ export function isGeneratedReleasePublicPath(path, releaseVersion) {
   return (
     fixedPackageFiles.includes(normalizedPath) ||
     normalizedPath === "registry/ui/registry.json" ||
-    (snapshotFile.endsWith(".json") && !snapshotFile.includes("/"))
+    (snapshotFile.endsWith(".json") && !snapshotFile.includes("/")) ||
+    (releaseVersion !== "0.0.0" &&
+      developmentSnapshotFile.endsWith(".json") &&
+      !developmentSnapshotFile.includes("/"))
   );
 }
 

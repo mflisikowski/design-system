@@ -23,7 +23,16 @@
     {
       "files": ["registry/**/*.{js,jsx,ts,tsx}"],
       "rules": {
-        "shadcn/no-restyle": "off"
+        "shadcn/no-restyle": "off",
+        "shadcn/no-unknown-classes": "off",
+        "jsx-a11y/heading-has-content": "off"
+      }
+    },
+    {
+      "files": ["apps/reference-crm/components/ui/**/*.{js,jsx,ts,tsx}"],
+      "rules": {
+        "shadcn/no-unknown-classes": "off",
+        "jsx-a11y/heading-has-content": "off"
       }
     }
   ]

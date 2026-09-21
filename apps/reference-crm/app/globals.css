@@ -263,14 +263,14 @@ h1 {
   width: 24%;
 }
 
+.client-table-surface .mfd-table__body .mfd-table__cell:first-child {
+  font-weight: var(--mfd-typography-label-font-weight);
+}
+
 .client-table-surface .mfd-table__head:last-child,
 .client-table-surface .mfd-table__cell:last-child {
   text-align: end;
   width: 5rem;
-}
-
-.client-name {
-  font-weight: var(--mfd-typography-label-font-weight);
 }
 
 .contact-details {
@@ -366,7 +366,8 @@ h1 {
     flex-direction: column;
   }
 
-  .added-column {
+  .client-table-surface .mfd-table__head:nth-child(3),
+  .client-table-surface .mfd-table__cell:nth-child(3) {
     display: none;
   }
 

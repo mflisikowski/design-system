@@ -115,10 +115,11 @@ function releaseState(baseReference) {
 const baseReference =
   process.env.CHANGESET_BASE_REF ??
   (process.env.GITHUB_BASE_REF ? `origin/${process.env.GITHUB_BASE_REF}` : undefined);
-const changes = baseReference ? pullRequestChanges(baseReference) : localChanges();
 const releaseMode = process.env.CHANGESET_RELEASE_PR === "true";
+const releaseBaseReference = baseReference ?? (releaseMode ? "HEAD" : undefined);
+const changes = baseReference ? pullRequestChanges(baseReference) : localChanges();
 const currentRelease = releaseMode
-  ? releaseState(baseReference)
+  ? releaseState(releaseBaseReference)
   : { valid: false, version: undefined };
 const result = evaluateChangesetPolicy(
   changes

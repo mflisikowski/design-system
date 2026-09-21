@@ -281,6 +281,7 @@ export const documentationPages = [
       "Release notes, migration guidance, and explicit maturity transitions for public contracts.",
     section: "Changelog",
     headings: [
+      { depth: 2, id: "010-add-client", label: "0.1.0 — Add Client" },
       { depth: 2, id: "unreleased", label: "Unreleased" },
       { depth: 2, id: "release-model", label: "Release model" },
       { depth: 2, id: "maturity-transitions", label: "Maturity transitions" },

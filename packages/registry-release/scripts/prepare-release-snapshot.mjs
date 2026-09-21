@@ -3,7 +3,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { run } from "./run-process.mjs";
-import { directoriesEqual, pathExists } from "./snapshot-utils.mjs";
+import { directoriesEqual, pathExists, removeDevelopmentSnapshot } from "./snapshot-utils.mjs";
 
 const packageDirectory = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const repositoryRoot = path.resolve(packageDirectory, "../..");
@@ -12,6 +12,10 @@ const releaseVersion = JSON.parse(
 ).version;
 const publicSnapshot = path.join(repositoryRoot, "apps/docs/public/r/v", releaseVersion);
 const durableSnapshot = path.join(repositoryRoot, "registry/snapshots/v", releaseVersion);
+const publicRoot = path.join(repositoryRoot, "apps/docs/public/r");
+const durableRoot = path.join(repositoryRoot, "registry/snapshots/v");
+
+await removeDevelopmentSnapshot({ publicRoot, durableRoot, releaseVersion });
 
 await run(process.execPath, [path.join(packageDirectory, "scripts/build-registry.mjs")], {
   cwd: repositoryRoot,

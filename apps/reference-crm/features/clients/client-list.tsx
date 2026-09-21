@@ -46,16 +46,16 @@ type ClientListProps = Readonly<{
 function LoadingTable() {
   return (
     <div className="client-table-surface">
-      <p className="visually-hidden" role="status">
+      <output className="visually-hidden">
         Loading clients
-      </p>
+      </output>
       <Table aria-busy="true">
         <TableCaption>Clients</TableCaption>
         <TableHeader>
           <TableRow>
             <TableHead>Client</TableHead>
             <TableHead>Primary contact</TableHead>
-            <TableHead className="added-column">Added</TableHead>
+            <TableHead>Added</TableHead>
             <TableHead>Actions</TableHead>
           </TableRow>
         </TableHeader>
@@ -68,7 +68,7 @@ function LoadingTable() {
               <TableCell>
                 <span className="skeleton-line skeleton-line--long" />
               </TableCell>
-              <TableCell className="added-column">
+              <TableCell>
                 <span className="skeleton-line" />
               </TableCell>
               <TableCell>
@@ -96,14 +96,14 @@ function ClientTable({ clients, onAnnouncement }: ClientTableProps) {
           <TableRow>
             <TableHead>Client</TableHead>
             <TableHead>Primary contact</TableHead>
-            <TableHead className="added-column">Added</TableHead>
+            <TableHead>Added</TableHead>
             <TableHead>Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {clients.map((client) => (
             <TableRow key={client.id}>
-              <TableCell className="client-name">{client.organizationName}</TableCell>
+              <TableCell>{client.organizationName}</TableCell>
               <TableCell>
                 <span className="contact-details">
                   <span>{client.contactName}</span>
@@ -113,7 +113,7 @@ function ClientTable({ clients, onAnnouncement }: ClientTableProps) {
                   {client.contactPhone ? <span>{client.contactPhone}</span> : null}
                 </span>
               </TableCell>
-              <TableCell className="added-column">
+              <TableCell>
                 <time dateTime={client.createdAt}>
                   {dateFormatter.format(new Date(client.createdAt))}
                 </time>
@@ -220,7 +220,6 @@ export function ClientList({ createScenario, scenario, waitingForApi = false }: 
         aria-live="polite"
         className="visually-hidden"
         data-announcement-id={announcement?.id}
-        role="status"
       >
         {announcement ? <span key={announcement.id}>{announcement.message}</span> : null}
       </p>

@@ -61,7 +61,10 @@ test("public foundations preserve native behavior and accessible names", async (
         <Icon name="ellipsis" />
       </IconButton>
       <Link href="#clients">Browse clients</Link>
-      <Link href="#settings" render={<a data-router-link="" href="#settings" />}>
+      <Link
+        href="#settings"
+        render={<a aria-label="Router-composed settings" data-router-link="" href="#settings" />}
+      >
         Router-composed settings
       </Link>
     </div>,
