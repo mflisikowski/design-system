@@ -47,6 +47,7 @@
       "outputs": []
     },
     "registry:check": {
+      "dependsOn": ["test"],
       "outputs": []
     },
     "registry:sync": {

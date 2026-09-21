@@ -39,3 +39,25 @@ test("captures representative component states in the pull-request theme matrix"
     "theme-bloom-dark-compact.png",
   );
 });
+
+test("captures the Clients key screen in the pull-request theme matrix", async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 720 });
+  await page.goto("/sign-in");
+  await page.getByRole("button", { name: "Continue as demo manager" }).click();
+  await expect(page.getByRole("cell", { exact: true, name: "Northstar Studio" })).toBeVisible();
+  await waitForStableFonts(page);
+
+  await expect(page).toHaveScreenshot("clients-atlas-light-comfortable.png", {
+    fullPage: true,
+  });
+
+  await page.locator("html").evaluate((element) => {
+    element.dataset.brand = "bloom";
+    element.dataset.colorScheme = "dark";
+    element.dataset.density = "compact";
+  });
+
+  await expect(page).toHaveScreenshot("clients-bloom-dark-compact.png", {
+    fullPage: true,
+  });
+});

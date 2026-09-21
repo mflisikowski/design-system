@@ -21,7 +21,12 @@ test("exposes the authenticated shell and deterministic client table", async ({ 
   await page.getByRole("button", { name: "Continue as demo manager" }).click();
   await expect(page.getByRole("heading", { level: 1, name: "Clients" })).toBeVisible();
   expect(await page.context().cookies()).toContainEqual(
-    expect.objectContaining({ httpOnly: true, name: "mfd-demo-session", sameSite: "Lax" }),
+    expect.objectContaining({
+      httpOnly: true,
+      name: "mfd-demo-session",
+      sameSite: "Lax",
+      secure: true,
+    }),
   );
   await page.goto("/clients");
 
@@ -36,6 +41,19 @@ test("exposes the authenticated shell and deterministic client table", async ({ 
   await expect(page.getByRole("table", { name: "Clients" })).toBeVisible();
   await expect(page.getByRole("cell", { exact: true, name: "Northstar Studio" })).toBeVisible();
   await expect(page.getByRole("columnheader", { name: "Added" })).toBeVisible();
+
+  await page.getByRole("button", { name: "More actions for Northstar Studio" }).click();
+  await expect(page.getByRole("menu", { name: "Actions for Northstar Studio" })).toBeVisible();
+  await expect(page.getByRole("menuitem", { name: "Email Jamie Chen" })).toBeFocused();
+  await page.keyboard.press("Escape");
+  await expect(
+    page.getByRole("button", { name: "More actions for Northstar Studio" }),
+  ).toBeFocused();
+
+  await expect(page.getByRole("link", { name: "Settings" })).toHaveAttribute(
+    "href",
+    "/settings/appearance",
+  );
 });
 
 test("signs out and protects the session again", async ({ page }) => {

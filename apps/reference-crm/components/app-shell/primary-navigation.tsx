@@ -6,7 +6,7 @@ import { Link } from "@/components/ui/link";
 
 const destinations = [
   { href: "/clients", label: "Clients" },
-  { href: "/settings", label: "Settings" },
+  { href: "/settings/appearance", label: "Settings" },
 ] as const;
 
 export function PrimaryNavigation() {

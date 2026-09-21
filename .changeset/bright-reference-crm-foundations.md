@@ -3,4 +3,4 @@
 "@mflisikowski/registry-release": minor
 ---
 
-Add semantic radius roles and the installable Button, Icon, Link, Alert, Empty State, and Table foundations validated by the Reference CRM Client list.
+Add semantic radius roles and the installable Button, Icon, Icon Button, Link, Alert, Empty State, and Table foundations validated by the Reference CRM Client list, including observable Icon Button sizes.

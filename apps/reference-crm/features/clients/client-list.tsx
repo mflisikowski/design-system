@@ -11,7 +11,7 @@ import {
   EmptyStateIcon,
   EmptyStateTitle,
 } from "@/components/ui/empty-state";
-import { Icon, IconButton } from "@/components/ui/icon";
+import { Icon } from "@/components/ui/icon";
 import {
   Table,
   TableBody,
@@ -21,7 +21,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-
+import { ClientRowActions } from "./client-row-actions";
 import type { Client } from "./model";
 import { type ClientListScenario, createHttpClientRepository } from "./repository";
 
@@ -108,9 +108,7 @@ function ClientTable({ clients }: Readonly<{ clients: readonly Client[] }>) {
                 </time>
               </TableCell>
               <TableCell>
-                <IconButton disabled label={`More actions for ${client.organizationName}`}>
-                  <Icon name="ellipsis" />
-                </IconButton>
+                <ClientRowActions client={client} />
               </TableCell>
             </TableRow>
           ))}

@@ -28,6 +28,16 @@
   touch-action: manipulation;
 }
 
+.mfd-icon-button[data-size="sm"] > .mfd-icon {
+  height: var(--mfd-icon-size-sm);
+  width: var(--mfd-icon-size-sm);
+}
+
+.mfd-icon-button[data-size="lg"] > .mfd-icon {
+  height: var(--mfd-icon-size-lg);
+  width: var(--mfd-icon-size-lg);
+}
+
 @media (hover: hover) {
   .mfd-icon-button:hover:not(:disabled) {
     background: var(--mfd-color-bg-subtle);

@@ -17,15 +17,17 @@ const typescriptBinary = path.join(packageDirectory, "node_modules/.bin/tsc");
 const releaseVersion = JSON.parse(
   await readFile(path.join(packageDirectory, "package.json"), "utf8"),
 ).version;
-const installableItems = [
-  "registry-sample",
-  "button",
-  "icon",
-  "link",
-  "alert",
-  "empty-state",
-  "table",
-];
+/**
+ * @type {{ items: Array<{
+ *   name: string;
+ *   type: string;
+ *   files: Array<{ target: string }>;
+ * }> }}
+ */
+const registryManifest = JSON.parse(
+  await readFile(path.join(repositoryRoot, "registry/ui/registry.json"), "utf8"),
+);
+const installableItems = registryManifest.items.filter((item) => item.type === "registry:ui");
 
 /**
  * @param {string} directory
@@ -230,11 +232,11 @@ export async function verifyCleanInstallFixtures(registryOutputDirectory = publi
           `@mflisikowski:registry=${origin}/npm/\nprefer-offline=true\n`,
         );
 
-        for (const itemName of installableItems) {
+        for (const item of installableItems) {
           const itemAddress =
             fixture === "new-project"
-              ? `@mflisikowski/${itemName}`
-              : `${origin}/r/v/${releaseVersion}/${itemName}.json`;
+              ? `@mflisikowski/${item.name}`
+              : `${origin}/r/v/${releaseVersion}/${item.name}.json`;
           await run(shadcnBinary, ["add", itemAddress, "--yes", "--cwd", fixtureDirectory], {
             cwd: fixtureDirectory,
             env: {
@@ -246,16 +248,12 @@ export async function verifyCleanInstallFixtures(registryOutputDirectory = publi
           });
         }
         await run(typescriptBinary, ["--project", "tsconfig.json"], { cwd: fixtureDirectory });
-        for (const fileName of [
-          "registry-sample.tsx",
-          "button.tsx",
-          "icon.tsx",
-          "link.tsx",
-          "alert.tsx",
-          "empty-state.tsx",
-          "table.tsx",
-        ]) {
-          await access(path.join(fixtureDirectory, "src/components/ui", fileName));
+        for (const item of installableItems) {
+          for (const file of item.files.filter(({ target }) => target.startsWith("@ui/"))) {
+            await access(
+              path.join(fixtureDirectory, "src/components/ui", path.basename(file.target)),
+            );
+          }
         }
         await access(path.join(fixtureDirectory, "src/lib/registry-sample-label.ts"));
         const installedManifest = JSON.parse(

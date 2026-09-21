@@ -270,6 +270,47 @@ h1 {
   outline-offset: 2px;
 }
 
+.client-row-actions {
+  display: inline-flex;
+  justify-content: end;
+  position: relative;
+}
+
+.client-row-actions__menu {
+  background: var(--mfd-color-bg-surface);
+  border: 1px solid var(--mfd-color-border-subtle);
+  border-radius: var(--mfd-radius-control);
+  box-shadow: var(--mfd-elevation-overlay);
+  inset-block-start: calc(100% + var(--mfd-space-stack-xs));
+  inset-inline-end: 0;
+  min-width: max-content;
+  padding: var(--mfd-space-stack-xs);
+  position: absolute;
+  text-align: start;
+  z-index: 1;
+}
+
+.client-row-actions__menu[hidden] {
+  display: none;
+}
+
+.client-row-actions__menu a {
+  border-radius: var(--mfd-radius-control);
+  color: var(--mfd-color-text-primary);
+  display: block;
+  padding: var(--mfd-space-stack-sm) var(--mfd-space-inline-sm);
+  text-decoration: none;
+}
+
+.client-row-actions__menu a:hover {
+  background: var(--mfd-color-bg-subtle);
+}
+
+.client-row-actions__menu a:focus-visible {
+  outline: 2px solid var(--mfd-color-border-focus);
+  outline-offset: 0;
+}
+
 .skeleton-line,
 .skeleton-dot {
   background: var(--mfd-color-bg-subtle);
