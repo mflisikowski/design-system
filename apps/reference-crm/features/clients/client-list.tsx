@@ -12,6 +12,7 @@ import {
   EmptyStateTitle,
 } from "@/components/ui/empty-state";
 import { Icon } from "@/components/ui/icon";
+import { Link } from "@/components/ui/link";
 import {
   Table,
   TableBody,
@@ -46,9 +47,7 @@ type ClientListProps = Readonly<{
 function LoadingTable() {
   return (
     <div className="client-table-surface">
-      <output className="visually-hidden">
-        Loading clients
-      </output>
+      <output className="visually-hidden">Loading clients</output>
       <Table aria-busy="true">
         <TableCaption>Clients</TableCaption>
         <TableHeader>
@@ -103,7 +102,11 @@ function ClientTable({ clients, onAnnouncement }: ClientTableProps) {
         <TableBody>
           {clients.map((client) => (
             <TableRow key={client.id}>
-              <TableCell>{client.organizationName}</TableCell>
+              <TableCell>
+                <Link href={`/clients/${client.id}`} variant="standalone">
+                  {client.organizationName}
+                </Link>
+              </TableCell>
               <TableCell>
                 <span className="contact-details">
                   <span>{client.contactName}</span>
@@ -220,6 +223,7 @@ export function ClientList({ createScenario, scenario, waitingForApi = false }: 
         aria-live="polite"
         className="visually-hidden"
         data-announcement-id={announcement?.id}
+        role="status"
       >
         {announcement ? <span key={announcement.id}>{announcement.message}</span> : null}
       </p>

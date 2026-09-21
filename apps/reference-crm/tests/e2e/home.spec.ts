@@ -84,6 +84,59 @@ test("exposes the authenticated shell and deterministic client table", async ({
   );
 });
 
+test("opens the same client details state from the table and a direct URL", async ({ page }) => {
+  await page.goto("/sign-in");
+  await page.getByRole("button", { name: "Continue as demo manager" }).click();
+  await expect(page.getByRole("cell", { exact: true, name: "Northstar Studio" })).toBeVisible();
+
+  const clientLink = page.getByRole("link", { name: "Northstar Studio", exact: true });
+  await expect(clientLink).toHaveAttribute("href", "/clients/client_northstar");
+  await clientLink.click();
+
+  await expect(page).toHaveURL(/\/clients\/client_northstar$/);
+  await expect(page.getByRole("heading", { level: 1, name: "Northstar Studio" })).toBeVisible();
+  await expect(page.getByRole("navigation", { name: "Breadcrumb" })).toBeVisible();
+  await expect(
+    page.getByRole("navigation", { name: "Breadcrumb" }).getByRole("link", { name: "Clients" }),
+  ).toHaveAttribute("href", "/clients");
+  await expect(page.getByText("Jamie Chen", { exact: true })).toBeVisible();
+  await expect(page.getByText("jamie.chen@northstar.example", { exact: true })).toBeVisible();
+
+  await page.goto("/clients/client_northstar");
+  await expect(page.getByRole("heading", { level: 1, name: "Northstar Studio" })).toBeVisible();
+  const breadcrumb = page.getByRole("navigation", { name: "Breadcrumb" });
+  await expect(breadcrumb).toContainText("Clients");
+  await expect(breadcrumb).toContainText("Northstar Studio");
+});
+
+test("returns to a directly requested client detail page after demo sign in", async ({ page }) => {
+  await page.context().clearCookies();
+  await page.goto("/clients/client_northstar");
+
+  await expect(page).toHaveURL(/\/sign-in\?returnTo=%2Fclients%2Fclient_northstar$/);
+  await page.getByRole("button", { name: "Continue as demo manager" }).click();
+
+  await expect(page).toHaveURL(/\/clients\/client_northstar$/);
+  await expect(page.getByRole("heading", { level: 1, name: "Northstar Studio" })).toBeVisible();
+});
+
+test("shows an accessible not found state with a safe return path", async ({ page }) => {
+  await page.goto("/sign-in");
+  await page.getByRole("button", { name: "Continue as demo manager" }).click();
+  await expect(page.getByRole("heading", { level: 1, name: "Clients" })).toBeVisible();
+  await page.goto("/clients/client_missing");
+
+  await expect(page.getByRole("heading", { level: 1, name: "Client not found" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "We could not find that client" })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Back to clients" })).toHaveAttribute(
+    "href",
+    "/clients",
+  );
+  const breadcrumb = page.getByRole("navigation", { name: "Breadcrumb" });
+  await expect(breadcrumb).toContainText("Clients");
+  await expect(breadcrumb).toContainText("Client not found");
+});
+
 test("signs out and protects the session again", async ({ page }) => {
   await page.goto("/sign-in");
   await page.getByRole("button", { name: "Continue as demo manager" }).click();

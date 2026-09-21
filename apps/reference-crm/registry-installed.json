@@ -5,6 +5,8 @@
     "button",
     "icon",
     "link",
+    "breadcrumb",
+    "page-header",
     "alert",
     "empty-state",
     "table",

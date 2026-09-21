@@ -1,0 +1,58 @@
+import NextLink from "next/link";
+import { Breadcrumb, BreadcrumbCurrent, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbSeparator } from "../../../../registry/ui/breadcrumb";
+import { Installation, LiveExample, MaturityNotice } from "@/components/docs/component-documentation";
+import { publicComponentDocumentation } from "@/lib/public-component-docs";
+
+<MaturityNotice introduced="0.2.0" status="experimental" />
+
+## Installation
+
+<Installation {...publicComponentDocumentation.breadcrumb.installation} />
+
+## Purpose
+
+Breadcrumb communicates the current location in a hierarchy and keeps an ancestor available as a native link.
+
+## Examples
+
+<LiveExample label="Client details breadcrumb">
+  <Breadcrumb>
+    <BreadcrumbList>
+      <BreadcrumbItem><BreadcrumbLink href="#purpose" render={<NextLink href="#purpose" />}>Clients</BreadcrumbLink></BreadcrumbItem>
+      <BreadcrumbSeparator />
+      <BreadcrumbItem><BreadcrumbCurrent>Northstar Studio</BreadcrumbCurrent></BreadcrumbItem>
+    </BreadcrumbList>
+  </Breadcrumb>
+</LiveExample>
+
+## Anatomy
+
+Breadcrumb is a navigation landmark containing an ordered list of BreadcrumbItem entries. Ancestors use BreadcrumbLink, separators are decorative, and the final entry uses BreadcrumbCurrent.
+
+## API
+
+Breadcrumb forwards native navigation properties. BreadcrumbList, BreadcrumbItem, BreadcrumbSeparator, and BreadcrumbCurrent forward their native properties. BreadcrumbLink accepts native Link properties plus the router `render` seam and always uses the standalone Link treatment.
+
+## States
+
+Ancestor links support native default, hover, and focus-visible states. The current item is non-interactive and truncates visually when space is limited.
+
+## Accessibility
+
+The landmark is labelled `Breadcrumb`, the list preserves ordered reading, separators are hidden from assistive technology, and the current item carries `aria-current="page"` without becoming a link.
+
+## Keyboard behavior
+
+Tab reaches ancestor BreadcrumbLink entries in order. Enter follows the focused ancestor. The current item is not a tab stop.
+
+## Figma specification
+
+Anatomy is `Navigation / Ordered list / Item / Link / Separator / Current`. The current item has a full accessible value even when its visual text is truncated.
+
+## Content guidance
+
+Use short ancestor labels and the complete current page name. Do not add a redundant Home item to the Client details flow.
+
+## Related patterns
+
+Page Header composes Breadcrumb with exactly one page heading and an optional action region.

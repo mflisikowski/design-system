@@ -23,7 +23,7 @@ export const registrySampleDocumentation = {
     },
   ],
   installation: {
-    dependencies: ["@mflisikowski/tokens@0.1.0", "clsx@2.1.1"],
+    dependencies: ["@mflisikowski/tokens@0.2.0", "clsx@2.1.1"],
     latest: "pnpm dlx shadcn@latest add @mflisikowski/registry-sample",
     namespaceConfig: [
       "{",
@@ -34,6 +34,6 @@ export const registrySampleDocumentation = {
     ].join("\n"),
     registryDependencies: ["@mflisikowski/registry-sample-label"],
     snapshot:
-      "pnpm dlx shadcn@latest add https://design-system.mflisikowski.dev/r/v/0.1.0/registry-sample.json",
+      "pnpm dlx shadcn@latest add https://design-system.mflisikowski.dev/r/v/0.2.0/registry-sample.json",
   },
 } as const;

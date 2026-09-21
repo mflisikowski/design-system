@@ -1,13 +1,14 @@
 "use client";
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import type { ReactNode } from "react";
 import { useEffect, useState } from "react";
 import { ToastViewport } from "@/components/ui/toast";
 import { startMockApi } from "@/mocks/browser";
 import { ClientList } from "./client-list";
 import type { ClientCreateScenario, ClientListScenario } from "./repository";
 
-const queryClient = new QueryClient({
+export const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       retry: false,
@@ -15,6 +16,14 @@ const queryClient = new QueryClient({
     },
   },
 });
+
+type ClientQueryProviderProps = Readonly<{
+  children: ReactNode;
+}>;
+
+export function ClientQueryProvider({ children }: ClientQueryProviderProps) {
+  return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>;
+}
 
 type ClientExperienceProps = Readonly<{
   createScenario: ClientCreateScenario;
@@ -37,9 +46,9 @@ export function ClientExperience({ createScenario, scenario }: ClientExperienceP
   }, []);
 
   return (
-    <QueryClientProvider client={queryClient}>
+    <ClientQueryProvider>
       <ClientList createScenario={createScenario} scenario={scenario} waitingForApi={!ready} />
       <ToastViewport />
-    </QueryClientProvider>
+    </ClientQueryProvider>
   );
 }

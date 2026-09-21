@@ -65,6 +65,24 @@ export function createClientHandlers(storage: ClientStorage, latency = defaultLa
 
       return HttpResponse.json(readOrSeed(storage));
     }),
+    http.get("*/api/clients/:clientId", async ({ params, request }) => {
+      const scenario = new URL(request.url).searchParams.get("scenario");
+      await delay(latency);
+
+      if (scenario === "error") {
+        return HttpResponse.json(
+          { message: "Client data is temporarily unavailable." },
+          { status: 503 },
+        );
+      }
+
+      const client = readOrSeed(storage).find((record) => record.id === params.clientId);
+      if (!client) {
+        return HttpResponse.json({ message: "Client was not found." }, { status: 404 });
+      }
+
+      return HttpResponse.json(client);
+    }),
     http.post("*/api/clients", async ({ request }) => {
       const scenario = new URL(request.url).searchParams.get("scenario");
       await delay(scenario === "slow" ? 1500 : latency);

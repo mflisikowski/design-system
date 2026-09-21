@@ -11,6 +11,25 @@ afterEach(() => mockServer.resetHandlers());
 afterAll(() => mockServer.close());
 
 describe("ClientRepository", () => {
+  it("gets a client by id through the HTTP boundary", async () => {
+    mockServer.use(...createClientHandlers(createMemoryClientStorage()));
+
+    const repository = createHttpClientRepository("http://localhost");
+
+    await expect(repository.get("client_northstar")).resolves.toEqual(deterministicClients[0]);
+  });
+
+  it("exposes an explicit not-found error for an unknown client id", async () => {
+    mockServer.use(...createClientHandlers(createMemoryClientStorage()));
+
+    const repository = createHttpClientRepository("http://localhost");
+
+    await expect(repository.get("client_missing")).rejects.toMatchObject({
+      name: "ClientRepositoryError",
+      status: 404,
+    });
+  });
+
   it("lists the deterministic seed through the HTTP boundary", async () => {
     mockServer.use(...createClientHandlers(createMemoryClientStorage()));
 

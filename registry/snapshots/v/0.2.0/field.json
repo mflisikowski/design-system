@@ -1,0 +1,35 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "field",
+  "title": "Field",
+  "description": "Accessible form-field composition for labels, descriptions, errors, and controls.",
+  "dependencies": [
+    "@mflisikowski/tokens@0.2.0",
+    "clsx@2.1.1"
+  ],
+  "registryDependencies": [],
+  "files": [
+    {
+      "path": "registry/ui/field.tsx",
+      "content": "\"use client\";\n\nimport { clsx } from \"clsx\";\nimport {\n  type AriaAttributes,\n  type ComponentPropsWithRef,\n  createContext,\n  type ReactNode,\n  useContext,\n  useId,\n} from \"react\";\n\nimport \"./field.css\";\n\ntype FieldContextValue = Readonly<{\n  controlId: string;\n  descriptionId: string;\n  errorId: string;\n  invalid: boolean;\n}>;\n\nconst FieldContext = createContext<FieldContextValue | null>(null);\n\nfunction useFieldContext(part: string) {\n  const context = useContext(FieldContext);\n  if (!context) {\n    throw new Error(`${part} must be rendered inside Field.`);\n  }\n  return context;\n}\n\nexport type FieldProps = ComponentPropsWithRef<\"div\"> & {\n  invalid?: boolean;\n};\n\nexport function Field({ children, className, invalid = false, ...props }: FieldProps) {\n  const id = useId();\n  const context = {\n    controlId: `${id}-control`,\n    descriptionId: `${id}-description`,\n    errorId: `${id}-error`,\n    invalid,\n  };\n\n  return (\n    <FieldContext.Provider value={context}>\n      <div {...props} className={clsx(\"mfd-field\", className)} data-invalid={invalid || undefined}>\n        {children}\n      </div>\n    </FieldContext.Provider>\n  );\n}\n\nexport type FieldLabelProps = ComponentPropsWithRef<\"label\">;\n\nexport function FieldLabel({ className, ...props }: FieldLabelProps) {\n  const field = useFieldContext(\"FieldLabel\");\n  return (\n    <label {...props} className={clsx(\"mfd-field__label\", className)} htmlFor={field.controlId} />\n  );\n}\n\nexport type FieldDescriptionProps = ComponentPropsWithRef<\"p\">;\n\nexport function FieldDescription({ className, ...props }: FieldDescriptionProps) {\n  const field = useFieldContext(\"FieldDescription\");\n  return (\n    <p {...props} className={clsx(\"mfd-field__description\", className)} id={field.descriptionId} />\n  );\n}\n\nexport type FieldErrorProps = ComponentPropsWithRef<\"p\"> & {\n  children: ReactNode;\n};\n\nexport function FieldError({ className, ...props }: FieldErrorProps) {\n  const field = useFieldContext(\"FieldError\");\n  if (!field.invalid) {\n    return null;\n  }\n\n  return <p {...props} className={clsx(\"mfd-field__error\", className)} id={field.errorId} />;\n}\n\nexport function useFieldControlProps(props: {\n  \"aria-describedby\"?: string;\n  \"aria-invalid\"?: AriaAttributes[\"aria-invalid\"];\n  id?: string;\n}) {\n  const field = useFieldContext(\"A field control\");\n  const describedBy = [\n    field.descriptionId,\n    field.invalid ? field.errorId : undefined,\n    props[\"aria-describedby\"],\n  ]\n    .filter(Boolean)\n    .join(\" \");\n\n  return {\n    \"aria-describedby\": describedBy || undefined,\n    \"aria-invalid\": props[\"aria-invalid\"] ?? (field.invalid || undefined),\n    id: field.controlId,\n  } as const;\n}\n",
+      "type": "registry:ui",
+      "target": "@ui/field.tsx"
+    },
+    {
+      "path": "registry/ui/field.css",
+      "content": ".mfd-field {\n  display: grid;\n  gap: var(--mfd-space-field-gap);\n}\n\n.mfd-field__label {\n  color: var(--mfd-color-text-primary);\n  font:\n    var(--mfd-typography-label-font-weight) var(--mfd-typography-label-font-size) /\n    var(--mfd-typography-label-line-height) var(--mfd-typography-label-font-family);\n  letter-spacing: var(--mfd-typography-label-letter-spacing);\n}\n\n.mfd-field__description,\n.mfd-field__error {\n  font:\n    var(--mfd-typography-caption-font-weight) var(--mfd-typography-caption-font-size) /\n    var(--mfd-typography-caption-line-height) var(--mfd-typography-caption-font-family);\n  margin: 0;\n}\n\n.mfd-field__description {\n  color: var(--mfd-color-text-secondary);\n}\n\n.mfd-field__error {\n  color: var(--mfd-color-status-danger-text);\n}\n",
+      "type": "registry:ui",
+      "target": "@ui/field.css"
+    }
+  ],
+  "meta": {
+    "maturity": "experimental",
+    "version": "0.2.0",
+    "installation": {
+      "latest": "pnpm dlx shadcn@latest add @mflisikowski/field",
+      "snapshot": "pnpm dlx shadcn@latest add https://design-system.mflisikowski.dev/r/v/0.2.0/field.json"
+    }
+  },
+  "docs": "Compose FieldLabel, optional FieldDescription, one compatible control, and FieldError. Field owns their accessible identifiers and invalid relationship.",
+  "type": "registry:ui"
+}

@@ -1,0 +1,59 @@
+import NextLink from "next/link";
+import { Breadcrumb, BreadcrumbCurrent, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbSeparator } from "../../../../registry/ui/breadcrumb";
+import { PageHeader } from "../../../../registry/ui/page-header";
+import { Button } from "../../../../registry/ui/button";
+import { Installation, LiveExample, MaturityNotice } from "@/components/docs/component-documentation";
+import { publicComponentDocumentation } from "@/lib/public-component-docs";
+
+<MaturityNotice introduced="0.2.0" status="experimental" />
+
+## Installation
+
+<Installation {...publicComponentDocumentation.pageHeader.installation} />
+
+## Purpose
+
+Page Header establishes a predictable page hierarchy with the current location, one page `h1`, supporting copy, and optional actions.
+
+## Examples
+
+<LiveExample label="Client details page header">
+    <PageHeader
+    breadcrumb={<Breadcrumb><BreadcrumbList><BreadcrumbItem><BreadcrumbLink href="#purpose" render={<NextLink href="#purpose" />}>Clients</BreadcrumbLink></BreadcrumbItem><BreadcrumbSeparator /><BreadcrumbItem><BreadcrumbCurrent>Northstar Studio</BreadcrumbCurrent></BreadcrumbItem></BreadcrumbList></Breadcrumb>}
+    description="Review the organization and its primary contact."
+    title="Northstar Studio"
+    actions={<Button>Open project</Button>}
+  />
+</LiveExample>
+
+## Anatomy
+
+Page Header contains the supplied Breadcrumb, one generated `h1`, optional description, and an optional action region. It remains structural rather than an elevated surface.
+
+## API
+
+`breadcrumb` and `title` are required. `description` and `actions` are optional React nodes. Native header properties and refs are forwarded; action semantics remain owned by the supplied controls.
+
+## States
+
+The component supports optional description and action regions. Actions wrap below the title at narrow widths while preserving their order and available width.
+
+## Accessibility
+
+Page Header always renders one `h1` for the page. Use visible action labels and keep the primary action as the only filled action in the supplied action region.
+
+## Keyboard behavior
+
+Keyboard behavior comes from the composed Breadcrumb links and supplied action controls. The structural header itself is not a focus stop.
+
+## Figma specification
+
+Anatomy is `Breadcrumb / Title / optional Description / optional Actions`. Properties are Description present and Actions present; responsive wrapping is a layout behavior.
+
+## Content guidance
+
+Use a concise page title, describe the page purpose in one sentence, and keep actions task-oriented. Do not add a second heading inside the header.
+
+## Related patterns
+
+Reference CRM uses Page Header for Client details and will extend the same structure for the Projects section in the next tracer.

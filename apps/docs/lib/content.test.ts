@@ -23,6 +23,8 @@ describe("documentation content manifest", () => {
       "components/button",
       "components/icon",
       "components/link",
+      "components/breadcrumb",
+      "components/page-header",
       "components/alert",
       "components/empty-state",
       "components/table",

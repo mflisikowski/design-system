@@ -13,6 +13,8 @@ published instances in DS Reference CRM.
 | Icon | Glyph | Name; Size: Small, Medium, Large; Informational | Decorative is the default. Informational use requires an accessible-name annotation. |
 | Icon Button | Container / Glyph | Size: Small, Medium, Large; Disabled | Every instance requires a contextual accessible-name annotation and a 44 px effective target. |
 | Link | Text / optional inline content | Variant: Inline, Standalone | Preserve underline behavior, focus-visible treatment, and native link semantics. |
+| Breadcrumb | Navigation / ordered list / item / link / separator / current | Current item; long-current truncation | Navigation landmark is labelled Breadcrumb. Separators are decorative; the final item is not a link and carries `aria-current="page"`. Keep Clients visible at narrow widths and preserve the full current value for assistive technology. |
+| Page Header | Breadcrumb / title / optional description / optional actions | Description present; actions present | Render exactly one page `h1`. Actions wrap below the title below 640 px; the primary action is the only filled action. |
 | Alert | Container / Title / Description / optional Action | Tone: Danger, Success; Action present | Live-region behavior is an annotation, not a visual variant. Alert never receives focus automatically. |
 | Empty State | Container / optional Icon / Title / optional Description / optional Actions | Icon present; Description present; Actions: None, Primary, Primary and Secondary | Icon is decorative; Title is required; failure is not an Empty State. |
 | Table | Table / Caption / Header / Row / Head / Body / Cell | Density mode only | Use native-table reading order. Loading skeleton keeps the table anatomy; empty and error states sit outside Body. |

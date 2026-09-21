@@ -1,0 +1,35 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "toast",
+  "title": "Toast",
+  "description": "Polite success acknowledgement adapter with bounded visibility and queueing.",
+  "dependencies": [
+    "@mflisikowski/tokens@0.2.0",
+    "sonner@2.0.8"
+  ],
+  "registryDependencies": [],
+  "files": [
+    {
+      "path": "registry/ui/toast.tsx",
+      "content": "\"use client\";\n\nimport { toast as sonnerToast, Toaster } from \"sonner\";\n\nimport \"./toast.css\";\n\nexport const toast = {\n  success(message: string) {\n    return sonnerToast.success(message);\n  },\n} as const;\n\nexport function ToastViewport() {\n  return (\n    <Toaster\n      closeButton\n      duration={4000}\n      gap={8}\n      position=\"bottom-right\"\n      toastOptions={{ className: \"mfd-toast\" }}\n      visibleToasts={3}\n    />\n  );\n}\n",
+      "type": "registry:ui",
+      "target": "@ui/toast.tsx"
+    },
+    {
+      "path": "registry/ui/toast.css",
+      "content": ".mfd-toast[data-sonner-toast] {\n  background: var(--mfd-color-bg-elevated);\n  border: 1px solid var(--mfd-color-status-success-border);\n  border-radius: var(--mfd-radius-surface);\n  box-shadow: var(--mfd-elevation-overlay);\n  color: var(--mfd-color-text-primary);\n  font: inherit;\n}\n\n.mfd-toast [data-icon] {\n  color: var(--mfd-color-status-success-text);\n}\n\n.mfd-toast [data-close-button]:focus-visible {\n  outline: 2px solid var(--mfd-color-border-focus);\n  outline-offset: 2px;\n}\n",
+      "type": "registry:ui",
+      "target": "@ui/toast.css"
+    }
+  ],
+  "meta": {
+    "maturity": "experimental",
+    "version": "0.2.0",
+    "installation": {
+      "latest": "pnpm dlx shadcn@latest add @mflisikowski/toast",
+      "snapshot": "pnpm dlx shadcn@latest add https://design-system.mflisikowski.dev/r/v/0.2.0/toast.json"
+    }
+  },
+  "docs": "Mount ToastViewport once, then call the MFD toast adapter. Success acknowledgement is polite, dismissible, and lasts four seconds by default.",
+  "type": "registry:ui"
+}
