@@ -17,11 +17,15 @@ catalog:
   "@fontsource-variable/geist": 5.3.0
   "@fontsource-variable/geist-mono": 5.3.0
   "@fontsource-variable/lora": 5.3.0
+  "@mdx-js/loader": 3.1.1
+  "@mdx-js/react": 3.1.1
+  "@next/mdx": 16.3.5
   "@terrazzo/cli": 2.7.1
   "@terrazzo/parser": 2.7.1
   "@terrazzo/plugin-css": 2.7.1
   "@terrazzo/plugin-js": 2.7.1
   "@terrazzo/token-types": 2.7.1
+  "@types/mdx": 2.0.14
   "@types/node": 24.13.6
   "@types/react": 19.3.0
   "@types/react-dom": 19.3.0

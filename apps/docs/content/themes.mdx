@@ -1,0 +1,14 @@
+## Independent axes
+
+Brand selects Atlas or Bloom, color scheme selects System, Light, or Dark, and density selects
+Comfortable or Compact. Changing one axis never implies a value for another.
+
+## Supported contexts
+
+The token resolver emits Atlas and Bloom across light and dark schemes and both density modes.
+System remains a runtime preference that follows the operating-system scheme.
+
+## Production boundary
+
+The Reference CRM brand selector is a demonstration of tenant resolution. Production applications
+resolve brand from their tenant before hydration; users are not promised a no-code brand editor.

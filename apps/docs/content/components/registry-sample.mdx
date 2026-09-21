@@ -1,0 +1,94 @@
+import { RegistrySample } from "../../../../registry/ui/registry-sample";
+import {
+  AccessibilityNotes,
+  ApiTable,
+  CodeExample,
+  Installation,
+  KeyboardBehavior,
+  LiveExample,
+  MaturityNotice,
+} from "@/components/docs/component-documentation";
+
+<MaturityNotice introduced="0.0.0" status="experimental" />
+
+## Preview
+
+The live example renders the canonical registry source used to generate the installable item. It
+is a distribution proof, not a stable product primitive.
+
+<LiveExample label="Registry Sample preview">
+  <RegistrySample brand="atlas" />
+</LiveExample>
+
+## Installation
+
+Install the latest reviewed item through the configured MFD registry namespace. Use the immutable
+snapshot URL when a reproducible pre-release installation is required.
+
+<Installation
+  dependencies={["@mflisikowski/tokens@0.0.0", "clsx@2.1.1"]}
+  latest="pnpm dlx shadcn@latest add @mflisikowski/registry-sample"
+  registryDependencies={["@mflisikowski/registry-sample-label"]}
+  snapshot="pnpm dlx shadcn@latest add https://design-system.mflisikowski.dev/r/v/0.0.0/registry-sample.json"
+/>
+
+## API
+
+`brand` is required and accepts an approved theme brand. `label` replaces the generated message.
+Native paragraph props, including `className`, are forwarded to the rendered element.
+
+<CodeExample filename="components/example.tsx" language="tsx">
+{`import { RegistrySample } from "@/components/ui/registry-sample";
+
+export function Example() {
+  return <RegistrySample brand="atlas" label="Registry connection verified." />;
+}`}
+</CodeExample>
+
+<ApiTable
+  rows={[
+    {
+      defaultValue: "—",
+      description: "Selects an approved MFD theme brand for the generated label.",
+      name: "brand",
+      type: '"atlas" | "bloom"',
+    },
+    {
+      defaultValue: "Generated from brand",
+      description: "Replaces the default visible message.",
+      name: "label",
+      type: "string",
+    },
+    {
+      defaultValue: "—",
+      description: "Forwards applicable native paragraph properties.",
+      name: "...props",
+      type: 'ComponentPropsWithoutRef<"p">',
+    },
+  ]}
+/>
+
+## Accessibility
+
+Registry Sample renders a semantic paragraph and inherits the active document theme. Its default
+message includes the selected brand in visible text and does not rely on color or iconography.
+
+<AccessibilityNotes>
+  <ul>
+    <li>The component adds no ARIA because a native paragraph already expresses its semantics.</li>
+    <li>The selected brand is present in text, so color is not the only carrier of meaning.</li>
+    <li>Consumers remain responsible for placing the status message in an understandable context.</li>
+  </ul>
+</AccessibilityNotes>
+
+## Keyboard behavior
+
+Registry Sample is non-interactive. It does not enter the tab order or define custom keyboard
+commands.
+
+<KeyboardBehavior
+  rows={[
+    { interaction: "Tab", result: "Skips the non-interactive paragraph." },
+    { interaction: "Any key", result: "No component-specific behavior." },
+  ]}
+/>

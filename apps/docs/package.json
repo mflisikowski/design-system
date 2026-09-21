@@ -3,18 +3,27 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "build": "next build",
-    "dev": "next dev",
-    "test": "vitest run --passWithNoTests",
+    "build": "pnpm docs:check && next build --webpack",
+    "dev": "next dev --webpack",
+    "docs:check": "vitest run lib/content.test.ts lib/validate-content.test.ts",
+    "test": "vitest run",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@fontsource-variable/geist": "catalog:",
+    "@fontsource-variable/geist-mono": "catalog:",
+    "@mdx-js/loader": "catalog:",
+    "@mdx-js/react": "catalog:",
+    "@mflisikowski/tokens": "workspace:*",
+    "@next/mdx": "catalog:",
+    "clsx": "catalog:",
     "next": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:"
   },
   "devDependencies": {
     "@mflisikowski/typescript-config": "workspace:*",
+    "@types/mdx": "catalog:",
     "@types/node": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
