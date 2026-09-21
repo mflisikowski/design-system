@@ -24,7 +24,7 @@ corepack pnpm verify
 | `pnpm changeset:check` | Require release intent only for public contract paths. |
 | `pnpm verify` | Run every pull-request gate above. |
 
-Token checks validate the canonical DTCG resolver through the package-owned Terrazzo task. Registry checks still report a visible not-applicable result until the canonical registry source is introduced. Turborepo automatically includes each package-owned implementation once its source exists.
+Token checks validate the canonical DTCG resolver through the package-owned Terrazzo task. The generated contrast report covers the actual foreground/background relationships rendered by the Reference CRM theme fixture and fails generation when an approved pair misses its threshold. Registry checks still report a visible not-applicable result until the canonical registry source is introduced. Turborepo automatically includes each package-owned implementation once its source exists.
 
 ## Changesets
 

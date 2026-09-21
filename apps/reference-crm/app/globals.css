@@ -1,6 +1,34 @@
-:root {
-  color-scheme: light dark;
-  font-family: system-ui, sans-serif;
+@font-face {
+  font-family: "Geist Sans";
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("@fontsource-variable/geist/files/geist-latin-ext-wght-normal.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Geist Mono";
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("@fontsource-variable/geist-mono/files/geist-mono-latin-ext-wght-normal.woff2")
+    format("woff2");
+}
+
+@font-face {
+  font-family: "DM Sans";
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("@fontsource-variable/dm-sans/files/dm-sans-latin-ext-wght-normal.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Lora";
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url("@fontsource-variable/lora/files/lora-latin-ext-wght-normal.woff2") format("woff2");
 }
 
 * {
@@ -8,6 +36,11 @@
 }
 
 body {
+  background: var(--mfd-color-bg-canvas);
+  color: var(--mfd-color-text-primary);
+  font-family: var(--mfd-typography-body-font-family);
+  font-size: var(--mfd-typography-body-font-size);
+  line-height: var(--mfd-typography-body-line-height);
   margin: 0;
 }
 

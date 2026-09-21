@@ -8,7 +8,15 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
     },
-    "./css": "./dist/css/tokens.css",
+    "./css": {
+      "types": "./dist/css/tokens.css.d.ts",
+      "default": "./dist/css/tokens.css"
+    },
+    "./contrast": "./dist/reports/contrast.json",
+    "./runtime": {
+      "types": "./dist/runtime/index.d.ts",
+      "import": "./dist/runtime/index.js"
+    },
     "./tailwind": "./dist/css/tailwind.css",
     "./figma": "./dist/figma/variables.json",
     "./json/*": "./dist/json/*.json"
@@ -19,6 +27,7 @@
   "scripts": {
     "build": "tz build",
     "test": "tz build --silent && vitest run",
+    "transit": "tz build --silent",
     "tokens:build": "tz build",
     "tokens:check": "tz check && tz build --silent && node ./tools/check-component-token-usage.mjs ../../apps ../../registry",
     "typecheck": "tsc --noEmit"

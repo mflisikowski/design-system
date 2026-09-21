@@ -102,6 +102,7 @@ describe("generated token artifacts", () => {
 
   it("provides MFD-prefixed runtime CSS for all eight context selectors", async () => {
     const css = await readFile(path.join(distDirectory, "css", "tokens.css"), "utf8");
+    const declarations = await readFile(path.join(distDirectory, "css", "tokens.css.d.ts"), "utf8");
 
     for (const contextName of contextNames) {
       const [brand, colorScheme, density] = contextName.split("-");
@@ -112,6 +113,47 @@ describe("generated token artifacts", () => {
 
     expect(css).toContain("--mfd-color-bg-canvas:");
     expect(css).not.toMatch(/--color-bg-canvas:/);
+    expect(declarations).toContain("declare const stylesheet: string;");
+  });
+
+  it("resolves fixed and system color schemes in CSS and declares native control schemes", async () => {
+    const css = await readFile(path.join(distDirectory, "css", "tokens.css"), "utf8");
+
+    expect(css).toContain(":root {\n  color-scheme: light dark;");
+    expect(css).toContain(':root[data-color-scheme="light"] {\n  color-scheme: light;');
+    expect(css).toContain(':root[data-color-scheme="dark"] {\n  color-scheme: dark;');
+    expect(css).toContain("@media (prefers-color-scheme: light)");
+    expect(css).toContain("@media (prefers-color-scheme: dark)");
+
+    for (const brand of ["atlas", "bloom"]) {
+      for (const density of ["comfortable", "compact"]) {
+        expect(css).toContain(
+          `[data-brand="${brand}"][data-color-scheme="system"][data-density="${density}"]`,
+        );
+      }
+    }
+  });
+
+  it("records passing contrast evidence for every rendered context", async () => {
+    const report = JSON.parse(
+      await readFile(path.join(distDirectory, "reports", "contrast.json"), "utf8"),
+    );
+
+    expect(report.schemaVersion).toBe(1);
+    expect(report.contexts.map((entry: { id: string }) => entry.id).sort()).toEqual(contextNames);
+
+    for (const context of report.contexts) {
+      expect(context.pairs.length).toBeGreaterThan(0);
+      expect(new Set(context.pairs.map((pair: { category: string }) => pair.category))).toEqual(
+        new Set(["boundary", "focus", "foreground", "on-solid", "selection"]),
+      );
+      expect(
+        context.pairs.every(
+          (pair: { minimum: number; ratio: number; result: string }) =>
+            pair.result === "pass" && pair.ratio >= pair.minimum,
+        ),
+      ).toBe(true);
+    }
   });
 
   it("exposes only property-appropriate semantic Tailwind utilities", async () => {
@@ -142,6 +184,27 @@ describe("generated token artifacts", () => {
     expect(declarations).toContain("colorScheme");
     expect(declarations).toContain("density");
     expect(resolved["size.control-height.md"].$value).toEqual({ value: 32, unit: "px" });
+  });
+
+  it("exports the typed runtime axes and the fixture contrast contract", async () => {
+    const declarations = await readFile(path.join(distDirectory, "runtime", "index.d.ts"), "utf8");
+    const runtime = await import(
+      pathToFileURL(path.join(distDirectory, "runtime", "index.js")).href
+    );
+
+    expect(declarations).toContain('export type ThemeBrand = "atlas" | "bloom";');
+    expect(declarations).toContain(
+      'export type ColorSchemePreference = "system" | "light" | "dark";',
+    );
+    expect(runtime.themeDefaults).toEqual({
+      brand: "atlas",
+      colorScheme: "system",
+      density: "comfortable",
+    });
+    expect(runtime.resolvedThemeContexts).toHaveLength(8);
+    expect(runtime.contrastPairs.map((pair: { category: string }) => pair.category)).toEqual(
+      expect.arrayContaining(["boundary", "focus", "foreground", "on-solid", "selection"]),
+    );
   });
 
   it("emits a stable Figma manifest with canonical identities and aliases", async () => {

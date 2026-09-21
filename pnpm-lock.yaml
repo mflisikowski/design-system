@@ -170,6 +170,18 @@ catalogs:
     '@changesets/cli':
       specifier: 3.0.3
       version: 3.0.3
+    '@fontsource-variable/dm-sans':
+      specifier: 5.3.0
+      version: 5.3.0
+    '@fontsource-variable/geist':
+      specifier: 5.3.0
+      version: 5.3.0
+    '@fontsource-variable/geist-mono':
+      specifier: 5.3.0
+      version: 5.3.0
+    '@fontsource-variable/lora':
+      specifier: 5.3.0
+      version: 5.3.0
     '@terrazzo/cli':
       specifier: 2.7.1
       version: 2.7.1
@@ -266,6 +278,21 @@ importers:
 
   apps/reference-crm:
     dependencies:
+      '@fontsource-variable/dm-sans':
+        specifier: 'catalog:'
+        version: 5.3.0
+      '@fontsource-variable/geist':
+        specifier: 'catalog:'
+        version: 5.3.0
+      '@fontsource-variable/geist-mono':
+        specifier: 'catalog:'
+        version: 5.3.0
+      '@fontsource-variable/lora':
+        specifier: 'catalog:'
+        version: 5.3.0
+      '@mflisikowski/tokens':
+        specifier: workspace:*
+        version: link:../../packages/tokens
       next:
         specifier: 'catalog:'
         version: 16.3.5(@types/node@24.13.6)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
@@ -473,6 +500,18 @@ packages:
 
   '@emnapi/runtime@1.11.3':
     resolution: {integrity: sha512-Xz4Tpyki7XyrpbUK1jR1AhdAdaXyhhY4lZ3neLodmhpuWfy2PAQN5B46sAiU4liOXGLkHypn/qU+jvfWSCYYLA==}
+
+  '@fontsource-variable/dm-sans@5.3.0':
+    resolution: {integrity: sha512-BpUG5bqePiDFMBM4ZtLSlPdAIOM990uB1dlXzIf4aw21yQR7BmykedLXXXMqGWsR18aMLOsbWccwJNh3ztTQaA==}
+
+  '@fontsource-variable/geist-mono@5.3.0':
+    resolution: {integrity: sha512-vBbuwDEo9AkrqADMXOrlAR3DFcJi4/JxeuU43FoiQERnNwsfXNnvxvReZG02cQKmyk4DZkZdBZX3oTDvy2zBAw==}
+
+  '@fontsource-variable/geist@5.3.0':
+    resolution: {integrity: sha512-j0m+vLQuG5XAYoHtGCVu0spvlGreR3EzpECUVzkFmI1mTVnAO38l/NEPDCFgZ177JxzYJCLSmTQibIiYPilGrA==}
+
+  '@fontsource-variable/lora@5.3.0':
+    resolution: {integrity: sha512-2ph8KiZ8Bn141hWuC3ErtpJ+Ui8p2MJQn8TJNRSRmLmnCIOCtHfiBM9R7WLRPeUG/q6hXyHOxWQ8DvRSX+ixvQ==}
 
   '@humanwhocodes/momoa@3.3.13':
     resolution: {integrity: sha512-AbKq3EW41+HY6pNMJgAOrz68iyiTTf0Nr1JRHHfuG5zwniJ9Dw8J3U7oa1I2ptpqYwmEf1sXKOGK6lbdZ9eqmg==}
@@ -2005,6 +2044,14 @@ snapshots:
     dependencies:
       tslib: 2.8.1
     optional: true
+
+  '@fontsource-variable/dm-sans@5.3.0': {}
+
+  '@fontsource-variable/geist-mono@5.3.0': {}
+
+  '@fontsource-variable/geist@5.3.0': {}
+
+  '@fontsource-variable/lora@5.3.0': {}
 
   '@humanwhocodes/momoa@3.3.13': {}
 

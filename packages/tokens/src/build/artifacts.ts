@@ -37,6 +37,15 @@ type FigmaVariable = {
   valuesByMode: Record<string, unknown>;
 };
 
+type ContrastCategory = "boundary" | "focus" | "foreground" | "on-solid" | "selection";
+type ContrastPair = {
+  background: string;
+  category: ContrastCategory;
+  foreground: string;
+  id: string;
+  minimum: number;
+};
+
 const modifiers = resolverDocument.modifiers as Record<
   keyof TokenContext,
   { contexts: Record<string, unknown>; default: string }
@@ -123,6 +132,206 @@ function colorHex(value: ColorValue, tokenId: string): string {
   });
 
   return `#${encoded.join("")}`;
+}
+
+const contrastPairs: ContrastPair[] = [
+  {
+    id: "primary-on-canvas",
+    category: "foreground",
+    foreground: "color.text.primary",
+    background: "color.bg.canvas",
+    minimum: 4.5,
+  },
+  {
+    id: "primary-on-surface",
+    category: "foreground",
+    foreground: "color.text.primary",
+    background: "color.bg.surface",
+    minimum: 4.5,
+  },
+  {
+    id: "secondary-on-surface",
+    category: "foreground",
+    foreground: "color.text.secondary",
+    background: "color.bg.surface",
+    minimum: 4.5,
+  },
+  {
+    id: "muted-on-surface",
+    category: "foreground",
+    foreground: "color.text.muted",
+    background: "color.bg.surface",
+    minimum: 4.5,
+  },
+  {
+    id: "muted-on-canvas",
+    category: "foreground",
+    foreground: "color.text.muted",
+    background: "color.bg.canvas",
+    minimum: 4.5,
+  },
+  {
+    id: "accent-text-on-accent-bg",
+    category: "foreground",
+    foreground: "color.accent.text",
+    background: "color.accent.bg",
+    minimum: 4.5,
+  },
+  {
+    id: "accent-on-solid",
+    category: "on-solid",
+    foreground: "color.accent.on-solid",
+    background: "color.accent.solid",
+    minimum: 4.5,
+  },
+  {
+    id: "focus-on-canvas",
+    category: "focus",
+    foreground: "color.border.focus",
+    background: "color.bg.canvas",
+    minimum: 3,
+  },
+  {
+    id: "strong-border-on-canvas",
+    category: "boundary",
+    foreground: "color.border.strong",
+    background: "color.bg.canvas",
+    minimum: 3,
+  },
+  {
+    id: "strong-border-on-surface",
+    category: "boundary",
+    foreground: "color.border.strong",
+    background: "color.bg.surface",
+    minimum: 3,
+  },
+  {
+    id: "selection-text-on-selection-bg",
+    category: "selection",
+    foreground: "color.selection.text",
+    background: "color.selection.bg",
+    minimum: 4.5,
+  },
+  ...(["danger", "success", "warning"] as const).flatMap((tone) => [
+    {
+      id: `${tone}-text-on-bg`,
+      category: "foreground" as const,
+      foreground: `color.status.${tone}.text`,
+      background: `color.status.${tone}.bg`,
+      minimum: 4.5,
+    },
+    {
+      id: `${tone}-border-on-bg`,
+      category: "boundary" as const,
+      foreground: `color.status.${tone}.border`,
+      background: `color.status.${tone}.bg`,
+      minimum: 3,
+    },
+    {
+      id: `inverse-on-${tone}-solid`,
+      category: "on-solid" as const,
+      foreground: "color.text.inverse",
+      background: `color.status.${tone}.solid`,
+      minimum: 4.5,
+    },
+  ]),
+];
+
+function resolvedColor(tokens: Record<string, TokenNormalized>, id: string) {
+  const value = tokens[id]?.$value;
+  if (!isColorValue(value) || value.colorSpace !== "oklch") {
+    throw new Error(`Contrast pair token ${id} must resolve to an OKLCH color.`);
+  }
+  if (value.alpha !== undefined && value.alpha !== 1) {
+    throw new Error(`Contrast pair token ${id} must be opaque or define a rendered backdrop.`);
+  }
+
+  return value;
+}
+
+function relativeLuminance(value: ColorValue) {
+  const [red = 0, green = 0, blue = 0] = linearSrgb(value.components);
+  return 0.2126 * red + 0.7152 * green + 0.0722 * blue;
+}
+
+function contrastRatio(foreground: ColorValue, background: ColorValue) {
+  const lighter = Math.max(relativeLuminance(foreground), relativeLuminance(background));
+  const darker = Math.min(relativeLuminance(foreground), relativeLuminance(background));
+
+  return (lighter + 0.05) / (darker + 0.05);
+}
+
+function contrastReport(
+  contexts: Array<{ context: TokenContext; tokens: Record<string, TokenNormalized> }>,
+) {
+  const reportContexts = contexts.map(({ context, tokens }) => {
+    const pairs = contrastPairs.map((pair) => {
+      const ratio = contrastRatio(
+        resolvedColor(tokens, pair.foreground),
+        resolvedColor(tokens, pair.background),
+      );
+
+      if (ratio < pair.minimum) {
+        throw new Error(
+          `${contextName(context)} ${pair.id} has ${ratio.toFixed(2)}:1 contrast; expected at least ${pair.minimum}:1.`,
+        );
+      }
+
+      return {
+        ...pair,
+        ratio: Number(ratio.toFixed(2)),
+        result: "pass",
+      };
+    });
+
+    return { id: contextName(context), context, pairs };
+  });
+
+  return {
+    schemaVersion: 1,
+    method: "WCAG 2.x relative luminance from canonical OKLCH converted to linear sRGB",
+    contexts: reportContexts,
+  };
+}
+
+function stringUnion(values: string[]) {
+  return values.map((value) => JSON.stringify(value)).join(" | ");
+}
+
+function runtimeContract() {
+  const colorSchemePreferences = ["system", ...colorSchemes];
+  const defaults = {
+    brand: defaultContext.brand,
+    colorScheme: "system",
+    density: defaultContext.density,
+  };
+  const javascript = `${[
+    "/* Generated by the MFD Terrazzo pipeline. Do not edit. */",
+    `export const themeBrands = ${JSON.stringify(brands)};`,
+    `export const colorSchemePreferences = ${JSON.stringify(colorSchemePreferences)};`,
+    `export const themeDensities = ${JSON.stringify(densities)};`,
+    `export const themeDefaults = ${JSON.stringify(defaults)};`,
+    `export const resolvedThemeContexts = ${JSON.stringify(tokenContexts)};`,
+    `export const contrastPairs = ${JSON.stringify(contrastPairs)};`,
+  ].join("\n")}\n`;
+  const declarations = `${[
+    `export type ThemeBrand = ${stringUnion(brands)};`,
+    `export type ResolvedColorScheme = ${stringUnion(colorSchemes)};`,
+    `export type ColorSchemePreference = ${stringUnion(colorSchemePreferences)};`,
+    `export type ThemeDensity = ${stringUnion(densities)};`,
+    `export type ContrastCategory = ${stringUnion(["boundary", "focus", "foreground", "on-solid", "selection"])};`,
+    "export type ThemePreferences = Readonly<{ brand: ThemeBrand; colorScheme: ColorSchemePreference; density: ThemeDensity }>;",
+    "export type ResolvedThemeContext = Readonly<{ brand: ThemeBrand; colorScheme: ResolvedColorScheme; density: ThemeDensity }>;",
+    "export type ContrastPair = Readonly<{ id: string; category: ContrastCategory; foreground: string; background: string; minimum: number }>;",
+    "export declare const themeBrands: readonly ThemeBrand[];",
+    "export declare const colorSchemePreferences: readonly ColorSchemePreference[];",
+    "export declare const themeDensities: readonly ThemeDensity[];",
+    "export declare const themeDefaults: ThemePreferences;",
+    "export declare const resolvedThemeContexts: readonly ResolvedThemeContext[];",
+    "export declare const contrastPairs: readonly ContrastPair[];",
+  ].join("\n")}\n`;
+
+  return { declarations, javascript };
 }
 
 function addColorFallbacks(value: unknown, tokenId: string): unknown {
@@ -509,7 +718,18 @@ export function artifactPlugin(): Plugin {
       }
 
       const defaultTokens = resolver.apply(defaultContext);
+      const runtime = runtimeContract();
+      outputFile(
+        "css/tokens.css.d.ts",
+        "declare const stylesheet: string;\nexport default stylesheet;\n",
+      );
       outputFile("css/tailwind.css", tailwindUtilities(defaultTokens));
+      outputFile("runtime/index.d.ts", runtime.declarations);
+      outputFile("runtime/index.js", runtime.javascript);
+      outputFile(
+        "reports/contrast.json",
+        `${JSON.stringify(contrastReport(resolvedTokenContexts), null, 2)}\n`,
+      );
       outputFile(
         "figma/variables.json",
         `${JSON.stringify(figmaManifest(resolver, sourceRevision), null, 2)}\n`,
