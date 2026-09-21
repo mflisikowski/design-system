@@ -12,6 +12,7 @@
       "!!**/.turbo/**",
       "!!**/node_modules/**",
       "!!apps/docs/public/r/**",
+      "!!registry/snapshots/**",
       "!!spikes/oxlint-shadcn-lint/**"
     ]
   },

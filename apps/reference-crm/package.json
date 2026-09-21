@@ -19,10 +19,13 @@
     "@fontsource-variable/geist-mono": "catalog:",
     "@fontsource-variable/lora": "catalog:",
     "@mflisikowski/tokens": "workspace:*",
+    "@tanstack/react-query": "5.103.2",
     "clsx": "2.1.1",
+    "lucide-react": "1.47.0",
     "next": "catalog:",
     "react": "catalog:",
-    "react-dom": "catalog:"
+    "react-dom": "catalog:",
+    "zod": "4.6.5"
   },
   "devDependencies": {
     "@axe-core/playwright": "catalog:",

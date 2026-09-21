@@ -73,7 +73,7 @@ summary:focus-visible,
 
 [data-docs="site-header"] {
   align-items: center;
-  background: color-mix(in oklch, var(--mfd-color-bg-canvas) 92%, transparent);
+  background: var(--mfd-color-bg-canvas);
   border-block-end: 1px solid var(--mfd-color-border-subtle);
   display: flex;
   justify-content: space-between;

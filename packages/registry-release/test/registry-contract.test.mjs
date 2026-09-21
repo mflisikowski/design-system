@@ -53,6 +53,37 @@ describe("canonical registry sample contract", () => {
     });
   });
 
+  it("publishes every Reference CRM foundation with reviewed metadata", async () => {
+    const releaseManifest = await readJson("packages/registry-release/package.json");
+    const uiRegistry = await readJson("registry/ui/registry.json");
+    const items = new Map(
+      uiRegistry.items.map((/** @type {{ name: string }} */ item) => [item.name, item]),
+    );
+
+    for (const name of ["button", "icon", "link", "alert", "empty-state", "table"]) {
+      expect(items.get(name)).toMatchObject({
+        dependencies: expect.arrayContaining([
+          `@mflisikowski/tokens@${releaseManifest.version}`,
+          "clsx@2.1.1",
+        ]),
+        docs: expect.any(String),
+        meta: {
+          maturity: "experimental",
+          version: releaseManifest.version,
+          installation: {
+            latest: `pnpm dlx shadcn@latest add @mflisikowski/${name}`,
+            snapshot: `pnpm dlx shadcn@latest add https://design-system.mflisikowski.dev/r/v/${releaseManifest.version}/${name}.json`,
+          },
+        },
+      });
+
+      await expect(readJson(`apps/docs/public/r/${name}.json`)).resolves.toMatchObject({ name });
+      await expect(
+        readJson(`apps/docs/public/r/v/${releaseManifest.version}/${name}.json`),
+      ).resolves.toMatchObject({ name });
+    }
+  });
+
   it("emits latest and immutable snapshot items with reproducible internal dependencies", async () => {
     const releaseManifest = await readJson("packages/registry-release/package.json");
     const releaseVersion = releaseManifest.version;

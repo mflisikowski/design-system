@@ -1,0 +1,51 @@
+import { Icon, IconButton } from "../../../../registry/ui/icon";
+import { Installation, LiveExample, MaturityNotice } from "@/components/docs/component-documentation";
+import { publicComponentDocumentation } from "@/lib/public-component-docs";
+
+<MaturityNotice introduced="0.0.0" status="experimental" />
+
+## Installation
+
+<Installation {...publicComponentDocumentation.icon.installation} />
+
+## Purpose
+
+Icon exposes the approved Lucide map. Icon Button provides a named native action when visible text would be redundant.
+
+## Examples
+
+<LiveExample label="Icon and Icon Button">
+  <div><Icon name="users" label="Clients" /> <IconButton label="More actions"><Icon name="ellipsis" /></IconButton></div>
+</LiveExample>
+
+## Anatomy
+
+Icon renders one SVG. Icon Button renders one native button around a decorative Icon.
+
+## API
+
+`name` selects the approved map and `size` accepts `sm`, `md`, or `lg`. `label` makes an informational Icon accessible. Icon Button requires `label` and forwards native button properties.
+
+## States
+
+Icon is non-interactive. Icon Button supports default, hover, focus-visible, pressed, and disabled states.
+
+## Accessibility
+
+Icons are hidden from assistive technology by default. Icon Button owns the contextual accessible name so its child Icon remains decorative.
+
+## Keyboard behavior
+
+Informational Icons do not enter the tab order. Tab focuses Icon Button; Enter and Space activate it.
+
+## Figma specification
+
+Icon anatomy is `Glyph`; properties are Name and Size. Icon Button anatomy is `Container / Glyph`; properties are Size and Disabled, with a required annotation for its accessible name.
+
+## Content guidance
+
+Name the action and entity: “More actions for Northstar Studio”, not “ellipsis” or “menu”.
+
+## Related patterns
+
+The Client empty state uses Users. Client row actions use Ellipsis and a row-specific Icon Button name.

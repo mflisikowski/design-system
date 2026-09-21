@@ -163,6 +163,23 @@
       }
     }
   },
+  "radius": {
+    "control": {
+      "$type": "dimension",
+      "$value": "{reference.radius.scale.md}",
+      "$description": "Default radius for interactive controls."
+    },
+    "surface": {
+      "$type": "dimension",
+      "$value": "{reference.radius.scale.lg}",
+      "$description": "Default radius for grouped content surfaces."
+    },
+    "pill": {
+      "$type": "dimension",
+      "$value": "{reference.radius.scale.full}",
+      "$description": "Fully rounded radius for compact status treatments."
+    }
+  },
   "size": {
     "hit-target": {
       "minimum": {

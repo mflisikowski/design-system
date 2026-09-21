@@ -1,0 +1,51 @@
+import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "../../../../registry/ui/table";
+import { Installation, LiveExample, MaturityNotice } from "@/components/docs/component-documentation";
+import { publicComponentDocumentation } from "@/lib/public-component-docs";
+
+<MaturityNotice introduced="0.0.0" status="experimental" />
+
+## Installation
+
+<Installation {...publicComponentDocumentation.table.installation} />
+
+## Purpose
+
+Table supplies styled native primitives for ordinary tabular data without adding grid semantics or product behavior.
+
+## Examples
+
+<LiveExample label="Semantic Table">
+  <Table><TableCaption>Clients</TableCaption><TableHeader><TableRow><TableHead>Client</TableHead><TableHead>Contact</TableHead></TableRow></TableHeader><TableBody><TableRow><TableCell>Northstar Studio</TableCell><TableCell>Jamie Chen</TableCell></TableRow></TableBody></Table>
+</LiveExample>
+
+## Anatomy
+
+Table composes native Caption, Header, Body, Row, column Head, and Cell elements.
+
+## API
+
+Every primitive forwards the corresponding native HTML properties. Table Head defaults `scope` to `col`; product columns and actions remain outside the registry.
+
+## States
+
+Content and loading skeletons may use the primitives. Empty, no-results, and failure states remain separate surfaces outside Table Body.
+
+## Accessibility
+
+Native table semantics expose caption, headers, rows, and cells. The component does not add ARIA grid behavior or arrow-key navigation.
+
+## Keyboard behavior
+
+The structure is not focusable. Interactive controls inside cells participate in the normal Tab order.
+
+## Figma specification
+
+Anatomy is `Table / Caption / Header / Row / Head / Body / Cell`. Density changes row dimensions; responsive column omission is documented at the product-pattern layer.
+
+## Content guidance
+
+Use concise noun labels for columns and an accessible caption that identifies the dataset.
+
+## Related patterns
+
+Client Table owns the Client, Primary contact, Added, and Actions columns and omits Added below 640 px.

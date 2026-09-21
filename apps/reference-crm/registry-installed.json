@@ -1,3 +1,12 @@
 {
-  "items": ["registry-sample", "registry-sample-label"]
+  "items": [
+    "registry-sample",
+    "registry-sample-label",
+    "button",
+    "icon",
+    "link",
+    "alert",
+    "empty-state",
+    "table"
+  ]
 }

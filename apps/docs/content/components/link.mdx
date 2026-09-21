@@ -1,0 +1,51 @@
+import { Link } from "../../../../registry/ui/link";
+import { Installation, LiveExample, MaturityNotice } from "@/components/docs/component-documentation";
+import { publicComponentDocumentation } from "@/lib/public-component-docs";
+
+<MaturityNotice introduced="0.0.0" status="experimental" />
+
+## Installation
+
+<Installation {...publicComponentDocumentation.link.installation} />
+
+## Purpose
+
+Link provides semantic anchor styling for inline references and standalone navigation.
+
+## Examples
+
+<LiveExample label="Link variants">
+  <p><Link href="#purpose">Inline link</Link> · <Link href="#related-patterns" variant="standalone">Standalone destination</Link></p>
+</LiveExample>
+
+## Anatomy
+
+One native anchor contains consumer-owned text or inline content.
+
+## API
+
+`variant` accepts `inline` or `standalone` and defaults to `inline`. Native anchor properties and refs are forwarded.
+
+## States
+
+Default, hover, visited browser behavior, and focus-visible are supported. Standalone links reveal an underline on hover and focus.
+
+## Accessibility
+
+Link remains a real anchor, preserving browser navigation, context-menu, and modified-click behavior with a visible focus indicator.
+
+## Keyboard behavior
+
+Tab focuses the Link and Enter follows its destination.
+
+## Figma specification
+
+Anatomy is `Text / optional inline content`. Properties are Variant and content; underline and focus-visible are explicit interaction states.
+
+## Content guidance
+
+Use destination language that remains meaningful outside its surrounding sentence. Do not style actions as links.
+
+## Related patterns
+
+The application shell uses standalone Links for Clients and Settings, with application-owned current-page treatment.

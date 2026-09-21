@@ -49,6 +49,136 @@
           "snapshot": "pnpm dlx shadcn@latest add https://design-system.mflisikowski.dev/r/v/0.0.0/registry-sample.json"
         }
       }
+    },
+    {
+      "name": "button",
+      "type": "registry:ui",
+      "title": "Button",
+      "description": "Accessible action control with MFD variants, sizes, and loading behavior.",
+      "dependencies": ["@mflisikowski/tokens@0.0.0", "clsx@2.1.1"],
+      "registryDependencies": [],
+      "files": [
+        { "path": "button.tsx", "type": "registry:ui", "target": "@ui/button.tsx" },
+        { "path": "button.css", "type": "registry:ui", "target": "@ui/button.css" }
+      ],
+      "docs": "Use Button for actions. Loading changes the visible and accessible label while preventing repeated activation.",
+      "meta": {
+        "maturity": "experimental",
+        "version": "0.0.0",
+        "installation": {
+          "latest": "pnpm dlx shadcn@latest add @mflisikowski/button",
+          "snapshot": "pnpm dlx shadcn@latest add https://design-system.mflisikowski.dev/r/v/0.0.0/button.json"
+        }
+      }
+    },
+    {
+      "name": "icon",
+      "type": "registry:ui",
+      "title": "Icon and Icon Button",
+      "description": "Approved Lucide icon map and accessible icon-only action control.",
+      "dependencies": ["@mflisikowski/tokens@0.0.0", "clsx@2.1.1", "lucide-react@1.47.0"],
+      "registryDependencies": [],
+      "files": [
+        { "path": "icon.tsx", "type": "registry:ui", "target": "@ui/icon.tsx" },
+        { "path": "icon.css", "type": "registry:ui", "target": "@ui/icon.css" }
+      ],
+      "docs": "Icons are decorative unless label is supplied. IconButton always requires a contextual label.",
+      "meta": {
+        "maturity": "experimental",
+        "version": "0.0.0",
+        "installation": {
+          "latest": "pnpm dlx shadcn@latest add @mflisikowski/icon",
+          "snapshot": "pnpm dlx shadcn@latest add https://design-system.mflisikowski.dev/r/v/0.0.0/icon.json"
+        }
+      }
+    },
+    {
+      "name": "link",
+      "type": "registry:ui",
+      "title": "Link",
+      "description": "Semantic anchor styling for inline and standalone navigation.",
+      "dependencies": ["@mflisikowski/tokens@0.0.0", "clsx@2.1.1"],
+      "registryDependencies": [],
+      "files": [
+        { "path": "link.tsx", "type": "registry:ui", "target": "@ui/link.tsx" },
+        { "path": "link.css", "type": "registry:ui", "target": "@ui/link.css" }
+      ],
+      "docs": "Link remains a native anchor. Inline links stay underlined; standalone navigation reveals its underline on hover and focus.",
+      "meta": {
+        "maturity": "experimental",
+        "version": "0.0.0",
+        "installation": {
+          "latest": "pnpm dlx shadcn@latest add @mflisikowski/link",
+          "snapshot": "pnpm dlx shadcn@latest add https://design-system.mflisikowski.dev/r/v/0.0.0/link.json"
+        }
+      }
+    },
+    {
+      "name": "alert",
+      "type": "registry:ui",
+      "title": "Alert",
+      "description": "Persistent danger or success feedback with optional urgent live semantics.",
+      "dependencies": ["@mflisikowski/tokens@0.0.0", "clsx@2.1.1"],
+      "registryDependencies": [],
+      "files": [
+        { "path": "alert.tsx", "type": "registry:ui", "target": "@ui/alert.tsx" },
+        { "path": "alert.css", "type": "registry:ui", "target": "@ui/alert.css" }
+      ],
+      "docs": "Compose AlertTitle, AlertDescription, and at most one AlertAction. Set live only for dynamically inserted urgent failures.",
+      "meta": {
+        "maturity": "experimental",
+        "version": "0.0.0",
+        "installation": {
+          "latest": "pnpm dlx shadcn@latest add @mflisikowski/alert",
+          "snapshot": "pnpm dlx shadcn@latest add https://design-system.mflisikowski.dev/r/v/0.0.0/alert.json"
+        }
+      }
+    },
+    {
+      "name": "empty-state",
+      "type": "registry:ui",
+      "title": "Empty State",
+      "description": "Compositional empty-content pattern with a required visible title.",
+      "dependencies": ["@mflisikowski/tokens@0.0.0", "clsx@2.1.1"],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "empty-state.tsx",
+          "type": "registry:ui",
+          "target": "@ui/empty-state.tsx"
+        },
+        { "path": "empty-state.css", "type": "registry:ui", "target": "@ui/empty-state.css" }
+      ],
+      "docs": "Use EmptyStateTitle for the state meaning, optional description, and no more than one primary and one secondary action.",
+      "meta": {
+        "maturity": "experimental",
+        "version": "0.0.0",
+        "installation": {
+          "latest": "pnpm dlx shadcn@latest add @mflisikowski/empty-state",
+          "snapshot": "pnpm dlx shadcn@latest add https://design-system.mflisikowski.dev/r/v/0.0.0/empty-state.json"
+        }
+      }
+    },
+    {
+      "name": "table",
+      "type": "registry:ui",
+      "title": "Table",
+      "description": "Native semantic table primitives for ordinary tabular data.",
+      "dependencies": ["@mflisikowski/tokens@0.0.0", "clsx@2.1.1"],
+      "registryDependencies": [],
+      "files": [
+        { "path": "table.tsx", "type": "registry:ui", "target": "@ui/table.tsx" },
+        { "path": "table.css", "type": "registry:ui", "target": "@ui/table.css" }
+      ],
+      "docs": "Compose native caption, header, body, row, heading, and cell primitives. Product sorting, filtering, and actions remain outside Table.",
+      "meta": {
+        "maturity": "experimental",
+        "version": "0.0.0",
+        "installation": {
+          "latest": "pnpm dlx shadcn@latest add @mflisikowski/table",
+          "snapshot": "pnpm dlx shadcn@latest add https://design-system.mflisikowski.dev/r/v/0.0.0/table.json"
+        }
+      }
     }
   ]
 }

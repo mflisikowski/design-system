@@ -30,6 +30,20 @@ export type DocumentationPage = Readonly<{
 const referenceCrmUrl =
   process.env.NEXT_PUBLIC_REFERENCE_CRM_URL ?? "https://crm.design-system.mflisikowski.dev";
 
+const publicComponentHeadings = [
+  { depth: 2, id: "installation", label: "Installation" },
+  { depth: 2, id: "purpose", label: "Purpose" },
+  { depth: 2, id: "examples", label: "Examples" },
+  { depth: 2, id: "anatomy", label: "Anatomy" },
+  { depth: 2, id: "api", label: "API" },
+  { depth: 2, id: "states", label: "States" },
+  { depth: 2, id: "accessibility", label: "Accessibility" },
+  { depth: 2, id: "keyboard-behavior", label: "Keyboard behavior" },
+  { depth: 2, id: "figma-specification", label: "Figma specification" },
+  { depth: 2, id: "content-guidance", label: "Content guidance" },
+  { depth: 2, id: "related-patterns", label: "Related patterns" },
+] as const satisfies readonly DocumentationHeading[];
+
 export const primaryNavigation = [
   { label: "Foundations", href: "/foundations" },
   { label: "Components", href: "/components" },
@@ -106,6 +120,67 @@ export const documentationPages = [
       { depth: 2, id: "related-patterns", label: "Related patterns" },
     ],
     load: () => import("../content/components/registry-sample.mdx"),
+  },
+  {
+    slug: "components/button",
+    href: "/components/button",
+    source: "components/button.mdx",
+    title: "Button",
+    description:
+      "Action control with explicit variants, density-aware sizes, and loading behavior.",
+    section: "Components",
+    headings: publicComponentHeadings,
+    load: () => import("../content/components/button.mdx"),
+  },
+  {
+    slug: "components/icon",
+    href: "/components/icon",
+    source: "components/icon.mdx",
+    title: "Icon and Icon Button",
+    description: "Approved iconography and contextual icon-only actions.",
+    section: "Components",
+    headings: publicComponentHeadings,
+    load: () => import("../content/components/icon.mdx"),
+  },
+  {
+    slug: "components/link",
+    href: "/components/link",
+    source: "components/link.mdx",
+    title: "Link",
+    description: "Native inline and standalone navigation with visible focus behavior.",
+    section: "Components",
+    headings: publicComponentHeadings,
+    load: () => import("../content/components/link.mdx"),
+  },
+  {
+    slug: "components/alert",
+    href: "/components/alert",
+    source: "components/alert.mdx",
+    title: "Alert",
+    description: "Persistent recovery feedback with deliberate live-region semantics.",
+    section: "Components",
+    headings: publicComponentHeadings,
+    load: () => import("../content/components/alert.mdx"),
+  },
+  {
+    slug: "components/empty-state",
+    href: "/components/empty-state",
+    source: "components/empty-state.mdx",
+    title: "Empty State",
+    description: "A compositional explanation and next step for absent content.",
+    section: "Components",
+    headings: publicComponentHeadings,
+    load: () => import("../content/components/empty-state.mdx"),
+  },
+  {
+    slug: "components/table",
+    href: "/components/table",
+    source: "components/table.mdx",
+    title: "Table",
+    description: "Native semantic table primitives for ordinary product data.",
+    section: "Components",
+    headings: publicComponentHeadings,
+    load: () => import("../content/components/table.mdx"),
   },
   {
     slug: "patterns",

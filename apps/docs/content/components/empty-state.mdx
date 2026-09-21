@@ -1,0 +1,52 @@
+import { Button } from "../../../../registry/ui/button";
+import { EmptyState, EmptyStateActions, EmptyStateDescription, EmptyStateTitle } from "../../../../registry/ui/empty-state";
+import { Installation, LiveExample, MaturityNotice } from "@/components/docs/component-documentation";
+import { publicComponentDocumentation } from "@/lib/public-component-docs";
+
+<MaturityNotice introduced="0.0.0" status="experimental" />
+
+## Installation
+
+<Installation {...publicComponentDocumentation.emptyState.installation} />
+
+## Purpose
+
+Empty State explains why content is absent and, when appropriate, offers a small next step.
+
+## Examples
+
+<LiveExample label="Client empty state">
+  <EmptyState><EmptyStateTitle>No clients yet</EmptyStateTitle><EmptyStateDescription>Reset demo data to restore seed records.</EmptyStateDescription><EmptyStateActions><Button>Reset demo data</Button></EmptyStateActions></EmptyState>
+</LiveExample>
+
+## Anatomy
+
+Empty State composes optional decorative Icon, required Title, optional Description, and optional Actions.
+
+## API
+
+Each part forwards its native properties. The contract permits at most one primary and one secondary action and has no visual variants.
+
+## States
+
+No data and no search results use distinct product copy. Fetch failures use Alert instead of Empty State.
+
+## Accessibility
+
+The visible Title carries the meaning. The Icon wrapper is decorative, while actions keep their native accessible names.
+
+## Keyboard behavior
+
+The pattern itself is skipped. Tab reaches any supplied actions in document order.
+
+## Figma specification
+
+Anatomy is `Container / optional Icon / Title / optional Description / optional Actions`. Boolean properties control optional parts; no tone property exists.
+
+## Content guidance
+
+Name the empty condition plainly and offer an action only when the User can change it.
+
+## Related patterns
+
+The Client list uses Empty State outside the table body when the browser contains no Client records.

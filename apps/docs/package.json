@@ -20,6 +20,7 @@
     "@mflisikowski/tokens": "workspace:*",
     "@next/mdx": "catalog:",
     "clsx": "catalog:",
+    "lucide-react": "1.47.0",
     "next": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:"

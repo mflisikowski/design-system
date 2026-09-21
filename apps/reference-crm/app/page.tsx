@@ -1,15 +1,11 @@
-import { themeDefaults } from "@mflisikowski/tokens/runtime";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
-import { RegistrySample } from "@/components/ui/registry-sample";
+import { demoSessionCookie, demoSessionValue } from "@/lib/demo-session";
 
-export default function HomePage() {
-  return (
-    <main>
-      <h1>MFD Reference CRM</h1>
-      <RegistrySample
-        brand={themeDefaults.brand}
-        label="The reference application workspace is ready."
-      />
-    </main>
+export default async function HomePage() {
+  const cookieStore = await cookies();
+  redirect(
+    cookieStore.get(demoSessionCookie)?.value === demoSessionValue ? "/clients" : "/sign-in",
   );
 }

@@ -1,0 +1,51 @@
+import { Button } from "../../../../registry/ui/button";
+import { Installation, LiveExample, MaturityNotice } from "@/components/docs/component-documentation";
+import { publicComponentDocumentation } from "@/lib/public-component-docs";
+
+<MaturityNotice introduced="0.0.0" status="experimental" />
+
+## Installation
+
+<Installation {...publicComponentDocumentation.button.installation} />
+
+## Purpose
+
+Button starts an action. Use a Link for navigation and Icon Button for an icon-only action.
+
+## Examples
+
+<LiveExample label="Button variants">
+  <div><Button>Continue</Button> <Button variant="outline">Try again</Button></div>
+</LiveExample>
+
+## Anatomy
+
+One native `button` contains visible label content and, while loading, a decorative progress mark.
+
+## API
+
+`variant` accepts `accent`, `neutral`, `outline`, `ghost`, or `danger`. `size` accepts `sm`, `md`, or `lg`. `loading` prevents activation; `loadingLabel` replaces the visible and accessible label. Native button properties and refs are forwarded.
+
+## States
+
+Default, hover, focus-visible, pressed, disabled, and loading are supported. Loading and disabled cannot be activated.
+
+## Accessibility
+
+The native control keeps its role and keyboard behavior. Focus remains visible, loading exposes `aria-busy`, and the touch target is at least 44 CSS pixels.
+
+## Keyboard behavior
+
+Tab focuses the Button. Enter and Space activate it when available.
+
+## Figma specification
+
+Anatomy is `Container / optional progress / Label`. Component properties are Variant, Size, Disabled, and Loading; focus-visible and pressed are interaction states, not independent API variants.
+
+## Content guidance
+
+Use a short verb-led label. A loading label must describe the work in progress, such as “Resetting demo data”.
+
+## Related patterns
+
+Button is used by demo sign-in, retry, reset, and future form actions in Reference CRM.

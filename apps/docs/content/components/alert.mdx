@@ -1,0 +1,51 @@
+import { Alert, AlertDescription, AlertTitle } from "../../../../registry/ui/alert";
+import { Installation, LiveExample, MaturityNotice } from "@/components/docs/component-documentation";
+import { publicComponentDocumentation } from "@/lib/public-component-docs";
+
+<MaturityNotice introduced="0.0.0" status="experimental" />
+
+## Installation
+
+<Installation {...publicComponentDocumentation.alert.installation} />
+
+## Purpose
+
+Alert keeps danger or success feedback in the document when the User may need to read or act on it.
+
+## Examples
+
+<LiveExample label="Persistent Alert">
+  <Alert><AlertTitle>Clients could not be loaded</AlertTitle><AlertDescription>Try the request again.</AlertDescription></Alert>
+</LiveExample>
+
+## Anatomy
+
+Alert composes Container, required Title, Description, and an optional single Action region.
+
+## API
+
+`tone` accepts `danger` or `success`. `live` adds urgent alert semantics only when dynamically inserted. Each part forwards its native properties.
+
+## States
+
+Danger and success tones are supported. Static and urgent-live semantics are independent from visual tone.
+
+## Accessibility
+
+Static content receives no unnecessary live role. Set `live` only for newly inserted urgent errors; Alert never moves focus.
+
+## Keyboard behavior
+
+Alert itself is not focusable. Any action inside follows that control’s native keyboard behavior.
+
+## Figma specification
+
+Anatomy is `Container / Title / Description / optional Action`. Properties are Tone and Action present; a live-region annotation documents runtime behavior rather than a visual variant.
+
+## Content guidance
+
+State the failure first, explain what remains safe, then offer one concrete recovery action.
+
+## Related patterns
+
+The Client list uses a live danger Alert with Try again when the local demo service fails.

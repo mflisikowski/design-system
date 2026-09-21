@@ -15,6 +15,7 @@ const releaseVersion = packageManifest.version;
 const defaultPublicRoot = path.join(repositoryRoot, "apps/docs/public/r");
 const defaultPackedRoot = path.join(packageDirectory, "dist/r");
 const durableSnapshotsRoot = path.join(repositoryRoot, "registry/snapshots/v");
+const shadcnBinary = path.join(packageDirectory, "node_modules/.bin/shadcn");
 
 /**
  * @param {string | undefined} configuredPath
@@ -50,18 +51,18 @@ const lintConfigManifest = JSON.parse(
 const uiRegistry = JSON.parse(
   await readFile(path.join(repositoryRoot, "registry/ui/registry.json"), "utf8"),
 );
-const sampleItem = uiRegistry.items.find(
-  (/** @type {{ name: string }} */ item) => item.name === "registry-sample",
-);
-const supportingItem = uiRegistry.items.find(
-  (/** @type {{ name: string }} */ item) => item.name === "registry-sample-label",
+const invalidVersionItems = uiRegistry.items.filter(
+  (/** @type {{ meta?: { version?: string }, dependencies?: string[] }} */ item) =>
+    item.meta?.version !== releaseVersion ||
+    item.dependencies?.some(
+      (dependency) =>
+        dependency.startsWith("@mflisikowski/") && !dependency.endsWith(`@${releaseVersion}`),
+    ),
 );
 if (
   tokensManifest.version !== releaseVersion ||
   lintConfigManifest.version !== releaseVersion ||
-  sampleItem?.meta?.version !== releaseVersion ||
-  supportingItem?.meta?.version !== releaseVersion ||
-  !sampleItem?.dependencies?.includes(`@mflisikowski/tokens@${releaseVersion}`)
+  invalidVersionItems.length > 0
 ) {
   throw new Error(
     `Registry release, public package, item metadata, and MFD dependency versions must all be ${releaseVersion}.`,
@@ -70,7 +71,7 @@ if (
 
 /** @param {string[]} arguments_ */
 function runShadcn(arguments_) {
-  const result = spawnSync("shadcn", arguments_, {
+  const result = spawnSync(shadcnBinary, arguments_, {
     cwd: repositoryRoot,
     encoding: "utf8",
     stdio: "pipe",

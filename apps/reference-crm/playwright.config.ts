@@ -1,6 +1,6 @@
 import { defineConfig, devices } from "@playwright/test";
 
-const baseURL = "http://127.0.0.1:3001";
+const baseURL = "http://localhost:3001";
 
 export default defineConfig({
   testDir: "./tests/e2e",
@@ -29,7 +29,7 @@ export default defineConfig({
     process.env.PLAYWRIGHT_NO_WEBSERVER === "1"
       ? undefined
       : {
-          command: "pnpm start",
+          command: "node node_modules/next/dist/bin/next start --hostname localhost --port 3001",
           url: baseURL,
           reuseExistingServer: !process.env.CI,
           stdout: "pipe",

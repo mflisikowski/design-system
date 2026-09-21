@@ -1,0 +1,25 @@
+.mfd-link {
+  color: var(--mfd-color-accent-text);
+  text-decoration-line: underline;
+  text-decoration-thickness: 0.08em;
+  text-underline-offset: 0.16em;
+}
+
+.mfd-link[data-variant="standalone"] {
+  color: var(--mfd-color-text-primary);
+  font-weight: var(--mfd-typography-label-font-weight);
+  text-decoration-color: transparent;
+}
+
+@media (hover: hover) {
+  .mfd-link:hover {
+    color: var(--mfd-color-accent-text);
+    text-decoration-color: currentColor;
+  }
+}
+
+.mfd-link:focus-visible {
+  border-radius: var(--mfd-radius-control);
+  outline: 2px solid var(--mfd-color-border-focus);
+  outline-offset: 2px;
+}

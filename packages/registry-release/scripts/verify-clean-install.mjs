@@ -17,6 +17,15 @@ const typescriptBinary = path.join(packageDirectory, "node_modules/.bin/tsc");
 const releaseVersion = JSON.parse(
   await readFile(path.join(packageDirectory, "package.json"), "utf8"),
 ).version;
+const installableItems = [
+  "registry-sample",
+  "button",
+  "icon",
+  "link",
+  "alert",
+  "empty-state",
+  "table",
+];
 
 /**
  * @param {string} directory
@@ -26,6 +35,7 @@ async function createConsumerFixture(directory, fixture) {
   await mkdir(path.join(directory, "src/components/ui"), { recursive: true });
   await mkdir(path.join(directory, "src/lib"), { recursive: true });
   await writeFile(path.join(directory, "src/globals.css"), "/* Fixture stylesheet. */\n");
+  await writeFile(path.join(directory, "src/styles.d.ts"), 'declare module "*.css";\n');
   await writeFile(
     path.join(directory, "package.json"),
     `${JSON.stringify(
@@ -220,27 +230,41 @@ export async function verifyCleanInstallFixtures(registryOutputDirectory = publi
           `@mflisikowski:registry=${origin}/npm/\nprefer-offline=true\n`,
         );
 
-        const itemAddress =
-          fixture === "new-project"
-            ? "@mflisikowski/registry-sample"
-            : `${origin}/r/v/${releaseVersion}/registry-sample.json`;
-        await run(shadcnBinary, ["add", itemAddress, "--yes", "--cwd", fixtureDirectory], {
-          cwd: fixtureDirectory,
-          env: {
-            ...process.env,
-            COREPACK_ENABLE_PROJECT_SPEC: "0",
-            npm_config_prefer_offline: "true",
-          },
-        });
+        for (const itemName of installableItems) {
+          const itemAddress =
+            fixture === "new-project"
+              ? `@mflisikowski/${itemName}`
+              : `${origin}/r/v/${releaseVersion}/${itemName}.json`;
+          await run(shadcnBinary, ["add", itemAddress, "--yes", "--cwd", fixtureDirectory], {
+            cwd: fixtureDirectory,
+            env: {
+              ...process.env,
+              COREPACK_ENABLE_PROJECT_SPEC: "0",
+              PATH: `${path.join(packageDirectory, "node_modules/.bin")}${path.delimiter}${process.env.PATH ?? ""}`,
+              npm_config_prefer_offline: "true",
+            },
+          });
+        }
         await run(typescriptBinary, ["--project", "tsconfig.json"], { cwd: fixtureDirectory });
-        await access(path.join(fixtureDirectory, "src/components/ui/registry-sample.tsx"));
+        for (const fileName of [
+          "registry-sample.tsx",
+          "button.tsx",
+          "icon.tsx",
+          "link.tsx",
+          "alert.tsx",
+          "empty-state.tsx",
+          "table.tsx",
+        ]) {
+          await access(path.join(fixtureDirectory, "src/components/ui", fileName));
+        }
         await access(path.join(fixtureDirectory, "src/lib/registry-sample-label.ts"));
         const installedManifest = JSON.parse(
           await readFile(path.join(fixtureDirectory, "package.json"), "utf8"),
         );
         if (
           installedManifest.dependencies?.["@mflisikowski/tokens"] !== releaseVersion ||
-          installedManifest.dependencies?.clsx !== "2.1.1"
+          installedManifest.dependencies?.clsx !== "2.1.1" ||
+          installedManifest.dependencies?.["lucide-react"] !== "1.47.0"
         ) {
           throw new Error(`${fixture} did not retain the registry's exact package dependencies.`);
         }

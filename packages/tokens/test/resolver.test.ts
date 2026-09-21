@@ -174,15 +174,19 @@ describe("canonical token resolver", () => {
 
     expect(tokenIds.some((id) => id.startsWith("semantic."))).toBe(false);
     expect(tokenIds.some((id) => id.startsWith("component."))).toBe(false);
-    expect(tokenIds.some((id) => id.startsWith("radius."))).toBe(false);
     expect(tokenIds).toEqual(
       expect.arrayContaining([
         "reference.color.neutral-light.1",
         "color.bg.canvas",
+        "radius.control",
+        "radius.surface",
+        "radius.pill",
         "size.control-height.md",
         "typography.body",
       ]),
     );
+    expect(tokenValue(tokens, "radius.control")).toEqual({ value: 6, unit: "px" });
+    expect(tokenValue(tokens, "radius.surface")).toEqual({ value: 8, unit: "px" });
     expect(
       tokenIds.every((id) =>
         id.split(".").every((part) => /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(part)),

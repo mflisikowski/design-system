@@ -12,6 +12,9 @@ const publicRegistryRoot = path.join(repositoryRoot, "apps/docs/public/r");
 const releaseVersion = JSON.parse(
   await readFile(path.join(packageDirectory, "package.json"), "utf8"),
 ).version;
+const installedItems = JSON.parse(
+  await readFile(path.join(appDirectory, "registry-installed.json"), "utf8"),
+).items;
 
 await run(process.execPath, [path.join(packageDirectory, "scripts/build-registry.mjs")], {
   cwd: repositoryRoot,
@@ -53,12 +56,14 @@ try {
   if (!address || typeof address === "string") {
     throw new Error("Registry sync server address is unavailable.");
   }
-  const itemUrl = `http://127.0.0.1:${address.port}/r/v/${releaseVersion}/registry-sample.json`;
-  await run(
-    path.join(packageDirectory, "node_modules/.bin/shadcn"),
-    ["add", itemUrl, "--yes", "--overwrite", "--cwd", appDirectory],
-    { cwd: appDirectory, stdio: "inherit" },
-  );
+  for (const itemName of installedItems) {
+    const itemUrl = `http://127.0.0.1:${address.port}/r/v/${releaseVersion}/${itemName}.json`;
+    await run(
+      path.join(packageDirectory, "node_modules/.bin/shadcn"),
+      ["add", itemUrl, "--yes", "--overwrite", "--cwd", appDirectory],
+      { cwd: appDirectory, stdio: "inherit" },
+    );
+  }
 } finally {
   await new Promise((resolve, reject) => {
     server.close((error) => (error ? reject(error) : resolve(undefined)));
