@@ -2,6 +2,8 @@
 
 Shared Oxlint policy for MFD-authored applications and registry source.
 
+## Policy and ownership
+
 Extend `@mflisikowski/lint-config/oxlint` from the repository Oxlint configuration. The policy
 enforces semantic tokens and static, token-backed classes in application code. Application code
 may control layout around a component, while registry source owns the component's internal visual
@@ -9,6 +11,20 @@ contract.
 
 Registry source disables only `shadcn/no-restyle`. Raw colors, arbitrary values, inline styles,
 static-class analysis, and unknown-class diagnostics remain active there.
+
+The published preset stays strict because only the consuming repository knows its registry root.
+Add a repository-local override for the explicit source directory:
+
+```json
+{
+  "overrides": [
+    {
+      "files": ["registry/**/*.{js,jsx,ts,tsx}"],
+      "rules": { "shadcn/no-restyle": "off" }
+    }
+  ]
+}
+```
 
 ## Exceptions
 

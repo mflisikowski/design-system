@@ -45,6 +45,21 @@ describe("MFD lint exceptions", () => {
       "// oxlint-disable-next-line shadcn/no-inline-styles -- MFD exception: needed",
       "specific reason",
     ],
+    [
+      "trailing broad suppression",
+      "const value = true; /* oxlint-disable shadcn/no-inline-styles -- MFD exception: This must not bypass exception review. */",
+      "own comment line",
+    ],
+    [
+      "suppression inside a template expression",
+      "const value = `${(() => { /* oxlint-disable shadcn/no-inline-styles -- MFD exception: This must not bypass exception review. */ return true; })()}`;",
+      "own comment line",
+    ],
+    [
+      "regex-assisted suppression inside a template expression",
+      "const value = `${/}}/.test('value') /* oxlint-disable shadcn/no-inline-styles -- MFD exception: This must not bypass exception review. */}`;",
+      "own comment line",
+    ],
   ])("rejects a %s", (_name, source, message) => {
     const result = inspectLintExceptions(source, "fixture.tsx");
 

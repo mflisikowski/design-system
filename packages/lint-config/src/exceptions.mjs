@@ -1,6 +1,8 @@
 import { readdir, readFile } from "node:fs/promises";
 import path from "node:path";
 
+import { parseSync } from "oxc-parser";
+
 /** @typedef {{ file: string, line: number, message: string }} ExceptionDiagnostic */
 /** @typedef {{ count?: number, file: string, line?: number, reason: string, rule: string }} ExceptionRecord */
 /** @typedef {{ absolutePath: string, relativePath: string }} SourceFile */
@@ -28,20 +30,45 @@ function diagnostic(file, line, message) {
  * @param {string} source
  * @param {string} file
  */
+function collectComments(source, file) {
+  return parseSync(file, source).comments.map((comment) => ({
+    startLine: source.slice(0, comment.start).split("\n").length,
+    text: comment.value,
+  }));
+}
+
+/**
+ * @param {string} source
+ * @param {string} file
+ */
 export function inspectLintExceptions(source, file) {
   const diagnostics = [];
   const exceptions = [];
+  const sourceLines = source.split("\n");
 
-  for (const [index, lineText] of source.split("\n").entries()) {
-    const comment = lineText
-      .trim()
-      .match(/^(?:\/\/|\/\*|\*|\{\/\*)\s*((?:eslint|oxlint)-disable(?:-next-line|-line)?\b.*)$/);
-    if (!comment) continue;
+  for (const comment of collectComments(source, file)) {
+    const directiveMatch = comment.text.match(
+      /(?:^|\n)\s*\*?\s*((?:eslint|oxlint)-disable(?:-next-line|-line)?\b[^\r\n]*)/,
+    );
+    if (!directiveMatch || !directiveMatch[1].includes("shadcn/")) continue;
 
-    const directive = comment[1].replace(/\*\/.*$/, "").trim();
-    if (!directive.includes("shadcn/")) continue;
+    const prefix = comment.text.slice(0, directiveMatch.index ?? 0);
+    const line = comment.startLine + prefix.split("\n").length - 1;
+    const directive = directiveMatch[1].trim();
+    const canonicalComment = sourceLines[line - 1]
+      ?.trim()
+      .match(/^(?:\/\/|\/\*|\*|\{\/\*)\s*(?:eslint|oxlint)-disable(?:-next-line|-line)?\b/);
+    if (!canonicalComment) {
+      diagnostics.push(
+        diagnostic(
+          file,
+          line,
+          "Put an MFD lint exception on its own comment line directly above the justified statement.",
+        ),
+      );
+      continue;
+    }
 
-    const line = index + 1;
     if (!directive.startsWith("oxlint-disable-next-line ")) {
       diagnostics.push(
         diagnostic(

@@ -15,8 +15,8 @@
 
 ### 2026-09-21 — executable lint policy completed
 
-- Published the shared Oxlint preset with all six approved `@shadcn/lint` rules, actionable MFD guidance, and a registry override limited to `no-restyle`.
+- Published the strict shared Oxlint preset with all six approved `@shadcn/lint` rules and actionable MFD guidance; the repository-local canonical `registry/` override disables only `no-restyle`.
 - Added valid and invalid fixtures for every rule, including severity assertions and application-versus-registry ownership coverage.
-- Added a checked `oxlint-disable-next-line` exception syntax with mandatory reasons, a reviewed repository baseline, and unused-directive failures.
+- Added a parser-backed `oxlint-disable-next-line` exception check with mandatory reasons, a reviewed repository baseline, bypass regression coverage, and unused-directive failures.
 - Exercised every documented ESLint fallback condition while keeping ESLint absent.
 - Verified the complete workspace with `pnpm verify`, including builds, tests, Browser Mode, E2E, tokens, registry installation, and changeset policy.

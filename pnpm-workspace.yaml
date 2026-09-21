@@ -32,6 +32,7 @@ catalog:
   msw: 2.15.0
   next: 16.3.5
   oxlint: 1.83.0
+  oxc-parser: 0.148.0
   react: 19.3.0
   react-dom: 19.3.0
   shadcn: 4.21.0

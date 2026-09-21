@@ -49,7 +49,7 @@ The pull-request workflow recognizes a Changesets release branch only when it co
 
 Biome owns formatting and import organization. Oxlint owns TypeScript and React linting. The production policy lives in `packages/lint-config` and exercises every approved rule with valid and invalid fixtures, application and registry ownership boundaries, narrow justified exceptions, and the documented ESLint fallback threshold. The original `spikes/oxlint-shadcn-lint` proof remains excluded from normal linting and formatting as historical compatibility evidence.
 
-Application code receives all approved rules. Registry source disables only `no-restyle`, because registry components own their internal visual contract; token and class rules stay active. Every diagnostic points agents to semantic tokens, the ownership boundary, and the specification. A source suppression must target exactly one `shadcn/*` rule with `oxlint-disable-next-line`, include an inline `MFD exception:` reason, and match `.mfd-lint-exceptions.json`. Unused directives and unreviewed exception growth fail the gate.
+Application code receives all approved rules. A repository-local override names the canonical `registry/` source and disables only `no-restyle`, because registry components own their internal visual contract; token and class rules stay active. Every diagnostic points agents to semantic tokens, the ownership boundary, and the public lint-config policy. A source suppression must target exactly one `shadcn/*` rule with `oxlint-disable-next-line`, include an inline `MFD exception:` reason, and match `.mfd-lint-exceptions.json`. Unused directives and unreviewed exception growth fail the gate.
 
 ## Pull-request CI
 

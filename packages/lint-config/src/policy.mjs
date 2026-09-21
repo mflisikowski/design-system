@@ -12,7 +12,7 @@ export const registryRules = Object.freeze({
 });
 
 export const policyNote =
-  "MFD: use semantic tokens and documented component APIs. Application code controls placement; registry source owns component internals. See docs/specification.md#15-linting-and-agent-policy.";
+  "MFD: use semantic tokens and documented component APIs. Application code controls placement; registry source owns component internals. See the @mflisikowski/lint-config README, Policy and ownership.";
 
 export function createOxlintConfig() {
   return {
@@ -23,11 +23,5 @@ export function createOxlintConfig() {
       },
     },
     rules: applicationRules,
-    overrides: [
-      {
-        files: ["**/registry/**/*.{js,jsx,ts,tsx}"],
-        rules: registryRules,
-      },
-    ],
   };
 }

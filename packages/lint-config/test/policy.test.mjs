@@ -13,10 +13,14 @@ const packageDirectory = path.resolve(path.dirname(fileURLToPath(import.meta.url
  * @param {string} relativePath
  * @param {string} [cwd]
  */
-function runFixture(relativePath, cwd = packageDirectory) {
+function runFixture(
+  relativePath,
+  cwd = packageDirectory,
+  config = path.join(packageDirectory, "oxlint.json"),
+) {
   const result = spawnSync(
     path.join(packageDirectory, "node_modules/.bin/oxlint"),
-    ["--format", "json", "--config", path.join(packageDirectory, "oxlint.json"), relativePath],
+    ["--format", "json", "--config", config, relativePath],
     {
       cwd,
       encoding: "utf8",
@@ -54,12 +58,6 @@ describe("MFD design-system lint policy", () => {
         },
       },
       rules: applicationRules,
-      overrides: [
-        {
-          files: ["**/registry/**/*.{js,jsx,ts,tsx}"],
-          rules: registryRules,
-        },
-      ],
     });
   });
 
@@ -85,7 +83,7 @@ describe("MFD design-system lint policy", () => {
     expect(result.status).toBe(severity === "error" ? 1 : 0);
     expect(diagnostic).toMatchObject({ code: `shadcn(${rule})`, severity });
     expect(diagnostic?.message).toContain("semantic tokens");
-    expect(diagnostic?.message).toContain("docs/specification.md#15-linting-and-agent-policy");
+    expect(diagnostic?.message).toContain("@mflisikowski/lint-config README");
   });
 
   it.each([
@@ -106,12 +104,26 @@ describe("MFD design-system lint policy", () => {
 
   it("lets registry source define component internals without weakening token rules", () => {
     const ownershipFixture = path.join(packageDirectory, "test/fixtures/ownership");
-    const applicationResult = runFixture("app/restyle.tsx", ownershipFixture);
-    const registryResult = runFixture("registry/restyle.tsx", ownershipFixture);
-    const registryRawColorResult = runFixture("registry/raw-color.tsx", ownershipFixture);
+    const ownershipConfig = path.join(ownershipFixture, "oxlint.json");
+    const applicationResult = runFixture("app/restyle.tsx", ownershipFixture, ownershipConfig);
+    const nestedRegistryResult = runFixture(
+      "app/registry/restyle.tsx",
+      ownershipFixture,
+      ownershipConfig,
+    );
+    const registryResult = runFixture("registry/restyle.tsx", ownershipFixture, ownershipConfig);
+    const registryRawColorResult = runFixture(
+      "registry/raw-color.tsx",
+      ownershipFixture,
+      ownershipConfig,
+    );
 
     expect(applicationResult.status).toBe(1);
     expect(applicationResult.report.diagnostics).toContainEqual(
+      expect.objectContaining({ code: "shadcn(no-restyle)" }),
+    );
+    expect(nestedRegistryResult.status).toBe(1);
+    expect(nestedRegistryResult.report.diagnostics).toContainEqual(
       expect.objectContaining({ code: "shadcn(no-restyle)" }),
     );
     expect(registryResult.status).toBe(0);

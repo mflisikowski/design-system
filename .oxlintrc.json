@@ -18,5 +18,13 @@
   ],
   "options": {
     "reportUnusedDisableDirectives": "error"
-  }
+  },
+  "overrides": [
+    {
+      "files": ["registry/**/*.{js,jsx,ts,tsx}"],
+      "rules": {
+        "shadcn/no-restyle": "off"
+      }
+    }
+  ]
 }

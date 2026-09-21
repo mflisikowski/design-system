@@ -19,7 +19,8 @@
     "oxlint.json"
   ],
   "dependencies": {
-    "@shadcn/lint": "catalog:"
+    "@shadcn/lint": "catalog:",
+    "oxc-parser": "catalog:"
   },
   "scripts": {
     "test": "vitest run",
