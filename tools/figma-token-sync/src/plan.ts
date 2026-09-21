@@ -50,6 +50,16 @@ function managedCollectionsById(current: CurrentDocument) {
   return result;
 }
 
+function hasUnmanagedVariables(collection: CurrentCollection, current: CurrentDocument) {
+  return current.variables.some(
+    (variable) => !variable.canonicalId && variable.shape.collectionId === collection.canonicalId,
+  );
+}
+
+function hasUnmanagedModes(collection: CurrentCollection) {
+  return collection.modes.some((mode) => !mode.canonicalId);
+}
+
 function collectionItems(manifest: TokenManifest, current: CurrentDocument) {
   const items: DiffItem[] = [];
   const managed = managedCollectionsById(current);
@@ -61,7 +71,9 @@ function collectionItems(manifest: TokenManifest, current: CurrentDocument) {
       for (const match of matches) {
         items.push(
           planItem({
+            after: stableStringify(desired),
             applicable: false,
+            before: stableStringify(match),
             canonicalId: desired.id,
             category: "conflict",
             detail: "More than one managed collection claims this canonical identifier.",
@@ -81,7 +93,9 @@ function collectionItems(manifest: TokenManifest, current: CurrentDocument) {
       );
       items.push(
         planItem({
+          after: stableStringify(desired),
           applicable: !collision,
+          ...(collision ? { before: stableStringify(collision) } : {}),
           canonicalId: desired.id,
           category: collision ? "conflict" : "create",
           detail: collision
@@ -100,7 +114,9 @@ function collectionItems(manifest: TokenManifest, current: CurrentDocument) {
       existing.hiddenFromPublishing !== desired.hiddenFromPublishing;
     items.push(
       planItem({
+        ...(changed ? { after: stableStringify(desired) } : {}),
         applicable: true,
+        ...(changed ? { before: stableStringify(existing) } : {}),
         canonicalId: desired.id,
         category: changed ? "update" : "unchanged",
         detail: changed
@@ -115,12 +131,17 @@ function collectionItems(manifest: TokenManifest, current: CurrentDocument) {
 
   for (const collection of current.collections) {
     if (collection.canonicalId && !desiredIds.has(collection.canonicalId)) {
+      const protectsUnmanagedContent =
+        hasUnmanagedVariables(collection, current) || hasUnmanagedModes(collection);
       items.push(
         planItem({
-          applicable: true,
+          applicable: !protectsUnmanagedContent,
+          before: stableStringify(collection),
           canonicalId: collection.canonicalId,
           category: "stale",
-          detail: "The managed collection is no longer present in the manifest.",
+          detail: protectsUnmanagedContent
+            ? "The collection is stale but contains unmanaged content, so Prune will preserve it."
+            : "The managed collection is no longer present in the manifest.",
           entity: "collection",
           figmaId: collection.figmaId,
           label: collection.name,
@@ -158,9 +179,28 @@ function modeItems(manifest: TokenManifest, current: CurrentDocument) {
           (candidate) => !candidate.canonicalId && candidate.name === desiredCollection.name,
         );
 
-      if (!existing && !sameNameUnmapped) {
+      if (sameNameUnmapped) {
         items.push(
           planItem({
+            after: stableStringify(desiredMode),
+            applicable: false,
+            before: stableStringify(sameNameUnmapped),
+            canonicalId: `${desiredCollection.id}:${desiredMode.id}`,
+            category: "conflict",
+            detail:
+              "An unmanaged mode already uses this name; it will not be adopted or overwritten.",
+            entity: "mode",
+            figmaId: sameNameUnmapped.figmaId,
+            label: `${desiredCollection.name} / ${desiredMode.name}`,
+          }),
+        );
+        continue;
+      }
+
+      if (!existing) {
+        items.push(
+          planItem({
+            after: stableStringify(desiredMode),
             applicable: !parentBlocked,
             canonicalId: `${desiredCollection.id}:${desiredMode.id}`,
             category: parentBlocked ? "conflict" : "create",
@@ -174,23 +214,19 @@ function modeItems(manifest: TokenManifest, current: CurrentDocument) {
         continue;
       }
 
-      const matchedMode = existing ?? sameNameUnmapped;
-      if (!matchedMode) {
-        continue;
-      }
-      const changed = !existing || matchedMode.name !== desiredMode.name;
+      const changed = existing.name !== desiredMode.name;
       items.push(
         planItem({
+          ...(changed ? { after: stableStringify(desiredMode) } : {}),
           applicable: true,
+          ...(changed ? { before: stableStringify(existing) } : {}),
           canonicalId: `${desiredCollection.id}:${desiredMode.id}`,
           category: changed ? "update" : "unchanged",
-          detail: !existing
-            ? "An existing mode in the managed collection will be linked to this canonical mode."
-            : changed
-              ? "The managed mode name differs from the manifest."
-              : "The managed mode matches the manifest.",
+          detail: changed
+            ? "The managed mode name differs from the manifest."
+            : "The managed mode matches the manifest.",
           entity: "mode",
-          figmaId: matchedMode.figmaId,
+          figmaId: existing.figmaId,
           label: `${desiredCollection.name} / ${desiredMode.name}`,
         }),
       );
@@ -201,16 +237,17 @@ function modeItems(manifest: TokenManifest, current: CurrentDocument) {
     }
     for (const mode of collection.modes) {
       const retainedById = mode.canonicalId && desiredModeIds.has(mode.canonicalId);
-      const retainedByName = desiredCollection.modes.some(
-        (desiredMode) => !mode.canonicalId && desiredMode.name === mode.name,
-      );
-      if (!retainedById && !retainedByName) {
+      if (mode.canonicalId && !retainedById) {
+        const protectsUnmanagedVariables = hasUnmanagedVariables(collection, current);
         items.push(
           planItem({
-            applicable: true,
+            applicable: !protectsUnmanagedVariables,
+            before: stableStringify(mode),
             canonicalId: `${desiredCollection.id}:${mode.canonicalId ?? `unmapped-${mode.figmaId}`}`,
             category: "stale",
-            detail: "This mode exists only in the managed Figma collection.",
+            detail: protectsUnmanagedVariables
+              ? "This mode is stale but unmanaged variables use the collection, so Prune will preserve it."
+              : "This mode exists only in the managed Figma collection.",
             entity: "mode",
             figmaId: mode.figmaId,
             label: `${desiredCollection.name} / ${mode.name}`,
@@ -242,7 +279,9 @@ function variableItems(manifest: TokenManifest, current: CurrentDocument) {
       for (const match of matches) {
         items.push(
           planItem({
+            after: stableStringify(desired),
             applicable: false,
+            before: stableStringify(match.shape),
             canonicalId: desired.id,
             category: "conflict",
             detail: "More than one managed variable claims this canonical token path.",
@@ -276,7 +315,9 @@ function variableItems(manifest: TokenManifest, current: CurrentDocument) {
       );
       items.push(
         planItem({
+          after: stableStringify(desired),
           applicable: !collision && !parentBlocked,
+          ...(collision ? { before: stableStringify(collision.shape) } : {}),
           canonicalId: desired.id,
           category: collision || parentBlocked ? "conflict" : "create",
           detail: collision
@@ -298,7 +339,9 @@ function variableItems(manifest: TokenManifest, current: CurrentDocument) {
     ) {
       items.push(
         planItem({
+          after: stableStringify(desired),
           applicable: false,
+          before: stableStringify(existing.shape),
           canonicalId: desired.id,
           category: "conflict",
           detail:
@@ -333,7 +376,9 @@ function variableItems(manifest: TokenManifest, current: CurrentDocument) {
       existing.appliedFingerprint === currentFingerprint;
     items.push(
       planItem({
+        after: stableStringify(desired),
         applicable: true,
+        before: stableStringify(existing.shape),
         canonicalId: desired.id,
         category: isRepositoryUpdate ? "update" : "conflict",
         detail: isRepositoryUpdate
@@ -351,6 +396,7 @@ function variableItems(manifest: TokenManifest, current: CurrentDocument) {
       items.push(
         planItem({
           applicable: true,
+          before: stableStringify(variable.shape),
           canonicalId: variable.canonicalId,
           category: "stale",
           detail: "The managed variable is no longer present in the manifest.",
@@ -397,5 +443,9 @@ export function buildSyncPlan(manifest: TokenManifest, current: CurrentDocument)
       contentHash: manifest.contentHash,
       sourceRevision: manifest.sourceRevision,
     },
+    metadataChanged:
+      current.appliedManifest?.contentHash !== manifest.contentHash ||
+      current.appliedManifest?.schemaVersion !== manifest.schemaVersion ||
+      current.appliedManifest?.sourceRevision !== manifest.sourceRevision,
   };
 }

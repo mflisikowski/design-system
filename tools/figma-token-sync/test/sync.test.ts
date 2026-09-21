@@ -11,7 +11,7 @@ import type {
   TokenManifest,
 } from "../src/contract";
 import { validateManifest } from "../src/manifest";
-import { applyItems, pruneItems } from "../src/operations";
+import { applyItems, plansMatch, pruneItems } from "../src/operations";
 import { buildSyncPlan, variableFingerprint } from "../src/plan";
 
 const packageDirectory = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
@@ -38,6 +38,11 @@ function currentVariable(variable: ManifestVariable): CurrentVariable {
 
 function appliedDocument(manifest: TokenManifest): CurrentDocument {
   return {
+    appliedManifest: {
+      contentHash: manifest.contentHash,
+      schemaVersion: manifest.schemaVersion,
+      sourceRevision: manifest.sourceRevision,
+    },
     collections: manifest.collections.map((collection) => ({
       canonicalId: collection.id,
       figmaId: `figma-collection:${collection.id}`,
@@ -123,6 +128,37 @@ describe("read-only Check plan", () => {
     expect(plan.counts.conflict).toBe(0);
     expect(plan.counts.stale).toBe(0);
     expect(plan.counts.unchanged).toBe(plan.items.length);
+    expect(plan.metadataChanged).toBe(false);
+  });
+
+  it("reports manifest metadata changes even when variable shapes are unchanged", async () => {
+    const original = await generatedManifest();
+    const desired = structuredClone(original);
+    desired.contentHash = `sha256:${"a".repeat(64)}`;
+    desired.sourceRevision = `sha256:${"b".repeat(64)}`;
+
+    const plan = buildSyncPlan(desired, appliedDocument(original));
+
+    expect(plan.counts.create + plan.counts.update + plan.counts.conflict + plan.counts.stale).toBe(
+      0,
+    );
+    expect(plan.metadataChanged).toBe(true);
+    expect(applyItems(plan)).toHaveLength(0);
+  });
+
+  it("invalidates a reviewed plan when the Figma snapshot changes", async () => {
+    const manifest = await generatedManifest();
+    const reviewed = buildSyncPlan(manifest, appliedDocument(manifest));
+    const changedDocument = appliedDocument(manifest);
+    const changedVariable = changedDocument.variables[0];
+    if (!changedVariable) {
+      throw new Error("Missing generated variable.");
+    }
+    changedVariable.shape.description = "Changed after Check";
+    const current = buildSyncPlan(manifest, changedDocument);
+
+    expect(plansMatch(reviewed, reviewed)).toBe(true);
+    expect(plansMatch(reviewed, current)).toBe(false);
   });
 
   it("distinguishes a repository update from managed Figma drift", async () => {
@@ -251,5 +287,76 @@ describe("read-only Check plan", () => {
       }),
     );
     expect(selected.some((item) => item.category === "stale")).toBe(false);
+  });
+
+  it("preserves a stale managed collection when it contains an unmanaged variable", async () => {
+    const manifest = await generatedManifest();
+    const current = appliedDocument(manifest);
+    current.collections.push({
+      canonicalId: "legacy-collection",
+      figmaId: "figma-collection:legacy",
+      hiddenFromPublishing: false,
+      modes: [{ canonicalId: "default", figmaId: "figma-mode:legacy:default", name: "Default" }],
+      name: "Legacy collection",
+    });
+    current.variables.push({
+      figmaId: "figma-variable:unmanaged",
+      shape: {
+        codeSyntax: { WEB: "" },
+        collectionId: "legacy-collection",
+        description: "",
+        id: "figma:unmanaged",
+        name: "Unmanaged local variable",
+        scopes: ["TEXT_CONTENT"],
+        type: "STRING",
+        valuesByMode: {},
+      },
+    });
+
+    const plan = buildSyncPlan(manifest, current);
+    const staleCollection = plan.items.find(
+      (item) => item.entity === "collection" && item.canonicalId === "legacy-collection",
+    );
+
+    expect(staleCollection).toMatchObject({ applicable: false, category: "stale" });
+    expect(pruneItems(plan, "PRUNE")).not.toContainEqual(staleCollection);
+  });
+
+  it("does not treat unrelated unmapped modes as stale managed entries", async () => {
+    const manifest = await generatedManifest();
+    const current = appliedDocument(manifest);
+    const collection = current.collections[0];
+    if (!collection) {
+      throw new Error("Missing generated collection.");
+    }
+    collection.modes.push({
+      figmaId: "figma-mode:unmanaged",
+      name: "Unmanaged local mode",
+    });
+
+    const plan = buildSyncPlan(manifest, current);
+
+    expect(plan.items.find((item) => item.figmaId === "figma-mode:unmanaged")).toBeUndefined();
+    expect(pruneItems(plan, "PRUNE").some((item) => item.figmaId === "figma-mode:unmanaged")).toBe(
+      false,
+    );
+  });
+
+  it("includes concrete before and after snapshots for changed values", async () => {
+    const original = await generatedManifest();
+    const desired = structuredClone(original);
+    const target = desired.variables[0];
+    if (!target) {
+      throw new Error("Missing generated variable.");
+    }
+    target.description = "Updated repository description";
+
+    const item = buildSyncPlan(desired, appliedDocument(original)).items.find(
+      (candidate) => candidate.canonicalId === target.id && candidate.entity === "variable",
+    );
+
+    expect(item).toMatchObject({ category: "update" });
+    expect(item?.before).toContain(original.variables[0]?.description);
+    expect(item?.after).toContain("Updated repository description");
   });
 });

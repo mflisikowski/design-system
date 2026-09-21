@@ -79,6 +79,11 @@ export type CurrentVariable = {
 };
 
 export type CurrentDocument = {
+  appliedManifest?: {
+    contentHash: string;
+    schemaVersion: number;
+    sourceRevision: string;
+  };
   collections: CurrentCollection[];
   variables: CurrentVariable[];
 };
@@ -87,7 +92,9 @@ export type DiffCategory = "conflict" | "create" | "stale" | "unchanged" | "upda
 export type DiffEntity = "collection" | "mode" | "variable";
 
 export type DiffItem = {
+  after?: string;
   applicable: boolean;
+  before?: string;
   canonicalId: string;
   category: DiffCategory;
   detail: string;
@@ -104,6 +111,7 @@ export type SyncPlan = {
     contentHash: string;
     sourceRevision: string;
   };
+  metadataChanged: boolean;
 };
 
 export type ApplySummary = {

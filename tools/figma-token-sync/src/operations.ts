@@ -1,4 +1,5 @@
 import type { DiffItem, SyncPlan } from "./contract";
+import { stableStringify } from "./plan";
 
 export function applyItems(plan: SyncPlan): DiffItem[] {
   if (plan.hasBlockingConflicts) {
@@ -18,4 +19,8 @@ export function pruneItems(plan: SyncPlan, confirmation: string): DiffItem[] {
     throw new Error("Prune requires the explicit PRUNE confirmation.");
   }
   return plan.items.filter((item) => item.applicable && item.category === "stale" && item.figmaId);
+}
+
+export function plansMatch(reviewed: SyncPlan, current: SyncPlan) {
+  return stableStringify(reviewed) === stableStringify(current);
 }

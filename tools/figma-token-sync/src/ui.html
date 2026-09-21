@@ -169,6 +169,30 @@
         color: var(--figma-color-text-secondary);
       }
 
+      .change-values {
+        display: grid;
+        grid-column: 2;
+        gap: 6px;
+      }
+
+      .change-values summary {
+        color: var(--figma-color-text-secondary);
+        cursor: pointer;
+      }
+
+      .change-values pre {
+        max-height: 132px;
+        margin: 0;
+        overflow: auto;
+        border-radius: 4px;
+        padding: 8px;
+        color: var(--figma-color-text-secondary);
+        background: var(--figma-color-bg-secondary);
+        font: 11px/1.4 ui-monospace, SFMono-Regular, Consolas, monospace;
+        white-space: pre-wrap;
+        overflow-wrap: anywhere;
+      }
+
       .confirmation {
         display: none;
         gap: 8px;
@@ -324,11 +348,15 @@
       function refreshActions() {
         const actionable = activePlan
           ? activePlan.counts.create + activePlan.counts.update +
-            activePlan.items.filter((item) => item.category === "conflict" && item.applicable).length
+            activePlan.items.filter((item) => item.category === "conflict" && item.applicable).length +
+            (activePlan.metadataChanged ? 1 : 0)
           : 0;
         checkButton.disabled = busy || !parsedManifest;
         applyButton.disabled = busy || !activePlan || activePlan.hasBlockingConflicts || actionable === 0;
-        openPruneButton.disabled = busy || !activePlan || activePlan.counts.stale === 0;
+        const hasPrunableEntries = activePlan
+          ? activePlan.items.some((item) => item.category === "stale" && item.applicable)
+          : false;
+        openPruneButton.disabled = busy || !hasPrunableEntries;
         confirmPruneButton.disabled = busy || confirmationValue.value !== "PRUNE";
         fileInput.disabled = busy;
       }
@@ -351,6 +379,10 @@
           count.textContent = `${category}: ${plan.counts[category]}`;
           summary.append(count);
         }
+        const metadata = document.createElement("span");
+        metadata.className = "count";
+        metadata.textContent = `metadata: ${plan.metadataChanged ? "pending" : "applied"}`;
+        summary.append(metadata);
 
         diff.replaceChildren();
         if (plan.items.length === 0) {
@@ -372,6 +404,24 @@
           detail.className = "item-detail";
           detail.textContent = item.detail;
           row.append(badge, label, detail);
+          if (item.before || item.after) {
+            const values = document.createElement("details");
+            values.className = "change-values";
+            const valuesLabel = document.createElement("summary");
+            valuesLabel.textContent = "Show before and after";
+            values.append(valuesLabel);
+            if (item.before) {
+              const before = document.createElement("pre");
+              before.textContent = `Before\n${item.before}`;
+              values.append(before);
+            }
+            if (item.after) {
+              const after = document.createElement("pre");
+              after.textContent = `After\n${item.after}`;
+              values.append(after);
+            }
+            row.append(values);
+          }
           diff.append(row);
         }
         manifestMeta.textContent = `Source ${plan.manifest.sourceRevision.slice(0, 19)}… · manifest ${plan.manifest.contentHash.slice(0, 19)}…`;
@@ -435,6 +485,14 @@
         if (!message) return;
         setBusy(false);
         if (message.type === "error") {
+          setStatus(message.message, "error");
+          return;
+        }
+        if (message.type === "refresh-required") {
+          renderPlan(message.plan);
+          confirmation.classList.remove("visible");
+          confirmationValue.value = "";
+          refreshActions();
           setStatus(message.message, "error");
           return;
         }

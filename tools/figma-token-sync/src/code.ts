@@ -11,7 +11,7 @@ import type {
   TokenManifest,
 } from "./contract";
 import { validateManifest } from "./manifest";
-import { applyItems, pruneItems } from "./operations";
+import { applyItems, plansMatch, pruneItems } from "./operations";
 import { buildSyncPlan, variableFingerprint } from "./plan";
 
 const panelWidth = 460;
@@ -31,6 +31,7 @@ type UiMessage =
 type PluginOperation = "apply" | "check" | "prune";
 
 let activeManifest: TokenManifest | undefined;
+let activePlan: SyncPlan | undefined;
 
 function parseModeMap(collection: VariableCollection) {
   const raw = collection.getPluginData(collectionModesKey);
@@ -157,7 +158,28 @@ async function readCurrentDocument(): Promise<CurrentDocument> {
     };
   });
 
-  return { collections, variables };
+  const rawManifestMetadata = figma.root.getPluginData(manifestMetadataKey);
+  let appliedManifest: CurrentDocument["appliedManifest"];
+  if (rawManifestMetadata) {
+    try {
+      const parsed = JSON.parse(rawManifestMetadata) as Record<string, unknown>;
+      if (
+        typeof parsed.contentHash === "string" &&
+        typeof parsed.schemaVersion === "number" &&
+        typeof parsed.sourceRevision === "string"
+      ) {
+        appliedManifest = {
+          contentHash: parsed.contentHash,
+          schemaVersion: parsed.schemaVersion,
+          sourceRevision: parsed.sourceRevision,
+        };
+      }
+    } catch {
+      appliedManifest = undefined;
+    }
+  }
+
+  return { ...(appliedManifest ? { appliedManifest } : {}), collections, variables };
 }
 
 function postError(error: unknown) {
@@ -172,6 +194,7 @@ function postPlan(
   plan: SyncPlan,
   summary?: ApplySummary | PruneSummary,
 ) {
+  activePlan = plan;
   figma.ui.postMessage({ operation, plan, ...(summary ? { summary } : {}), type: "result" });
 }
 
@@ -272,6 +295,9 @@ async function applyManifest(manifest: TokenManifest, plan: SyncPlan): Promise<A
     updated: plan.counts.update,
   };
   if (actionable.length === 0) {
+    if (plan.metadataChanged) {
+      setManifestMetadata(manifest);
+    }
     return summary;
   }
 
@@ -333,6 +359,20 @@ async function applyManifest(manifest: TokenManifest, plan: SyncPlan): Promise<A
 
   setManifestMetadata(manifest);
   return summary;
+}
+
+async function reviewedCurrentPlan(manifest: TokenManifest) {
+  const currentPlan = buildSyncPlan(manifest, await readCurrentDocument());
+  if (!activePlan || !plansMatch(activePlan, currentPlan)) {
+    activePlan = currentPlan;
+    figma.ui.postMessage({
+      message: "The Figma file changed after Check. Review the refreshed diff before continuing.",
+      plan: currentPlan,
+      type: "refresh-required",
+    });
+    return undefined;
+  }
+  return currentPlan;
 }
 
 async function pruneManifest(
@@ -405,7 +445,10 @@ figma.ui.onmessage = async (message: UiMessage) => {
     if (!activeManifest) {
       throw new Error("Choose and check a generated variables.json manifest first.");
     }
-    const plan = buildSyncPlan(activeManifest, await readCurrentDocument());
+    const plan = await reviewedCurrentPlan(activeManifest);
+    if (!plan) {
+      return;
+    }
     if (message.type === "apply") {
       const summary = await applyManifest(activeManifest, plan);
       postPlan("apply", buildSyncPlan(activeManifest, await readCurrentDocument()), summary);
