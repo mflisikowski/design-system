@@ -46,7 +46,9 @@ test("exposes the authenticated shell and deterministic client table", async ({ 
   await page.getByRole("button", { name: "More actions for Northstar Studio" }).click();
   await expect(page.getByRole("menu", { name: "Actions for Northstar Studio" })).toBeVisible();
   await page.getByRole("menuitem", { name: "Copy email address" }).click();
-  await expect(page.getByRole("status")).toHaveText("Email address copied for Northstar Studio");
+  const copyStatus = page.getByRole("status");
+  await expect(copyStatus).toHaveText("Email address copied for Northstar Studio");
+  const firstAnnouncementId = await copyStatus.getAttribute("data-announcement-id");
   expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(
     "jamie.chen@northstar.example",
   );
@@ -55,7 +57,9 @@ test("exposes the authenticated shell and deterministic client table", async ({ 
   ).toBeFocused();
   await page.keyboard.press("ArrowDown");
   await expect(page.getByRole("menu", { name: "Actions for Northstar Studio" })).toBeVisible();
-  await page.keyboard.press("Escape");
+  await page.getByRole("menuitem", { name: "Copy email address" }).click();
+  await expect(copyStatus).not.toHaveAttribute("data-announcement-id", firstAnnouncementId ?? "");
+  await expect(copyStatus).toHaveText("Email address copied for Northstar Studio");
 
   await expect(page.getByRole("link", { name: "Settings" })).toHaveAttribute(
     "href",

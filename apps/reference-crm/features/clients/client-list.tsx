@@ -1,7 +1,7 @@
 "use client";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 import { Alert, AlertAction, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
@@ -125,7 +125,14 @@ function ClientTable({ clients, onAnnouncement }: ClientTableProps) {
 
 export function ClientList({ scenario, waitingForApi = false }: ClientListProps) {
   const queryClient = useQueryClient();
-  const [announcement, setAnnouncement] = useState("");
+  const announcementSequence = useRef(0);
+  const [announcement, setAnnouncement] = useState<{ id: number; message: string } | null>(null);
+
+  function announce(message: string) {
+    announcementSequence.current += 1;
+    setAnnouncement({ id: announcementSequence.current, message });
+  }
+
   const clients = useQuery({
     enabled: !waitingForApi,
     queryFn: () => clientRepository.list(scenario),
@@ -135,13 +142,13 @@ export function ClientList({ scenario, waitingForApi = false }: ClientListProps)
     mutationFn: () => clientRepository.reset(),
     onSuccess: (records) => {
       queryClient.setQueryData([...clientListKey, "default"], records);
-      setAnnouncement("Demo data reset");
+      announce("Demo data reset");
     },
   });
 
   function resetDemoData() {
     if (window.confirm("Reset all locally stored demo client data?")) {
-      setAnnouncement("");
+      setAnnouncement(null);
       reset.mutate();
     }
   }
@@ -176,7 +183,7 @@ export function ClientList({ scenario, waitingForApi = false }: ClientListProps)
       </EmptyState>
     );
   } else {
-    content = <ClientTable clients={clients.data} onAnnouncement={setAnnouncement} />;
+    content = <ClientTable clients={clients.data} onAnnouncement={announce} />;
   }
 
   return (
@@ -199,8 +206,14 @@ export function ClientList({ scenario, waitingForApi = false }: ClientListProps)
         </Button>
       </div>
       <p className="demo-disclosure">Demo data is fictional and stored only in this browser.</p>
-      <p aria-live="polite" className="visually-hidden" role="status">
-        {announcement}
+      <p
+        aria-atomic="true"
+        aria-live="polite"
+        className="visually-hidden"
+        data-announcement-id={announcement?.id}
+        role="status"
+      >
+        {announcement ? <span key={announcement.id}>{announcement.message}</span> : null}
       </p>
       {content}
     </section>
