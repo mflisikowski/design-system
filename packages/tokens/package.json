@@ -3,18 +3,35 @@
   "version": "0.0.0",
   "description": "Canonical design tokens for MFD Design System",
   "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./css": "./dist/css/tokens.css",
+    "./tailwind": "./dist/css/tailwind.css",
+    "./figma": "./dist/figma/variables.json",
+    "./json/*": "./dist/json/*.json"
+  },
   "files": [
     "dist"
   ],
   "scripts": {
-    "test": "vitest run",
-    "tokens:check": "tz check",
+    "build": "tz build",
+    "test": "tz build --silent && vitest run",
+    "tokens:build": "tz build",
+    "tokens:check": "tz check && tz build --silent && node ./tools/check-component-token-usage.mjs ../../apps ../../registry",
     "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@terrazzo/token-types": "catalog:"
   },
   "devDependencies": {
     "@mflisikowski/typescript-config": "workspace:*",
     "@terrazzo/cli": "catalog:",
     "@terrazzo/parser": "catalog:",
+    "@terrazzo/plugin-css": "catalog:",
+    "@terrazzo/plugin-js": "catalog:",
     "@types/node": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:"

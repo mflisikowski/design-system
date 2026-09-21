@@ -14,6 +14,9 @@ catalog:
   "@changesets/cli": 3.0.3
   "@terrazzo/cli": 2.7.1
   "@terrazzo/parser": 2.7.1
+  "@terrazzo/plugin-css": 2.7.1
+  "@terrazzo/plugin-js": 2.7.1
+  "@terrazzo/token-types": 2.7.1
   "@types/node": 24.13.6
   "@types/react": 19.3.0
   "@types/react-dom": 19.3.0
