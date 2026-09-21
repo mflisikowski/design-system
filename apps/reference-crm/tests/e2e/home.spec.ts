@@ -44,11 +44,14 @@ test("exposes the authenticated shell and deterministic client table", async ({ 
 
   await page.getByRole("button", { name: "More actions for Northstar Studio" }).click();
   await expect(page.getByRole("menu", { name: "Actions for Northstar Studio" })).toBeVisible();
-  await expect(page.getByRole("menuitem", { name: "Email Jamie Chen" })).toBeFocused();
+  await expect(page.getByRole("menuitem", { name: "No actions available" })).toBeVisible();
   await page.keyboard.press("Escape");
   await expect(
     page.getByRole("button", { name: "More actions for Northstar Studio" }),
   ).toBeFocused();
+  await page.keyboard.press("ArrowDown");
+  await expect(page.getByRole("menu", { name: "Actions for Northstar Studio" })).toBeVisible();
+  await page.keyboard.press("Escape");
 
   await expect(page.getByRole("link", { name: "Settings" })).toHaveAttribute(
     "href",

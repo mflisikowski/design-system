@@ -36,6 +36,9 @@ test("public foundations preserve native behavior and accessible names", async (
         <Icon name="ellipsis" />
       </IconButton>
       <Link href="#clients">Browse clients</Link>
+      <Link href="#settings" render={<a data-router-link="" href="#settings" />}>
+        Router-composed settings
+      </Link>
     </div>,
   );
 
@@ -48,6 +51,9 @@ test("public foundations preserve native behavior and accessible names", async (
   await expect
     .element(page.getByRole("link", { name: "Browse clients" }))
     .toHaveAttribute("href", "#clients");
+  await expect
+    .element(page.getByRole("link", { name: "Router-composed settings" }))
+    .toHaveAttribute("data-router-link", "");
 });
 
 test("feedback and data display expose semantic structures", async () => {

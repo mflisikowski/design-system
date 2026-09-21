@@ -261,6 +261,7 @@ export async function verifyCleanInstallFixtures(registryOutputDirectory = publi
         );
         if (
           installedManifest.dependencies?.["@mflisikowski/tokens"] !== releaseVersion ||
+          installedManifest.dependencies?.["@base-ui/react"] !== "1.8.0" ||
           installedManifest.dependencies?.clsx !== "2.1.1" ||
           installedManifest.dependencies?.["lucide-react"] !== "1.47.0"
         ) {

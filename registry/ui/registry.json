@@ -97,13 +97,13 @@
       "type": "registry:ui",
       "title": "Link",
       "description": "Semantic anchor styling for inline and standalone navigation.",
-      "dependencies": ["@mflisikowski/tokens@0.0.0", "clsx@2.1.1"],
+      "dependencies": ["@base-ui/react@1.8.0", "@mflisikowski/tokens@0.0.0", "clsx@2.1.1"],
       "registryDependencies": [],
       "files": [
         { "path": "link.tsx", "type": "registry:ui", "target": "@ui/link.tsx" },
         { "path": "link.css", "type": "registry:ui", "target": "@ui/link.css" }
       ],
-      "docs": "Link remains a native anchor. Inline links stay underlined; standalone navigation reveals its underline on hover and focus.",
+      "docs": "Link remains a native anchor and exposes a render seam for application routers. Inline links stay underlined; standalone navigation reveals its underline on hover and focus.",
       "meta": {
         "maturity": "experimental",
         "version": "0.0.0",

@@ -1,12 +1,22 @@
+"use client";
+
+import { useRender } from "@base-ui/react/use-render";
 import { clsx } from "clsx";
-import type { ComponentPropsWithRef } from "react";
 
 import "./link.css";
 
-export type LinkProps = ComponentPropsWithRef<"a"> & {
+export type LinkProps = useRender.ComponentProps<"a"> & {
   variant?: "inline" | "standalone";
 };
 
-export function Link({ className, variant = "inline", ...props }: LinkProps) {
-  return <a {...props} className={clsx("mfd-link", className)} data-variant={variant} />;
+export function Link({ className, render, variant = "inline", ...props }: LinkProps) {
+  return useRender({
+    defaultTagName: "a",
+    props: {
+      ...props,
+      className: clsx("mfd-link", className),
+      "data-variant": variant,
+    },
+    render,
+  });
 }

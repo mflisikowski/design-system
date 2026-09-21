@@ -1,5 +1,6 @@
 "use client";
 
+import NextLink from "next/link";
 import { usePathname } from "next/navigation";
 
 import { Link } from "@/components/ui/link";
@@ -21,6 +22,7 @@ export function PrimaryNavigation() {
             aria-current={active ? "page" : undefined}
             href={destination.href}
             key={destination.href}
+            render={<NextLink href={destination.href} />}
             variant="standalone"
           >
             {destination.label}
