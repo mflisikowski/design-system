@@ -14,11 +14,12 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@base-ui/react": "catalog:",
+    "@base-ui/react": "1.8.0",
     "@fontsource-variable/dm-sans": "catalog:",
     "@fontsource-variable/geist": "catalog:",
     "@fontsource-variable/geist-mono": "catalog:",
     "@fontsource-variable/lora": "catalog:",
+    "@hookform/resolvers": "catalog:",
     "@mflisikowski/tokens": "workspace:*",
     "@tanstack/react-query": "5.103.2",
     "clsx": "2.1.1",
@@ -26,6 +27,8 @@
     "next": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
+    "react-hook-form": "catalog:",
+    "sonner": "2.0.8",
     "zod": "4.6.5"
   },
   "devDependencies": {

@@ -1,0 +1,50 @@
+import { Button } from "../../../../registry/ui/button";
+import { Dialog, DialogBody, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "../../../../registry/ui/dialog";
+import { Installation, LiveExample, MaturityNotice } from "@/components/docs/component-documentation";
+import { publicComponentDocumentation } from "@/lib/public-component-docs";
+
+<MaturityNotice introduced="0.0.0" status="experimental" />
+
+## Installation
+
+<Installation {...publicComponentDocumentation.dialog.installation} />
+
+## Purpose
+
+Dialog contains a focused task while blocking interaction with the page behind it.
+
+## Examples
+
+<LiveExample label="Responsive Dialog"><Dialog><DialogTrigger>Open example</DialogTrigger><DialogContent><DialogHeader><DialogTitle>Example dialog</DialogTitle><DialogDescription>Review the modal behavior.</DialogDescription></DialogHeader><DialogBody>Dialog content</DialogBody><DialogFooter><DialogClose render={<Button variant="outline" />}>Close</DialogClose></DialogFooter></DialogContent></Dialog></LiveExample>
+
+## Anatomy
+
+Dialog composes Root, Trigger, Content, Header, Title, Description, Body, Footer, and Close parts.
+
+## API
+
+Root supports controlled and uncontrolled open state and close-request details. Content supports `size="sm" | "md" | "lg"` and a pending close lock.
+
+## States
+
+Closed, opening, open, closing, and pending-protected states are supported. Below 640px, Content becomes full screen automatically.
+
+## Accessibility
+
+Title and Description name the modal. Focus is trapped while open and returns to the trigger on close. The visible Close control always remains in the anatomy.
+
+## Keyboard behavior
+
+Tab and Shift+Tab stay within the Dialog. Escape requests close. Product flows may intercept close requests while work is dirty or pending.
+
+## Figma specification
+
+Anatomy is `Backdrop / Content / Header / Body / Footer / Close`. Properties are Size and content-presence properties; mobile presentation is responsive, not a variant.
+
+## Content guidance
+
+Use a verb-led title and a short description of the task. Keep the primary action in Footer and avoid long or multi-step work.
+
+## Related patterns
+
+Add Client uses medium Dialog presentation and the same full-screen form below 640px.

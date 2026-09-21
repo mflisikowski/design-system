@@ -21,12 +21,13 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { AddClientDialog } from "./add-client-dialog";
 import { ClientRowActions } from "./client-row-actions";
 import type { Client } from "./model";
+import { clientQueryKeys } from "./query-keys";
 import { type ClientListScenario, createHttpClientRepository } from "./repository";
 
 const clientRepository = createHttpClientRepository();
-const clientListKey = ["clients"] as const;
 const dateFormatter = new Intl.DateTimeFormat("en-US", {
   dateStyle: "medium",
   timeZone: "UTC",
@@ -136,12 +137,12 @@ export function ClientList({ scenario, waitingForApi = false }: ClientListProps)
   const clients = useQuery({
     enabled: !waitingForApi,
     queryFn: () => clientRepository.list(scenario),
-    queryKey: [...clientListKey, scenario],
+    queryKey: clientQueryKeys.list(scenario),
   });
   const reset = useMutation({
     mutationFn: () => clientRepository.reset(),
     onSuccess: (records) => {
-      queryClient.setQueryData([...clientListKey, "default"], records);
+      queryClient.setQueryData(clientQueryKeys.list("default"), records);
       announce("Demo data reset");
     },
   });
@@ -196,14 +197,17 @@ export function ClientList({ scenario, waitingForApi = false }: ClientListProps)
             Browse fictional organizations and their primary contacts.
           </p>
         </div>
-        <Button
-          loading={reset.isPending}
-          loadingLabel="Resetting demo data"
-          onClick={resetDemoData}
-          variant="outline"
-        >
-          Reset demo data
-        </Button>
+        <div className="page-heading__actions">
+          <AddClientDialog scenario={scenario} />
+          <Button
+            loading={reset.isPending}
+            loadingLabel="Resetting demo data"
+            onClick={resetDemoData}
+            variant="outline"
+          >
+            Reset demo data
+          </Button>
+        </div>
       </div>
       <p className="demo-disclosure">Demo data is fictional and stored only in this browser.</p>
       <p

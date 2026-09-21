@@ -1,6 +1,6 @@
 import { delay, HttpResponse, http } from "msw";
 
-import { type Client, clientsSchema } from "./model";
+import { type Client, clientsSchema, createClientInputSchema } from "./model";
 import { deterministicClients } from "./seed";
 
 const clientsStorageKey = "mfd-demo-clients";
@@ -62,6 +62,20 @@ export function createClientHandlers(storage: ClientStorage, latency = defaultLa
       }
 
       return HttpResponse.json(readOrSeed(storage));
+    }),
+    http.post("*/api/clients", async ({ request }) => {
+      await delay(latency);
+      const input = createClientInputSchema.parse(await request.json());
+      const timestamp = new Date().toISOString();
+      const client: Client = {
+        ...input,
+        id: crypto.randomUUID(),
+        relationshipStatus: "active",
+        createdAt: timestamp,
+        updatedAt: timestamp,
+      };
+      storage.write([client, ...readOrSeed(storage)]);
+      return HttpResponse.json(client, { status: 201 });
     }),
     http.post("*/api/clients/reset", async () => {
       await delay(latency);

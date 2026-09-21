@@ -2,9 +2,8 @@
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
-
+import { ToastViewport } from "@/components/ui/toast";
 import { startMockApi } from "@/mocks/browser";
-
 import { ClientList } from "./client-list";
 import type { ClientListScenario } from "./repository";
 
@@ -39,6 +38,7 @@ export function ClientExperience({ scenario }: ClientExperienceProps) {
   return (
     <QueryClientProvider client={queryClient}>
       <ClientList scenario={scenario} waitingForApi={!ready} />
+      <ToastViewport />
     </QueryClientProvider>
   );
 }

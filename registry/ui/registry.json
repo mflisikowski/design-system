@@ -93,6 +93,108 @@
       }
     },
     {
+      "name": "field",
+      "type": "registry:ui",
+      "title": "Field",
+      "description": "Accessible form-field composition for labels, descriptions, errors, and controls.",
+      "dependencies": ["@mflisikowski/tokens@0.0.0", "clsx@2.1.1"],
+      "registryDependencies": [],
+      "files": [
+        { "path": "field.tsx", "type": "registry:ui", "target": "@ui/field.tsx" },
+        { "path": "field.css", "type": "registry:ui", "target": "@ui/field.css" }
+      ],
+      "docs": "Compose FieldLabel, optional FieldDescription, one compatible control, and FieldError. Field owns their accessible identifiers and invalid relationship.",
+      "meta": {
+        "maturity": "experimental",
+        "version": "0.0.0",
+        "installation": {
+          "latest": "pnpm dlx shadcn@latest add @mflisikowski/field",
+          "snapshot": "pnpm dlx shadcn@latest add https://design-system.mflisikowski.dev/r/v/0.0.0/field.json"
+        }
+      }
+    },
+    {
+      "name": "input",
+      "type": "registry:ui",
+      "title": "Input",
+      "description": "Density-aware native text input for use inside Field.",
+      "dependencies": ["@mflisikowski/tokens@0.0.0", "clsx@2.1.1"],
+      "registryDependencies": ["@mflisikowski/field"],
+      "files": [
+        { "path": "input.tsx", "type": "registry:ui", "target": "@ui/input.tsx" },
+        { "path": "input.css", "type": "registry:ui", "target": "@ui/input.css" }
+      ],
+      "docs": "Use Input inside Field. Native input properties and refs are forwarded; size maps to density-aware control tokens.",
+      "meta": {
+        "maturity": "experimental",
+        "version": "0.0.0",
+        "installation": {
+          "latest": "pnpm dlx shadcn@latest add @mflisikowski/input",
+          "snapshot": "pnpm dlx shadcn@latest add https://design-system.mflisikowski.dev/r/v/0.0.0/input.json"
+        }
+      }
+    },
+    {
+      "name": "textarea",
+      "type": "registry:ui",
+      "title": "Textarea",
+      "description": "Density-aware native multiline text control for use inside Field.",
+      "dependencies": ["@mflisikowski/tokens@0.0.0", "clsx@2.1.1"],
+      "registryDependencies": ["@mflisikowski/field", "@mflisikowski/input"],
+      "files": [{ "path": "textarea.tsx", "type": "registry:ui", "target": "@ui/textarea.tsx" }],
+      "docs": "Use Textarea inside Field. Native textarea properties and refs are forwarded; size maps to density-aware control tokens.",
+      "meta": {
+        "maturity": "experimental",
+        "version": "0.0.0",
+        "installation": {
+          "latest": "pnpm dlx shadcn@latest add @mflisikowski/textarea",
+          "snapshot": "pnpm dlx shadcn@latest add https://design-system.mflisikowski.dev/r/v/0.0.0/textarea.json"
+        }
+      }
+    },
+    {
+      "name": "dialog",
+      "type": "registry:ui",
+      "title": "Dialog",
+      "description": "Compositional modal dialog with responsive full-screen presentation.",
+      "dependencies": ["@base-ui/react@1.8.0", "@mflisikowski/tokens@0.0.0", "clsx@2.1.1"],
+      "registryDependencies": [],
+      "files": [
+        { "path": "dialog.tsx", "type": "registry:ui", "target": "@ui/dialog.tsx" },
+        { "path": "dialog.css", "type": "registry:ui", "target": "@ui/dialog.css" }
+      ],
+      "docs": "Compose Dialog, Trigger, Content, Header, Title, Description, Body, Footer, and Close. Content becomes full screen below 640px.",
+      "meta": {
+        "maturity": "experimental",
+        "version": "0.0.0",
+        "installation": {
+          "latest": "pnpm dlx shadcn@latest add @mflisikowski/dialog",
+          "snapshot": "pnpm dlx shadcn@latest add https://design-system.mflisikowski.dev/r/v/0.0.0/dialog.json"
+        }
+      }
+    },
+    {
+      "name": "toast",
+      "type": "registry:ui",
+      "title": "Toast",
+      "description": "Polite success acknowledgement adapter with bounded visibility and queueing.",
+      "dependencies": ["@mflisikowski/tokens@0.0.0", "sonner@2.0.8"],
+      "registryDependencies": [],
+      "files": [
+        { "path": "toast.tsx", "type": "registry:ui", "target": "@ui/toast.tsx" },
+        { "path": "toast.css", "type": "registry:ui", "target": "@ui/toast.css" }
+      ],
+      "docs": "Mount ToastViewport once, then call the MFD toast adapter. Success acknowledgement is polite, dismissible, and lasts four seconds by default.",
+      "meta": {
+        "maturity": "experimental",
+        "version": "0.0.0",
+        "installation": {
+          "latest": "pnpm dlx shadcn@latest add @mflisikowski/toast",
+          "snapshot": "pnpm dlx shadcn@latest add https://design-system.mflisikowski.dev/r/v/0.0.0/toast.json"
+        }
+      }
+    },
+    {
       "name": "link",
       "type": "registry:ui",
       "title": "Link",

@@ -1,0 +1,50 @@
+import { Field, FieldDescription, FieldError, FieldLabel } from "../../../../registry/ui/field";
+import { Input } from "../../../../registry/ui/input";
+import { Installation, LiveExample, MaturityNotice } from "@/components/docs/component-documentation";
+import { publicComponentDocumentation } from "@/lib/public-component-docs";
+
+<MaturityNotice introduced="0.0.0" status="experimental" />
+
+## Installation
+
+<Installation {...publicComponentDocumentation.field.installation} />
+
+## Purpose
+
+Field gives any compatible control one visible label plus optional description and validation feedback without coupling it to a form library.
+
+## Examples
+
+<LiveExample label="Field composition"><Field><FieldLabel>Organization name</FieldLabel><FieldDescription>Use the client organization.</FieldDescription><Input /></Field></LiveExample>
+
+## Anatomy
+
+Field composes FieldLabel, optional FieldDescription, one control, and optional FieldError.
+
+## API
+
+`invalid` controls the error relationship and visual state. Every part forwards its applicable native properties.
+
+## States
+
+Field supports default and invalid states. Disabled and read-only state belongs to the contained control.
+
+## Accessibility
+
+Field owns generated identifiers so the label names its control and descriptions and errors contribute to its accessible description. FieldError accepts external validation content.
+
+## Keyboard behavior
+
+Field adds no keyboard behavior; the contained control keeps its native interaction.
+
+## Figma specification
+
+Anatomy is `Field / Label / optional Description / Control / optional Error`. Invalid is a state, not a consumer-selected visual variant.
+
+## Content guidance
+
+Labels name the data requested. Descriptions provide durable help; errors explain how to correct the current value.
+
+## Related patterns
+
+ClientForm composes Field with Input and Textarea and supplies React Hook Form validation messages.

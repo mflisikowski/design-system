@@ -1,0 +1,50 @@
+import { Field, FieldLabel } from "../../../../registry/ui/field";
+import { Textarea } from "../../../../registry/ui/textarea";
+import { Installation, LiveExample, MaturityNotice } from "@/components/docs/component-documentation";
+import { publicComponentDocumentation } from "@/lib/public-component-docs";
+
+<MaturityNotice introduced="0.0.0" status="experimental" />
+
+## Installation
+
+<Installation {...publicComponentDocumentation.textarea.installation} />
+
+## Purpose
+
+Textarea collects multiline text while preserving native editing behavior and Field relationships.
+
+## Examples
+
+<LiveExample label="Textarea"><Field><FieldLabel>Notes</FieldLabel><Textarea rows={4} /></Field></LiveExample>
+
+## Anatomy
+
+One native `textarea` is composed inside Field.
+
+## API
+
+`size` accepts `sm`, `md`, or `lg` and defaults to `md`. Native textarea properties and refs are forwarded.
+
+## States
+
+Default, hover, focus-visible, invalid, disabled, and read-only native behavior are supported.
+
+## Accessibility
+
+Use inside Field for a visible label and relationships. A product-owned limit should be visible before it becomes an error.
+
+## Keyboard behavior
+
+Tab focuses the textarea. Enter inserts a line break; native selection and editing behavior remain intact.
+
+## Figma specification
+
+Anatomy is `Control / Value`. Properties are Size and Disabled; invalid and focus-visible are states.
+
+## Content guidance
+
+Use Textarea only when multiline input is expected. Set product-owned length limits from the approved domain contract.
+
+## Related patterns
+
+ClientForm uses Textarea for optional relationship notes.

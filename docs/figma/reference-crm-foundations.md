@@ -16,6 +16,11 @@ published instances in DS Reference CRM.
 | Alert | Container / Title / Description / optional Action | Tone: Danger, Success; Action present | Live-region behavior is an annotation, not a visual variant. Alert never receives focus automatically. |
 | Empty State | Container / optional Icon / Title / optional Description / optional Actions | Icon present; Description present; Actions: None, Primary, Primary and Secondary | Icon is decorative; Title is required; failure is not an Empty State. |
 | Table | Table / Caption / Header / Row / Head / Body / Cell | Density mode only | Use native-table reading order. Loading skeleton keeps the table anatomy; empty and error states sit outside Body. |
+| Field | Container / Label / optional Description / Control slot / optional Error | Invalid; Description present; Error present | Label names the slotted control. Description and Error are included in its accessible-description annotation. |
+| Input | Control / Value | Size: Small, Medium, Large; Disabled; Read only | Compose only inside Field. Mobile text remains at least 16 CSS px and size follows the active density mode. |
+| Textarea | Control / Value | Size: Small, Medium, Large; Disabled; Read only | Compose only inside Field. Height may grow by product context without changing the control contract. |
+| Dialog | Backdrop / Content / Header / Title / Description / Body / Footer / Close | Size: Small, Medium, Large; Pending | Below 640 px, the same Content is full screen. Header and Footer remain visible while Body scrolls; pending blocks every close request. |
+| Toast | Container / Status icon / Message / Dismiss | Tone: Success | Runtime notes specify polite status semantics, four-second duration, at most three visible items, and queueing. |
 
 ## Reference CRM frames
 
@@ -23,6 +28,13 @@ Create sign-in, Client loading, Client fetch error, Client empty, and Client pop
 wide and 320 px widths. The populated frame uses Client, Primary contact, Added, and Actions
 columns. The narrow frame omits Added while retaining the same table structure. Annotate the skip
 link as the first focusable element and the main region as its stable target.
+
+Add Client is specified in wide default, wide invalid, wide submitting, wide success-return, and
+320 px full-screen frames. Default has Organization name as the initial keyboard/pointer focus;
+the mobile touch annotation places initial focus on Content. Invalid shows all three required-field
+errors and Organization name focus. Submitting marks the form busy, disables every control and
+close path, and replaces the submit label with `Saving client`. Success returns to the populated
+Clients frame with the created row first, Add client focused, and the polite `Client added` Toast.
 
 ## Review gate
 

@@ -206,6 +206,29 @@ h1 {
   justify-content: space-between;
 }
 
+.page-heading__actions {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--mfd-space-inline-md);
+  justify-content: flex-end;
+}
+
+.client-form__fields {
+  display: grid;
+  gap: var(--mfd-space-group-gap);
+}
+
+.client-form {
+  display: contents;
+}
+
+.client-form__fields {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
 .demo-disclosure {
   background: var(--mfd-color-bg-subtle);
   border-inline-start: 3px solid var(--mfd-color-accent-solid);

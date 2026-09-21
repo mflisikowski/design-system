@@ -1,0 +1,28 @@
+.mfd-field {
+  display: grid;
+  gap: var(--mfd-space-field-gap);
+}
+
+.mfd-field__label {
+  color: var(--mfd-color-text-primary);
+  font:
+    var(--mfd-typography-label-font-weight) var(--mfd-typography-label-font-size) /
+    var(--mfd-typography-label-line-height) var(--mfd-typography-label-font-family);
+  letter-spacing: var(--mfd-typography-label-letter-spacing);
+}
+
+.mfd-field__description,
+.mfd-field__error {
+  font:
+    var(--mfd-typography-caption-font-weight) var(--mfd-typography-caption-font-size) /
+    var(--mfd-typography-caption-line-height) var(--mfd-typography-caption-font-family);
+  margin: 0;
+}
+
+.mfd-field__description {
+  color: var(--mfd-color-text-secondary);
+}
+
+.mfd-field__error {
+  color: var(--mfd-color-status-danger-text);
+}

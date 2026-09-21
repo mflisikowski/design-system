@@ -60,12 +60,21 @@ describe("canonical registry sample contract", () => {
       uiRegistry.items.map((/** @type {{ name: string }} */ item) => [item.name, item]),
     );
 
-    for (const name of ["button", "icon", "link", "alert", "empty-state", "table"]) {
+    for (const name of [
+      "button",
+      "icon",
+      "link",
+      "alert",
+      "empty-state",
+      "table",
+      "field",
+      "input",
+      "textarea",
+      "dialog",
+      "toast",
+    ]) {
       expect(items.get(name)).toMatchObject({
-        dependencies: expect.arrayContaining([
-          `@mflisikowski/tokens@${releaseManifest.version}`,
-          "clsx@2.1.1",
-        ]),
+        dependencies: expect.arrayContaining([`@mflisikowski/tokens@${releaseManifest.version}`]),
         docs: expect.any(String),
         meta: {
           maturity: "experimental",
@@ -76,6 +85,10 @@ describe("canonical registry sample contract", () => {
           },
         },
       });
+
+      if (name !== "toast") {
+        expect(items.get(name).dependencies).toContain("clsx@2.1.1");
+      }
 
       await expect(readJson(`apps/docs/public/r/${name}.json`)).resolves.toMatchObject({ name });
       await expect(

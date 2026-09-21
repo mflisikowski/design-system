@@ -1,0 +1,50 @@
+import { Field, FieldLabel } from "../../../../registry/ui/field";
+import { Input } from "../../../../registry/ui/input";
+import { Installation, LiveExample, MaturityNotice } from "@/components/docs/component-documentation";
+import { publicComponentDocumentation } from "@/lib/public-component-docs";
+
+<MaturityNotice introduced="0.0.0" status="experimental" />
+
+## Installation
+
+<Installation {...publicComponentDocumentation.input.installation} />
+
+## Purpose
+
+Input collects one line of text while preserving native semantics and the shared Field relationship.
+
+## Examples
+
+<LiveExample label="Input sizes"><Field><FieldLabel>Contact email</FieldLabel><Input type="email" /></Field></LiveExample>
+
+## Anatomy
+
+One native `input` is composed inside Field.
+
+## API
+
+`size` accepts `sm`, `md`, or `lg` and defaults to `md`. Native input properties and refs are forwarded.
+
+## States
+
+Default, hover, focus-visible, invalid, disabled, and read-only native behavior are supported.
+
+## Accessibility
+
+Use inside Field for a visible label and relationships. Mobile text remains at least 16 CSS pixels to avoid unintended browser zoom.
+
+## Keyboard behavior
+
+Tab focuses the input. Editing, selection, and submission retain native browser behavior.
+
+## Figma specification
+
+Anatomy is `Control / Value`. Properties are Size and Disabled; invalid and focus-visible are states.
+
+## Content guidance
+
+Choose the native `type` and autocomplete value that match the requested data. Do not place instructions only in placeholder text.
+
+## Related patterns
+
+ClientForm uses Input for organization and primary-contact details.

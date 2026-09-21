@@ -6,12 +6,25 @@ import { render } from "vitest-browser-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import {
+  Dialog,
+  DialogBody,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
   EmptyState,
   EmptyStateActions,
   EmptyStateDescription,
   EmptyStateTitle,
 } from "@/components/ui/empty-state";
+import { Field, FieldDescription, FieldError, FieldLabel } from "@/components/ui/field";
 import { Icon, IconButton } from "@/components/ui/icon";
+import { Input } from "@/components/ui/input";
 import { Link } from "@/components/ui/link";
 import {
   Table,
@@ -22,6 +35,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Textarea } from "@/components/ui/textarea";
+import { ToastViewport, toast } from "@/components/ui/toast";
 
 test("public foundations preserve native behavior and accessible names", async () => {
   const onClick = vi.fn();
@@ -104,4 +119,82 @@ test("feedback and data display expose semantic structures", async () => {
 
   await page.getByRole("button", { name: "Show empty state" }).click();
   await expect.element(page.getByRole("heading", { name: "No clients yet" })).toBeInTheDocument();
+});
+
+test("form controls expose labels, descriptions, and validation errors", async () => {
+  render(
+    <>
+      <Field invalid>
+        <FieldLabel>Organization name</FieldLabel>
+        <FieldDescription>Use the client organization, not the contact.</FieldDescription>
+        <Input />
+        <FieldError>Organization name is required.</FieldError>
+      </Field>
+      <Field>
+        <FieldLabel>Notes</FieldLabel>
+        <Textarea />
+      </Field>
+    </>,
+  );
+
+  const organizationName = page.getByRole("textbox", { name: "Organization name" });
+  await expect.element(organizationName).toHaveAttribute("aria-invalid", "true");
+  await expect
+    .element(organizationName)
+    .toHaveAccessibleDescription(
+      "Use the client organization, not the contact. Organization name is required.",
+    );
+  await expect.element(page.getByRole("textbox", { name: "Notes" })).toBeInTheDocument();
+});
+
+test("dialog manages modal focus and restores it to the trigger", async () => {
+  const onOpenChange = vi.fn();
+  render(
+    <Dialog onOpenChange={onOpenChange}>
+      <DialogTrigger>Open client form</DialogTrigger>
+      <DialogContent size="md">
+        <DialogHeader>
+          <DialogTitle>Add client</DialogTitle>
+          <DialogDescription>Enter the organization and primary contact.</DialogDescription>
+        </DialogHeader>
+        <DialogBody>
+          <Field>
+            <FieldLabel>Organization name</FieldLabel>
+            <Input />
+          </Field>
+        </DialogBody>
+        <DialogFooter>
+          <DialogClose>Cancel</DialogClose>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>,
+  );
+
+  const trigger = page.getByRole("button", { name: "Open client form" });
+  await trigger.click();
+  expect(onOpenChange).toHaveBeenLastCalledWith(
+    true,
+    expect.objectContaining({ cancel: expect.any(Function), reason: "trigger" }),
+  );
+  await expect.element(page.getByRole("dialog", { name: "Add client" })).toBeInTheDocument();
+  await expect.element(page.getByRole("textbox", { name: "Organization name" })).toHaveFocus();
+  await page.getByRole("button", { name: "Cancel" }).click();
+  expect(onOpenChange).toHaveBeenLastCalledWith(
+    false,
+    expect.objectContaining({ cancel: expect.any(Function), reason: "close" }),
+  );
+  await expect.element(trigger).toHaveFocus();
+});
+
+test("toast adapter announces successful acknowledgements politely", async () => {
+  render(
+    <>
+      <ToastViewport />
+      <Button onClick={() => toast.success("Client added")}>Save client</Button>
+    </>,
+  );
+
+  await page.getByRole("button", { name: "Save client" }).click();
+  await expect.element(page.getByText("Client added")).toBeInTheDocument();
+  await expect.element(page.getByText("Client added")).toHaveAttribute("data-title");
 });

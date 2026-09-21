@@ -1,0 +1,51 @@
+import { CodeExample, Installation, MaturityNotice } from "@/components/docs/component-documentation";
+import { publicComponentDocumentation } from "@/lib/public-component-docs";
+
+<MaturityNotice introduced="0.0.0" status="experimental" />
+
+## Installation
+
+<Installation {...publicComponentDocumentation.toast.installation} />
+
+## Purpose
+
+Toast briefly acknowledges completed work that requires no recovery action.
+
+## Examples
+
+<CodeExample filename="client-success.tsx" language="tsx">{
+`<ToastViewport />
+toast.success("Client added")`
+}</CodeExample>
+
+## Anatomy
+
+ToastViewport owns queue placement; each Toast contains status content and a dismiss control.
+
+## API
+
+Mount `ToastViewport` once, then call `toast.success(message)`. Sonner remains internal and is not part of the MFD application contract.
+
+## States
+
+Entering, visible, dismissing, and queued states are supported. Up to three Toasts are visible and the default duration is four seconds.
+
+## Accessibility
+
+Success uses polite status semantics and never moves focus. Information that requires recovery must remain in Alert instead.
+
+## Keyboard behavior
+
+Toast does not enter focus automatically. Its dismiss control is reachable in the normal tab order.
+
+## Figma specification
+
+Anatomy is `Container / Status icon / Message / Dismiss`. Queueing and duration are runtime annotations rather than visual variants.
+
+## Content guidance
+
+Use a short past-tense acknowledgement such as “Client added”. Do not place errors or required actions only in Toast.
+
+## Related patterns
+
+Add Client emits `Client added` after the returned record updates the list.

@@ -16,4 +16,30 @@ export const clientSchema = z.object({
 
 export const clientsSchema = z.array(clientSchema);
 
+export const createClientInputSchema = z.object({
+  organizationName: z
+    .string()
+    .trim()
+    .min(2, "Organization name must have at least 2 characters.")
+    .max(100, "Organization name must have at most 100 characters."),
+  contactName: z
+    .string()
+    .trim()
+    .min(2, "Contact name must have at least 2 characters.")
+    .max(100, "Contact name must have at most 100 characters."),
+  contactEmail: z.string().trim().pipe(z.email("Enter a valid email address.")),
+  contactPhone: z
+    .string()
+    .trim()
+    .transform((value) => value || undefined)
+    .optional(),
+  notes: z
+    .string()
+    .trim()
+    .max(1000, "Notes must have at most 1000 characters.")
+    .transform((value) => value || undefined)
+    .optional(),
+});
+
 export type Client = z.infer<typeof clientSchema>;
+export type CreateClientInput = z.infer<typeof createClientInputSchema>;
