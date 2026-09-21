@@ -1,0 +1,6 @@
+@import "tailwindcss";
+
+@theme inline {
+  --color-canvas: var(--mfd-color-bg-canvas);
+  --color-text-primary: var(--mfd-color-text-primary);
+}

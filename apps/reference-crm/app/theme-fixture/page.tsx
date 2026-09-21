@@ -94,6 +94,7 @@ export default function ThemeFixturePage() {
                         aria-hidden="true"
                         className={styles.contrastSwatch}
                         data-contrast-pair={pair.id}
+                        /* oxlint-disable-next-line shadcn/no-inline-styles -- MFD exception: Dynamic semantic-token pairs verify generated contrast against rendered backgrounds. */
                         style={contrastStyle(pair)}
                       >
                         {pair.category === "boundary" || pair.category === "focus" ? "" : "Aa"}

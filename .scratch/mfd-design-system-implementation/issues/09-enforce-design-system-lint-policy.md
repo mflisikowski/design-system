@@ -4,9 +4,19 @@
 
 **Blocked by:** 05: Generate and validate token artifacts.
 
-**Status:** ready-for-agent
+**Status:** resolved
 
-- [ ] Every approved rule has valid and invalid fixtures with the intended error or warning severity.
-- [ ] Diagnostics explain how to use semantic tokens and respect registry and application ownership boundaries.
-- [ ] Narrow inline exception syntax is tested and cannot suppress more than the justified scope.
-- [ ] The documented ESLint fallback threshold is exercised without enabling the fallback prematurely.
+- [x] Every approved rule has valid and invalid fixtures with the intended error or warning severity.
+- [x] Diagnostics explain how to use semantic tokens and respect registry and application ownership boundaries.
+- [x] Narrow inline exception syntax is tested and cannot suppress more than the justified scope.
+- [x] The documented ESLint fallback threshold is exercised without enabling the fallback prematurely.
+
+## Comments
+
+### 2026-09-21 — executable lint policy completed
+
+- Published the shared Oxlint preset with all six approved `@shadcn/lint` rules, actionable MFD guidance, and a registry override limited to `no-restyle`.
+- Added valid and invalid fixtures for every rule, including severity assertions and application-versus-registry ownership coverage.
+- Added a checked `oxlint-disable-next-line` exception syntax with mandatory reasons, a reviewed repository baseline, and unused-directive failures.
+- Exercised every documented ESLint fallback condition while keeping ESLint absent.
+- Verified the complete workspace with `pnpm verify`, including builds, tests, Browser Mode, E2E, tokens, registry installation, and changeset policy.

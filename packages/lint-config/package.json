@@ -3,5 +3,37 @@
   "version": "0.0.0",
   "description": "Shared lint policy for MFD Design System consumers.",
   "type": "module",
-  "files": []
+  "bin": {
+    "mfd-lint-exceptions": "./bin/check-exceptions.mjs"
+  },
+  "exports": {
+    ".": "./src/policy.mjs",
+    "./exceptions": "./src/exceptions.mjs",
+    "./oxlint": "./oxlint.json"
+  },
+  "files": [
+    "bin",
+    "src",
+    "README.md",
+    "exception-baseline.schema.json",
+    "oxlint.json"
+  ],
+  "dependencies": {
+    "@shadcn/lint": "catalog:"
+  },
+  "scripts": {
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@mflisikowski/typescript-config": "workspace:*",
+    "@types/node": "catalog:",
+    "oxlint": "catalog:",
+    "tailwindcss": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
 }

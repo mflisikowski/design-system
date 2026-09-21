@@ -1,0 +1,11 @@
+{
+  "$schema": "./packages/lint-config/exception-baseline.schema.json",
+  "exceptions": [
+    {
+      "count": 1,
+      "file": "apps/reference-crm/app/theme-fixture/page.tsx",
+      "reason": "Dynamic semantic-token pairs verify generated contrast against rendered backgrounds.",
+      "rule": "shadcn/no-inline-styles"
+    }
+  ]
+}

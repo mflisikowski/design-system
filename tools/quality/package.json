@@ -9,7 +9,7 @@
     "changeset:version": "node scripts/run-from-root.mjs changeset version",
     "format": "node scripts/run-from-root.mjs biome check .",
     "format:write": "node scripts/run-from-root.mjs biome check --write .",
-    "lint": "node scripts/run-from-root.mjs oxlint --config .oxlintrc.json --deny-warnings .",
+    "lint": "node scripts/run-lint.mjs",
     "registry:check": "node scripts/check-optional-gate.mjs registry",
     "test": "vitest run",
     "tokens:check": "node scripts/check-optional-gate.mjs tokens"
@@ -17,6 +17,7 @@
   "devDependencies": {
     "@biomejs/biome": "catalog:",
     "@changesets/cli": "catalog:",
+    "@mflisikowski/lint-config": "workspace:*",
     "oxlint": "catalog:",
     "vitest": "catalog:"
   }

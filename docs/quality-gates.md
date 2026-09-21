@@ -15,7 +15,7 @@ corepack pnpm verify
 | --- | --- |
 | `pnpm format` | Check Biome formatting and import organization. |
 | `pnpm format:write` | Apply safe Biome formatting and import organization. |
-| `pnpm lint` | Run Oxlint with warnings treated as failures. |
+| `pnpm lint` | Check the reviewed lint-exception baseline, then run the shared Oxlint design-system policy with warnings treated as failures. |
 | `pnpm typecheck` | Run package-owned TypeScript checks. |
 | `pnpm build` | Build all buildable applications and packages. |
 | `pnpm test` | Run package-owned Vitest suites; empty application suites are explicitly allowed while no behavior exists. |
@@ -47,7 +47,9 @@ The pull-request workflow recognizes a Changesets release branch only when it co
 
 ## Tool ownership
 
-Biome owns formatting and import organization. Oxlint owns TypeScript and React linting. The intentionally invalid `spikes/oxlint-shadcn-lint` fixture remains excluded from normal linting and formatting, while an automated test protects its pinned dependencies and valid/invalid examples until ticket 09 replaces it with production policy coverage.
+Biome owns formatting and import organization. Oxlint owns TypeScript and React linting. The production policy lives in `packages/lint-config` and exercises every approved rule with valid and invalid fixtures, application and registry ownership boundaries, narrow justified exceptions, and the documented ESLint fallback threshold. The original `spikes/oxlint-shadcn-lint` proof remains excluded from normal linting and formatting as historical compatibility evidence.
+
+Application code receives all approved rules. Registry source disables only `no-restyle`, because registry components own their internal visual contract; token and class rules stay active. Every diagnostic points agents to semantic tokens, the ownership boundary, and the specification. A source suppression must target exactly one `shadcn/*` rule with `oxlint-disable-next-line`, include an inline `MFD exception:` reason, and match `.mfd-lint-exceptions.json`. Unused directives and unreviewed exception growth fail the gate.
 
 ## Pull-request CI
 

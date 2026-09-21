@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://design-system.mflisikowski.dev/schemas/lint-exceptions.json",
+  "title": "MFD lint exception baseline",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["exceptions"],
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "exceptions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["count", "file", "reason", "rule"],
+        "properties": {
+          "count": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "file": {
+            "type": "string",
+            "minLength": 1
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 20
+          },
+          "rule": {
+            "enum": [
+              "shadcn/no-arbitrary-values",
+              "shadcn/no-inline-styles",
+              "shadcn/no-raw-colors",
+              "shadcn/no-restyle",
+              "shadcn/no-unknown-classes",
+              "shadcn/require-static-classes"
+            ]
+          }
+        }
+      }
+    }
+  }
+}

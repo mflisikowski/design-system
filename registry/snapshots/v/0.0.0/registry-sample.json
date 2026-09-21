@@ -3,14 +3,17 @@
   "name": "registry-sample",
   "title": "Registry Sample",
   "description": "A minimal semantic component that proves the MFD registry distribution path.",
-  "dependencies": ["@mflisikowski/tokens@0.0.0", "clsx@2.1.1"],
+  "dependencies": [
+    "@mflisikowski/tokens@0.0.0",
+    "clsx@2.1.1"
+  ],
   "registryDependencies": [
     "https://design-system.mflisikowski.dev/r/v/0.0.0/registry-sample-label.json"
   ],
   "files": [
     {
       "path": "registry/ui/registry-sample.tsx",
-      "content": "import type { ThemeBrand } from \"@mflisikowski/tokens/runtime\";\nimport { clsx } from \"clsx\";\nimport type { ComponentPropsWithoutRef } from \"react\";\n\nimport { registrySampleLabel } from \"@/lib/registry-sample-label\";\n\nexport type RegistrySampleProps = Omit<ComponentPropsWithoutRef<\"p\">, \"children\"> & {\n  brand: ThemeBrand;\n  label?: string;\n};\n\nexport function RegistrySample({ brand, className, label, ...props }: RegistrySampleProps) {\n  return (\n    <p {...props} className={clsx(\"mfd-registry-sample\", className)} data-mfd-registry-sample=\"\">\n      {label ?? registrySampleLabel(brand)}\n    </p>\n  );\n}\n",
+      "content": "import type { ThemeBrand } from \"@mflisikowski/tokens/runtime\";\nimport { clsx } from \"clsx\";\nimport type { ComponentPropsWithoutRef } from \"react\";\n\nimport { registrySampleLabel } from \"@/lib/registry-sample-label\";\n\nexport type RegistrySampleProps = Omit<ComponentPropsWithoutRef<\"p\">, \"children\"> & {\n  brand: ThemeBrand;\n  label?: string;\n};\n\nexport function RegistrySample({ brand, className, label, ...props }: RegistrySampleProps) {\n  return (\n    <p {...props} className={clsx(className)} data-mfd-registry-sample=\"\">\n      {label ?? registrySampleLabel(brand)}\n    </p>\n  );\n}\n",
       "type": "registry:ui",
       "target": "@ui/registry-sample.tsx"
     }

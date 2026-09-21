@@ -11,7 +11,7 @@ export type RegistrySampleProps = Omit<ComponentPropsWithoutRef<"p">, "children"
 
 export function RegistrySample({ brand, className, label, ...props }: RegistrySampleProps) {
   return (
-    <p {...props} className={clsx("mfd-registry-sample", className)} data-mfd-registry-sample="">
+    <p {...props} className={clsx(className)} data-mfd-registry-sample="">
       {label ?? registrySampleLabel(brand)}
     </p>
   );

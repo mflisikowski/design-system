@@ -32,8 +32,13 @@
       "name": "registry-sample",
       "title": "Registry Sample",
       "description": "A minimal semantic component that proves the MFD registry distribution path.",
-      "dependencies": ["@mflisikowski/tokens@0.0.0", "clsx@2.1.1"],
-      "registryDependencies": ["@mflisikowski/registry-sample-label"],
+      "dependencies": [
+        "@mflisikowski/tokens@0.0.0",
+        "clsx@2.1.1"
+      ],
+      "registryDependencies": [
+        "@mflisikowski/registry-sample-label"
+      ],
       "files": [
         {
           "path": "registry/ui/registry-sample.tsx",
