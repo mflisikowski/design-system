@@ -66,6 +66,46 @@ describe("documentation structure validation", () => {
     expect(issues).toContain("Broken internal link in introduction.mdx: /components/missing");
   });
 
+  it("rejects unresolved fragments in root-relative, relative, and same-page links", () => {
+    const issues = validateDocumentationSnapshot({
+      pages: [
+        {
+          slug: "components",
+          href: "/components",
+          source: "components.mdx",
+          headings: [{ depth: 2, id: "available", label: "Available" }],
+        },
+        {
+          slug: "components/registry-sample",
+          href: "/components/registry-sample",
+          source: "components/registry-sample.mdx",
+          headings: [{ depth: 2, id: "api", label: "API" }],
+        },
+      ],
+      files: {
+        "components.mdx": [
+          "## Available",
+          "[Valid](/components/registry-sample#api)",
+          "[Missing root fragment](/components/registry-sample#missing)",
+          "[Missing relative fragment](components/registry-sample#missing)",
+          "[Missing local fragment](#missing)",
+        ].join("\n"),
+        "components/registry-sample.mdx": "## API\n",
+      },
+    });
+
+    expect(issues).toContain(
+      "Broken internal link in components.mdx: /components/registry-sample#missing",
+    );
+    expect(issues).toContain(
+      "Broken internal link in components.mdx: components/registry-sample#missing",
+    );
+    expect(issues).toContain("Broken internal link in components.mdx: #missing");
+    expect(issues).not.toContain(
+      "Broken internal link in components.mdx: /components/registry-sample#api",
+    );
+  });
+
   it("rejects heading levels that skip the documentation hierarchy", () => {
     const issues = validateDocumentationSnapshot({
       pages: [

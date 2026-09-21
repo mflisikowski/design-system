@@ -38,6 +38,7 @@ export function MaturityNotice({ introduced, status }: MaturityNoticeProps) {
 type InstallationProps = Readonly<{
   dependencies: readonly string[];
   latest: string;
+  namespaceConfig: string;
   registryDependencies: readonly string[];
   snapshot: string;
 }>;
@@ -61,13 +62,39 @@ function CommandLine({ command, label }: Readonly<{ command: string; label: stri
 export function Installation({
   dependencies,
   latest,
+  namespaceConfig,
   registryDependencies,
   snapshot,
 }: InstallationProps) {
   return (
     <div data-docs="installation-block">
-      <CommandLine command={latest} label="Latest reviewed item" />
-      <CommandLine command={snapshot} label="Immutable snapshot" />
+      <section data-docs="installation-path">
+        <h3>New project</h3>
+        <p>
+          Initialize the project with shadcn, then add the MFD registry namespace to the generated{" "}
+          <code>components.json</code> before installing the item.
+        </p>
+        <CodeExample filename="components.json" language="json">
+          {namespaceConfig}
+        </CodeExample>
+        <CommandLine command={latest} label="Install the latest reviewed item" />
+      </section>
+      <section data-docs="installation-path">
+        <h3>Existing project</h3>
+        <p>
+          Merge the registry entry into the existing <code>components.json</code>, preserving the
+          project&apos;s style, aliases, and Tailwind settings, then install the item.
+        </p>
+        <CodeExample filename="components.json" language="json">
+          {namespaceConfig}
+        </CodeExample>
+        <CommandLine command={latest} label="Install the latest reviewed item" />
+      </section>
+      <section data-docs="installation-path">
+        <h3>Reproducible installation</h3>
+        <p>Use the complete immutable URL when the exact reviewed release must be retained.</p>
+        <CommandLine command={snapshot} label="Install the immutable snapshot" />
+      </section>
       <dl data-docs="dependency-list">
         <div>
           <dt>Package dependencies</dt>
@@ -125,11 +152,16 @@ type ApiRow = Readonly<{
   type: string;
 }>;
 
-export function ApiTable({ rows }: Readonly<{ rows: readonly ApiRow[] }>) {
+type ApiTableProps = Readonly<{
+  label: string;
+  rows: readonly ApiRow[];
+}>;
+
+export function ApiTable({ label, rows }: ApiTableProps) {
   return (
-    <ScrollableRegion label="Registry Sample API" surface="table-scroll">
+    <ScrollableRegion label={`${label} API`} surface="table-scroll">
       <table>
-        <caption>Registry Sample public properties</caption>
+        <caption>{label} public properties</caption>
         <thead>
           <tr>
             <th scope="col">Property</th>

@@ -48,7 +48,7 @@ export function validateDocumentationSnapshot({ pages, files }: DocumentationSna
   const issues: string[] = [];
   const slugs = new Set<string>();
   const manifestSources = new Set(pages.map((page) => page.source));
-  const manifestRoutes = new Set(pages.map((page) => page.href));
+  const manifestPagesByRoute = new Map(pages.map((page) => [page.href, page]));
 
   for (const page of pages) {
     if (
@@ -80,11 +80,21 @@ export function validateDocumentationSnapshot({ pages, files }: DocumentationSna
       issues.push(`Unlisted documentation file: ${source}`);
     }
 
-    const internalLinkPattern = /(?:\]\(|href=["'])(\/[^)"']+)/g;
+    const sourcePage = pages.find((page) => page.source === source);
+    const internalLinkPattern = /(?:\]\(|href=["'])([^)"'\s]+)/g;
     for (const match of files[source]?.matchAll(internalLinkPattern) ?? []) {
       const href = match[1];
-      const path = href?.split("#", 1)[0];
-      if (path && !manifestRoutes.has(path)) {
+      if (!href || /^(?:[a-z]+:|\/\/)/i.test(href)) {
+        continue;
+      }
+
+      const resolved = new URL(href, `https://docs.example${sourcePage?.href ?? "/"}`);
+      const targetPage = manifestPagesByRoute.get(resolved.pathname);
+      const fragment = decodeURIComponent(resolved.hash.slice(1));
+      const fragmentExists =
+        fragment === "" || targetPage?.headings.some((heading) => heading.id === fragment);
+
+      if (!targetPage || !fragmentExists) {
         issues.push(`Broken internal link in ${source}: ${href}`);
       }
     }

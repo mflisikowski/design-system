@@ -8,10 +8,17 @@ import {
   LiveExample,
   MaturityNotice,
 } from "@/components/docs/component-documentation";
+import { registrySampleDocumentation } from "@/lib/registry-sample-docs";
 
 <MaturityNotice introduced="0.0.0" status="experimental" />
 
-## Preview
+## Purpose
+
+Registry Sample proves that the public registry can distribute canonical MFD source, its package
+dependencies, and its registry dependency into a clean consumer. It is not a product-facing
+component and should not be used to communicate application status.
+
+## Examples
 
 The live example renders the canonical registry source used to generate the installable item. It
 is a distribution proof, not a stable product primitive.
@@ -20,17 +27,18 @@ is a distribution proof, not a stable product primitive.
   <RegistrySample brand="atlas" />
 </LiveExample>
 
+## Anatomy
+
+The component has one semantic element: a paragraph. Its visible label is either supplied by the
+consumer or generated from the required brand. Native paragraph properties are forwarded to that
+element; no wrapper, icon, or interactive control is added.
+
 ## Installation
 
-Install the latest reviewed item through the configured MFD registry namespace. Use the immutable
-snapshot URL when a reproducible pre-release installation is required.
+Configure the MFD registry namespace before using the latest command. New and existing projects
+follow separate setup paths because an existing `components.json` must retain its current choices.
 
-<Installation
-  dependencies={["@mflisikowski/tokens@0.0.0", "clsx@2.1.1"]}
-  latest="pnpm dlx shadcn@latest add @mflisikowski/registry-sample"
-  registryDependencies={["@mflisikowski/registry-sample-label"]}
-  snapshot="pnpm dlx shadcn@latest add https://design-system.mflisikowski.dev/r/v/0.0.0/registry-sample.json"
-/>
+<Installation {...registrySampleDocumentation.installation} />
 
 ## API
 
@@ -45,28 +53,13 @@ export function Example() {
 }`}
 </CodeExample>
 
-<ApiTable
-  rows={[
-    {
-      defaultValue: "—",
-      description: "Selects an approved MFD theme brand for the generated label.",
-      name: "brand",
-      type: '"atlas" | "bloom"',
-    },
-    {
-      defaultValue: "Generated from brand",
-      description: "Replaces the default visible message.",
-      name: "label",
-      type: "string",
-    },
-    {
-      defaultValue: "—",
-      description: "Forwards applicable native paragraph properties.",
-      name: "...props",
-      type: 'ComponentPropsWithoutRef<"p">',
-    },
-  ]}
-/>
+<ApiTable label="Registry Sample" rows={registrySampleDocumentation.apiRows} />
+
+## States
+
+Registry Sample has no interaction states. It supports the Atlas and Bloom brand inputs, an
+optional custom label, and any native paragraph state expressed through forwarded attributes.
+Disabled, loading, selected, pressed, and invalid states do not apply to this semantic paragraph.
 
 ## Accessibility
 
@@ -92,3 +85,16 @@ commands.
     { interaction: "Any key", result: "No component-specific behavior." },
   ]}
 />
+
+## Content guidance
+
+Keep custom labels short and factual. Use the sample only to verify installation and theming; do
+not turn it into a user-facing success, warning, or error message. Product status copy belongs in a
+validated product component with an appropriate live-region contract when announcements are
+required.
+
+## Related patterns
+
+Registry Sample has no approved product pattern. See [Components](/components#ownership) for the
+source-ownership boundary and [Foundations](/foundations#independent-theme-axes) for the brand,
+color-scheme, and density model it exercises.

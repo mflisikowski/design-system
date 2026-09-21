@@ -286,6 +286,16 @@ main {
   text-wrap: balance;
 }
 
+[data-docs="content"] h3 {
+  color: var(--mfd-color-text-primary);
+  font-family: var(--mfd-typography-heading-font-family);
+  font-size: var(--mfd-typography-heading-font-size);
+  font-weight: var(--mfd-typography-heading-font-weight);
+  line-height: var(--mfd-typography-heading-line-height);
+  margin-block: var(--mfd-space-stack-xl) var(--mfd-space-stack-sm);
+  text-wrap: balance;
+}
+
 [data-docs="heading-anchor"] {
   color: var(--mfd-color-border-strong);
   inset-inline-start: -1.25em;
@@ -418,6 +428,12 @@ main {
 [data-docs="code-example"],
 [data-docs="accessibility-notes"] {
   margin-block: var(--mfd-space-stack-lg);
+}
+
+[data-docs="installation-path"] + [data-docs="installation-path"] {
+  border-block-start: 1px solid var(--mfd-color-border-subtle);
+  margin-block-start: var(--mfd-space-stack-xl);
+  padding-block-start: var(--mfd-space-stack-sm);
 }
 
 [data-docs="command-line"],

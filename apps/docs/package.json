@@ -5,8 +5,11 @@
   "scripts": {
     "build": "pnpm docs:check && next build --webpack",
     "dev": "next dev --webpack",
-    "docs:check": "vitest run lib/content.test.ts lib/validate-content.test.ts",
-    "test": "vitest run",
+    "docs:check": "vitest run lib",
+    "start": "next start --hostname 127.0.0.1 --port 3000",
+    "test": "vitest run lib",
+    "test:e2e": "playwright test --project=chromium",
+    "test:e2e:release": "playwright test",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
@@ -22,7 +25,9 @@
     "react-dom": "catalog:"
   },
   "devDependencies": {
+    "@axe-core/playwright": "catalog:",
     "@mflisikowski/typescript-config": "workspace:*",
+    "@playwright/test": "catalog:",
     "@types/mdx": "catalog:",
     "@types/node": "catalog:",
     "@types/react": "catalog:",
