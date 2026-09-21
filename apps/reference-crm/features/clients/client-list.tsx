@@ -76,7 +76,12 @@ function LoadingTable() {
   );
 }
 
-function ClientTable({ clients }: Readonly<{ clients: readonly Client[] }>) {
+type ClientTableProps = Readonly<{
+  clients: readonly Client[];
+  onAnnouncement: (message: string) => void;
+}>;
+
+function ClientTable({ clients, onAnnouncement }: ClientTableProps) {
   return (
     <div className="client-table-surface">
       <Table>
@@ -108,7 +113,7 @@ function ClientTable({ clients }: Readonly<{ clients: readonly Client[] }>) {
                 </time>
               </TableCell>
               <TableCell>
-                <ClientRowActions client={client} />
+                <ClientRowActions client={client} onAnnouncement={onAnnouncement} />
               </TableCell>
             </TableRow>
           ))}
@@ -171,7 +176,7 @@ export function ClientList({ scenario, waitingForApi = false }: ClientListProps)
       </EmptyState>
     );
   } else {
-    content = <ClientTable clients={clients.data} />;
+    content = <ClientTable clients={clients.data} onAnnouncement={setAnnouncement} />;
   }
 
   return (

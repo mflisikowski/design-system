@@ -17,6 +17,7 @@ test("protects CRM routes and returns to the requested page after demo sign in",
 });
 
 test("exposes the authenticated shell and deterministic client table", async ({ page }) => {
+  await page.context().grantPermissions(["clipboard-read", "clipboard-write"]);
   await page.goto("/sign-in");
   await page.getByRole("button", { name: "Continue as demo manager" }).click();
   await expect(page.getByRole("heading", { level: 1, name: "Clients" })).toBeVisible();
@@ -44,8 +45,11 @@ test("exposes the authenticated shell and deterministic client table", async ({ 
 
   await page.getByRole("button", { name: "More actions for Northstar Studio" }).click();
   await expect(page.getByRole("menu", { name: "Actions for Northstar Studio" })).toBeVisible();
-  await expect(page.getByRole("menuitem", { name: "No actions available" })).toBeVisible();
-  await page.keyboard.press("Escape");
+  await page.getByRole("menuitem", { name: "Copy email address" }).click();
+  await expect(page.getByRole("status")).toHaveText("Email address copied for Northstar Studio");
+  expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(
+    "jamie.chen@northstar.example",
+  );
   await expect(
     page.getByRole("button", { name: "More actions for Northstar Studio" }),
   ).toBeFocused();

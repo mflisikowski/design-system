@@ -285,14 +285,17 @@ h1 {
 }
 
 .client-row-actions__item {
+  cursor: pointer;
   border-radius: var(--mfd-radius-control);
   color: var(--mfd-color-text-primary);
   display: block;
   padding: var(--mfd-space-stack-sm) var(--mfd-space-inline-sm);
 }
 
-.client-row-actions__item[data-disabled] {
-  color: var(--mfd-color-text-secondary);
+.client-row-actions__item[data-highlighted] {
+  background: var(--mfd-color-bg-subtle);
+  outline: 2px solid var(--mfd-color-border-focus);
+  outline-offset: 0;
 }
 
 .skeleton-line,
