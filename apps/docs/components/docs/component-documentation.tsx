@@ -149,6 +149,7 @@ type ApiRow = Readonly<{
   defaultValue: string;
   description: string;
   name: string;
+  required: boolean;
   type: string;
 }>;
 
@@ -166,6 +167,7 @@ export function ApiTable({ label, rows }: ApiTableProps) {
           <tr>
             <th scope="col">Property</th>
             <th scope="col">Type</th>
+            <th scope="col">Required</th>
             <th scope="col">Default</th>
             <th scope="col">Description</th>
           </tr>
@@ -179,6 +181,7 @@ export function ApiTable({ label, rows }: ApiTableProps) {
               <td>
                 <code>{row.type}</code>
               </td>
+              <td>{row.required ? "Yes" : "No"}</td>
               <td>{row.defaultValue}</td>
               <td>{row.description}</td>
             </tr>

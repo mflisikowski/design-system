@@ -275,6 +275,11 @@ main {
   text-wrap: pretty;
 }
 
+[data-docs="content"] h2,
+[data-docs="content"] h3 {
+  position: relative;
+}
+
 [data-docs="content"] h2 {
   font-family: var(--mfd-typography-heading-font-family);
   font-size: var(--mfd-typography-title-font-size);
@@ -282,7 +287,6 @@ main {
   letter-spacing: var(--mfd-typography-title-letter-spacing);
   line-height: var(--mfd-typography-title-line-height);
   margin-block: var(--mfd-space-section) var(--mfd-space-stack-md);
-  position: relative;
   text-wrap: balance;
 }
 
@@ -305,7 +309,9 @@ main {
 }
 
 [data-docs="content"] h2:hover [data-docs="heading-anchor"],
-[data-docs="content"] h2:focus-within [data-docs="heading-anchor"] {
+[data-docs="content"] h2:focus-within [data-docs="heading-anchor"],
+[data-docs="content"] h3:hover [data-docs="heading-anchor"],
+[data-docs="content"] h3:focus-within [data-docs="heading-anchor"] {
   opacity: 1;
 }
 

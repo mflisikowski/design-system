@@ -12,6 +12,13 @@ import { registrySampleDocumentation } from "@/lib/registry-sample-docs";
 
 <MaturityNotice introduced="0.0.0" status="experimental" />
 
+## Installation
+
+Configure the MFD registry namespace before using the latest command. New and existing projects
+follow separate setup paths because an existing `components.json` must retain its current choices.
+
+<Installation {...registrySampleDocumentation.installation} />
+
 ## Purpose
 
 Registry Sample proves that the public registry can distribute canonical MFD source, its package
@@ -32,13 +39,6 @@ is a distribution proof, not a stable product primitive.
 The component has one semantic element: a paragraph. Its visible label is either supplied by the
 consumer or generated from the required brand. Native paragraph properties are forwarded to that
 element; no wrapper, icon, or interactive control is added.
-
-## Installation
-
-Configure the MFD registry namespace before using the latest command. New and existing projects
-follow separate setup paths because an existing `components.json` must retain its current choices.
-
-<Installation {...registrySampleDocumentation.installation} />
 
 ## API
 

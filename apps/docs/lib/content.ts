@@ -94,10 +94,10 @@ export const documentationPages = [
       "The canonical distribution proof for an MFD registry component and its dependencies.",
     section: "Components",
     headings: [
+      { depth: 2, id: "installation", label: "Installation" },
       { depth: 2, id: "purpose", label: "Purpose" },
       { depth: 2, id: "examples", label: "Examples" },
       { depth: 2, id: "anatomy", label: "Anatomy" },
-      { depth: 2, id: "installation", label: "Installation" },
       { depth: 2, id: "api", label: "API" },
       { depth: 2, id: "states", label: "States" },
       { depth: 2, id: "accessibility", label: "Accessibility" },

@@ -34,18 +34,33 @@ describe("Registry Sample documentation contract", () => {
       new URL("../../../registry/ui/registry-sample.tsx", import.meta.url),
       "utf8",
     );
-    const propsBody = /export type RegistrySampleProps =[\s\S]+?& \{([\s\S]+?)\};/.exec(
-      source,
-    )?.[1];
-    const exportedProps = [...(propsBody?.matchAll(/^\s*([A-Za-z][A-Za-z0-9]*)\??:/gm) ?? [])].map(
-      (match) => match[1],
+    const propsDeclaration =
+      /export type RegistrySampleProps =\s*([\s\S]+?)\s*&\s*\{([\s\S]+?)\};/.exec(source);
+    const inheritedProps = propsDeclaration?.[1]?.trim();
+    const ownProps = [
+      ...(propsDeclaration?.[2]?.matchAll(/^\s*(\w+)(\?)?:\s*([^;]+);/gm) ?? []),
+    ].map(([, name, optional, type]) => ({
+      name,
+      required: optional !== "?",
+      type: type?.trim(),
+    }));
+    const documentedContract = registrySampleDocumentation.apiRows.map(
+      ({ name, required, type }) => ({ name, required, type }),
     );
-    const documentedProps = registrySampleDocumentation.apiRows
-      .map(({ name }) => name)
-      .filter((name) => name !== "...props");
 
-    expect(documentedProps).toEqual(exportedProps);
-    expect(source).toContain("...props");
-    expect(registrySampleDocumentation.apiRows.at(-1)?.name).toBe("...props");
+    expect(documentedContract).toEqual([
+      ...ownProps,
+      {
+        name: "...props",
+        required: false,
+        type: inheritedProps,
+      },
+    ]);
+    expect(source).toContain("{label ?? registrySampleLabel(brand)}");
+    expect(registrySampleDocumentation.apiRows).toMatchObject([
+      { name: "brand", defaultValue: "—" },
+      { name: "label", defaultValue: "Generated from brand" },
+      { name: "...props", defaultValue: "—" },
+    ]);
   });
 });

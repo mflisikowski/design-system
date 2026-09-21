@@ -56,3 +56,16 @@ test("reflows at 320 CSS pixels without page-level horizontal overflow", async (
 
   expect(dimensions.documentWidth).toBe(dimensions.viewportWidth);
 });
+
+test("supports a 200% browser-zoom-equivalent viewport", async ({ page }) => {
+  await page.setViewportSize({ width: 640, height: 900 });
+  await page.goto("/components/registry-sample");
+
+  await expect(page.getByRole("heading", { level: 1, name: "Registry Sample" })).toBeVisible();
+  const dimensions = await page.evaluate(() => ({
+    documentWidth: document.documentElement.scrollWidth,
+    viewportWidth: document.documentElement.clientWidth,
+  }));
+
+  expect(dimensions.documentWidth).toBe(dimensions.viewportWidth);
+});

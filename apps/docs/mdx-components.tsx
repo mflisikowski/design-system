@@ -1,20 +1,8 @@
 import type { MDXComponents } from "mdx/types";
 import Link from "next/link";
-import type { AnchorHTMLAttributes, HTMLAttributes } from "react";
+import type { AnchorHTMLAttributes } from "react";
 
-import { headingId } from "./lib/heading-id";
-
-function DocumentationHeading({ children, ...props }: HTMLAttributes<HTMLHeadingElement>) {
-  const label = typeof children === "string" ? children : "";
-  return (
-    <h2 id={headingId(label)} {...props}>
-      <a aria-hidden="true" data-docs="heading-anchor" href={`#${headingId(label)}`} tabIndex={-1}>
-        #
-      </a>
-      {children}
-    </h2>
-  );
-}
+import { DocumentationH2, DocumentationH3 } from "./lib/documentation-heading";
 
 function DocumentationLink({
   children,
@@ -38,7 +26,8 @@ function DocumentationLink({
 
 const defaultComponents = {
   a: DocumentationLink,
-  h2: DocumentationHeading,
+  h2: DocumentationH2,
+  h3: DocumentationH3,
 } satisfies MDXComponents;
 
 export function useMDXComponents(components: MDXComponents): MDXComponents {
