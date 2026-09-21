@@ -29,9 +29,14 @@
     "lint": "turbo run lint",
     "registry:check": "turbo run registry:check",
     "test": "turbo run test",
+    "test:browser": "turbo run test:browser",
+    "test:browser:release": "turbo run test:browser:release",
+    "test:e2e": "turbo run test:e2e",
+    "test:e2e:release": "turbo run test:e2e:release",
     "tokens:check": "turbo run tokens:check",
     "typecheck": "turbo run typecheck",
-    "verify": "turbo run format lint typecheck build test tokens:check registry:check changeset:check"
+    "verify": "turbo run format lint typecheck build test test:browser test:e2e tokens:check registry:check changeset:check",
+    "verify:release": "turbo run format lint typecheck build test test:browser:release test:e2e:release tokens:check registry:check changeset:check"
   },
   "devDependencies": {
     "@biomejs/biome": "catalog:",

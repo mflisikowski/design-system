@@ -7,7 +7,7 @@ corepack pnpm install --frozen-lockfile
 corepack pnpm verify
 ~~~
 
-`verify` delegates all work through Turborepo and includes formatting and import organization, Oxlint, TypeScript, production builds, tests, token validation, registry validation, and the path-aware changeset policy.
+`verify` delegates all work through Turborepo and includes formatting and import organization, Oxlint, TypeScript, production builds, Node tests, Chromium browser-component and end-to-end tests, axe checks, exact screenshot comparison, token validation, registry validation, and the path-aware changeset policy.
 
 ## Commands
 
@@ -19,10 +19,13 @@ corepack pnpm verify
 | `pnpm typecheck` | Run package-owned TypeScript checks. |
 | `pnpm build` | Build all buildable applications and packages. |
 | `pnpm test` | Run package-owned Vitest suites; empty application suites are explicitly allowed while no behavior exists. |
+| `pnpm test:browser` | Run public component behavior in Chromium through Vitest Browser Mode and Playwright. |
+| `pnpm test:e2e` | Run Chromium application flows, axe checks, and committed screenshot comparisons. |
 | `pnpm tokens:check` | Run token validation when the canonical token package provides it. |
 | `pnpm registry:check` | Run registry validation when the canonical registry source exists. |
 | `pnpm changeset:check` | Require release intent only for public contract paths. |
 | `pnpm verify` | Run every pull-request gate above. |
+| `pnpm verify:release` | Run the full gate with Chromium, Firefox, and WebKit behavior and flow coverage; screenshots remain Chromium-only. |
 
 Token checks validate the canonical DTCG resolver through the package-owned Terrazzo task. The generated contrast report covers the actual foreground/background relationships rendered by the Reference CRM theme fixture and fails generation when an approved pair misses its threshold. Registry checks still report a visible not-applicable result until the canonical registry source is introduced. Turborepo automatically includes each package-owned implementation once its source exists.
 
@@ -42,4 +45,35 @@ Biome owns formatting and import organization. Oxlint owns TypeScript and React 
 
 ## Pull-request CI
 
-`.github/workflows/quality.yml` runs only for pull requests with read-only repository permission. Checkout credentials are not persisted, action releases are pinned to immutable commit SHAs, and the workflow contains no publication or deployment step.
+`.github/workflows/quality.yml` runs only for pull requests with read-only repository permission. It runs the shared `verify` command in a Playwright image pinned by digest and selects only the Chromium projects. Checkout credentials are not persisted, action releases are pinned to immutable commit SHAs, and the workflow contains no publication or deployment step.
+
+The manually dispatched `.github/workflows/release-quality.yml` installs Chromium, Firefox, and WebKit and runs `verify:release`. It is also read-only and does not publish or deploy anything.
+
+## Test harnesses
+
+Reference CRM owns three explicit seams:
+
+- Node Vitest tests pure logic and reusable MSW handlers;
+- Vitest Browser Mode uses the Playwright provider for real-browser component behavior;
+- Playwright Test owns running-application flows, stable-state axe scans, and visual regression.
+
+MSW handlers live under `apps/reference-crm/tests/msw/` and are shared by Node and browser setup. Unhandled `/api/` requests fail browser tests instead of reaching a real service.
+
+Playwright fixes locale, timezone, color scheme, reduced-motion preference, and viewport presets. Pull-request snapshots cover the key screen and representative theme-fixture states in Atlas Light Comfortable and Bloom Dark Compact. Screenshot assertions disable animation and carets, use no global pixel tolerance, and read committed baselines from `tests/e2e/__screenshots__/linux-chromium/`. Visual assertions skip outside Linux, while CI compares them in the exact pinned image used for generation. Playwright sets `updateSnapshots: none`; CI and ordinary local commands can never rewrite a failed baseline.
+
+An intentional baseline update must run in the pinned Linux image and be reviewed in the same pull request:
+
+~~~sh
+docker run --rm --ipc=host \
+  -v "$PWD":/work \
+  -v mfd-design-system-linux-node-modules:/work/node_modules \
+  -w /work \
+  mcr.microsoft.com/playwright:v1.63.0-noble@sha256:eff16c30e6f3f4af0a03fa4b706120d5e9b0891c344a27d64559aff5900a4a27 \
+  bash -lc "corepack enable && corepack pnpm install --frozen-lockfile && \
+  corepack pnpm --filter @mflisikowski/reference-crm build && \
+  cd apps/reference-crm && corepack pnpm exec playwright test \
+  tests/e2e/visual-harness.spec.ts --config=playwright.config.ts \
+  --project=chromium --update-snapshots=changed"
+~~~
+
+Use the [manual verification template](manual-verification-template.md) for checks that automation cannot claim.

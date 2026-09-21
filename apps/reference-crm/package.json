@@ -5,7 +5,12 @@
   "scripts": {
     "build": "next build",
     "dev": "next dev --port 3001",
-    "test": "vitest run --passWithNoTests",
+    "start": "next start --hostname 127.0.0.1 --port 3001",
+    "test": "vitest run",
+    "test:browser": "vitest run --config vitest.browser.config.mts --project=chromium",
+    "test:browser:release": "vitest run --config vitest.browser.config.mts",
+    "test:e2e": "playwright test --project=chromium",
+    "test:e2e:release": "playwright test",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
@@ -19,11 +24,21 @@
     "react-dom": "catalog:"
   },
   "devDependencies": {
+    "@axe-core/playwright": "catalog:",
     "@mflisikowski/typescript-config": "workspace:*",
+    "@playwright/test": "catalog:",
     "@types/node": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
+    "@vitest/browser-playwright": "catalog:",
+    "msw": "catalog:",
     "typescript": "catalog:",
-    "vitest": "catalog:"
+    "vitest": "catalog:",
+    "vitest-browser-react": "catalog:"
+  },
+  "msw": {
+    "workerDirectory": [
+      "public"
+    ]
   }
 }

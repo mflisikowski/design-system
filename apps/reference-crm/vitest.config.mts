@@ -6,4 +6,7 @@ export default defineConfig({
       runtime: "automatic",
     },
   },
+  test: {
+    include: ["app/**/*.test.ts?(x)", "tests/node/**/*.test.ts"],
+  },
 });
