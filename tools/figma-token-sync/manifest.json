@@ -1,0 +1,18 @@
+{
+  "name": "MFD Token Sync",
+  "id": "mfd-token-sync-local",
+  "api": "1.0.0",
+  "editorType": ["figma"],
+  "main": "dist/code.js",
+  "ui": "src/ui.html",
+  "documentAccess": "dynamic-page",
+  "relaunchButtons": [
+    {
+      "command": "sync",
+      "name": "Open MFD Token Sync"
+    }
+  ],
+  "networkAccess": {
+    "allowedDomains": ["none"]
+  }
+}

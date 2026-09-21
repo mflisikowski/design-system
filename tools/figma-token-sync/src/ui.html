@@ -1,0 +1,471 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>MFD Token Sync</title>
+    <style>
+      :root {
+        color: var(--figma-color-text);
+        background: var(--figma-color-bg);
+        font: 12px/1.45 Inter, system-ui, sans-serif;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+      }
+
+      button,
+      input {
+        font: inherit;
+      }
+
+      button {
+        min-height: 32px;
+        border: 1px solid var(--figma-color-border);
+        border-radius: 6px;
+        padding: 6px 12px;
+        color: var(--figma-color-text);
+        background: var(--figma-color-bg-secondary);
+        cursor: pointer;
+      }
+
+      button:hover:not(:disabled) {
+        background: var(--figma-color-bg-hover);
+      }
+
+      button:focus-visible,
+      input:focus-visible {
+        outline: 2px solid var(--figma-color-border-selected);
+        outline-offset: 2px;
+      }
+
+      button:disabled {
+        color: var(--figma-color-text-disabled);
+        cursor: not-allowed;
+      }
+
+      button.primary {
+        border-color: var(--figma-color-bg-brand);
+        color: var(--figma-color-text-onbrand);
+        background: var(--figma-color-bg-brand);
+      }
+
+      button.danger {
+        border-color: var(--figma-color-border-danger);
+        color: var(--figma-color-text-danger);
+      }
+
+      .content {
+        display: grid;
+        gap: 16px;
+        padding: 16px;
+      }
+
+      h1,
+      h2,
+      p {
+        margin: 0;
+      }
+
+      h1 {
+        font-size: 16px;
+      }
+
+      h2 {
+        font-size: 12px;
+      }
+
+      .muted {
+        color: var(--figma-color-text-secondary);
+      }
+
+      .file-row,
+      .actions,
+      .summary {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+      }
+
+      .file-row input {
+        min-width: 0;
+        flex: 1;
+        border: 1px solid var(--figma-color-border);
+        border-radius: 6px;
+        padding: 6px;
+        color: var(--figma-color-text);
+        background: var(--figma-color-bg-secondary);
+      }
+
+      .summary {
+        flex-wrap: wrap;
+      }
+
+      .count {
+        border-radius: 999px;
+        padding: 3px 8px;
+        color: var(--figma-color-text-secondary);
+        background: var(--figma-color-bg-secondary);
+      }
+
+      .count[data-category="conflict"] {
+        color: var(--figma-color-text-danger);
+        background: var(--figma-color-bg-danger-tertiary);
+      }
+
+      .count[data-category="create"],
+      .count[data-category="update"] {
+        color: var(--figma-color-text-brand);
+        background: var(--figma-color-bg-brand-tertiary);
+      }
+
+      .diff {
+        max-height: 286px;
+        overflow: auto;
+        border: 1px solid var(--figma-color-border);
+        border-radius: 6px;
+      }
+
+      .diff-empty {
+        padding: 16px;
+        color: var(--figma-color-text-secondary);
+        text-align: center;
+      }
+
+      .diff-item {
+        display: grid;
+        grid-template-columns: 72px minmax(0, 1fr);
+        gap: 4px 8px;
+        padding: 9px 10px;
+        border-bottom: 1px solid var(--figma-color-border);
+      }
+
+      .diff-item:last-child {
+        border-bottom: 0;
+      }
+
+      .badge {
+        align-self: start;
+        border-radius: 4px;
+        padding: 2px 5px;
+        color: var(--figma-color-text-secondary);
+        background: var(--figma-color-bg-secondary);
+        text-align: center;
+        text-transform: capitalize;
+      }
+
+      .item-label {
+        overflow-wrap: anywhere;
+        font-weight: 600;
+      }
+
+      .item-detail {
+        grid-column: 2;
+        color: var(--figma-color-text-secondary);
+      }
+
+      .confirmation {
+        display: none;
+        gap: 8px;
+        border: 1px solid var(--figma-color-border-danger);
+        border-radius: 6px;
+        padding: 12px;
+        background: var(--figma-color-bg-danger-tertiary);
+      }
+
+      .confirmation.visible {
+        display: grid;
+      }
+
+      .confirmation label {
+        display: grid;
+        gap: 4px;
+      }
+
+      .confirmation input {
+        border: 1px solid var(--figma-color-border);
+        border-radius: 4px;
+        padding: 6px 8px;
+        color: var(--figma-color-text);
+        background: var(--figma-color-bg);
+      }
+
+      footer {
+        display: grid;
+        gap: 10px;
+        position: sticky;
+        bottom: 0;
+        border-top: 1px solid var(--figma-color-border);
+        padding: 12px 16px;
+        background: var(--figma-color-bg);
+      }
+
+      .actions {
+        justify-content: flex-end;
+      }
+
+      #status[data-tone="error"] {
+        color: var(--figma-color-text-danger);
+      }
+
+      #status[data-tone="success"] {
+        color: var(--figma-color-text-success);
+      }
+    </style>
+  </head>
+  <body>
+    <main id="plugin-root">
+      <div class="content">
+        <div>
+          <h1>MFD Token Sync</h1>
+          <p class="muted">Preview and apply the repository-owned Figma variable manifest.</p>
+        </div>
+
+        <section aria-labelledby="manifest-heading">
+          <h2 id="manifest-heading">Generated manifest</h2>
+          <div class="file-row">
+            <input id="file" type="file" accept="application/json,.json" />
+            <button id="check" type="button" disabled>Check</button>
+          </div>
+          <p id="manifest-meta" class="muted">Choose packages/tokens/dist/figma/variables.json.</p>
+        </section>
+
+        <section aria-labelledby="diff-heading">
+          <h2 id="diff-heading">Complete diff</h2>
+          <div id="summary" class="summary" aria-label="Diff totals"></div>
+          <div id="diff" class="diff">
+            <p class="diff-empty">Run Check to compare the manifest with this file.</p>
+          </div>
+        </section>
+
+        <section id="confirmation" class="confirmation" aria-labelledby="prune-heading">
+          <h2 id="prune-heading">Confirm destructive prune</h2>
+          <p>Prune permanently removes only entries marked as managed by this plugin and listed as stale.</p>
+          <label>
+            Type PRUNE to continue
+            <input id="confirmation-value" autocomplete="off" spellcheck="false" />
+          </label>
+          <div class="actions">
+            <button id="cancel-prune" type="button">Cancel</button>
+            <button id="confirm-prune" class="danger" type="button" disabled>Confirm prune</button>
+          </div>
+        </section>
+      </div>
+
+      <footer>
+        <p id="status" aria-live="polite">Ready. Check never modifies the Figma file.</p>
+        <div class="actions">
+          <button id="open-prune" class="danger" type="button" disabled>Prune stale</button>
+          <button id="apply" class="primary" type="button" disabled>Apply repository values</button>
+        </div>
+      </footer>
+    </main>
+
+    <script>
+      const fileInput = document.getElementById("file");
+      const checkButton = document.getElementById("check");
+      const applyButton = document.getElementById("apply");
+      const openPruneButton = document.getElementById("open-prune");
+      const confirmPruneButton = document.getElementById("confirm-prune");
+      const cancelPruneButton = document.getElementById("cancel-prune");
+      const confirmation = document.getElementById("confirmation");
+      const confirmationValue = document.getElementById("confirmation-value");
+      const diff = document.getElementById("diff");
+      const summary = document.getElementById("summary");
+      const status = document.getElementById("status");
+      const manifestMeta = document.getElementById("manifest-meta");
+
+      let parsedManifest;
+      let activePlan;
+      let busy = false;
+
+      const post = (message) => parent.postMessage({ pluginMessage: message }, "*");
+
+      function stableStringify(value) {
+        if (Array.isArray(value)) {
+          return `[${value.map(stableStringify).join(",")}]`;
+        }
+        if (value && typeof value === "object") {
+          const entries = Object.entries(value)
+            .sort(([left], [right]) => left.localeCompare(right))
+            .map(([key, child]) => `${JSON.stringify(key)}:${stableStringify(child)}`);
+          return `{${entries.join(",")}}`;
+        }
+        return JSON.stringify(value);
+      }
+
+      async function verifyContentHash(manifest) {
+        if (!manifest || typeof manifest !== "object" || typeof manifest.contentHash !== "string") {
+          throw new Error("The selected JSON does not contain an MFD content hash.");
+        }
+        const { contentHash, ...payload } = manifest;
+        const digest = await crypto.subtle.digest(
+          "SHA-256",
+          new TextEncoder().encode(stableStringify(payload)),
+        );
+        const actual = `sha256:${Array.from(new Uint8Array(digest), (byte) =>
+          byte.toString(16).padStart(2, "0"),
+        ).join("")}`;
+        if (actual !== contentHash) {
+          throw new Error("The manifest content does not match its generated content hash.");
+        }
+      }
+
+      function setStatus(message, tone) {
+        status.textContent = message;
+        status.dataset.tone = tone || "";
+      }
+
+      function refreshActions() {
+        const actionable = activePlan
+          ? activePlan.counts.create + activePlan.counts.update +
+            activePlan.items.filter((item) => item.category === "conflict" && item.applicable).length
+          : 0;
+        checkButton.disabled = busy || !parsedManifest;
+        applyButton.disabled = busy || !activePlan || activePlan.hasBlockingConflicts || actionable === 0;
+        openPruneButton.disabled = busy || !activePlan || activePlan.counts.stale === 0;
+        confirmPruneButton.disabled = busy || confirmationValue.value !== "PRUNE";
+        fileInput.disabled = busy;
+      }
+
+      function setBusy(nextBusy, operation) {
+        busy = nextBusy;
+        if (nextBusy) {
+          setStatus(`${operation} in progress…`);
+        }
+        refreshActions();
+      }
+
+      function renderPlan(plan) {
+        activePlan = plan;
+        summary.replaceChildren();
+        for (const category of ["create", "update", "unchanged", "conflict", "stale"]) {
+          const count = document.createElement("span");
+          count.className = "count";
+          count.dataset.category = category;
+          count.textContent = `${category}: ${plan.counts[category]}`;
+          summary.append(count);
+        }
+
+        diff.replaceChildren();
+        if (plan.items.length === 0) {
+          const empty = document.createElement("p");
+          empty.className = "diff-empty";
+          empty.textContent = "No managed entries were found in the manifest or file.";
+          diff.append(empty);
+        }
+        for (const item of plan.items) {
+          const row = document.createElement("div");
+          row.className = "diff-item";
+          const badge = document.createElement("span");
+          badge.className = "badge";
+          badge.textContent = item.category;
+          const label = document.createElement("span");
+          label.className = "item-label";
+          label.textContent = `${item.entity}: ${item.label}`;
+          const detail = document.createElement("span");
+          detail.className = "item-detail";
+          detail.textContent = item.detail;
+          row.append(badge, label, detail);
+          diff.append(row);
+        }
+        manifestMeta.textContent = `Source ${plan.manifest.sourceRevision.slice(0, 19)}… · manifest ${plan.manifest.contentHash.slice(0, 19)}…`;
+        refreshActions();
+      }
+
+      fileInput.addEventListener("change", async () => {
+        activePlan = undefined;
+        parsedManifest = undefined;
+        const file = fileInput.files && fileInput.files[0];
+        if (!file) {
+          setStatus("Choose a generated variables.json manifest.");
+          refreshActions();
+          return;
+        }
+        try {
+          parsedManifest = JSON.parse(await file.text());
+          await verifyContentHash(parsedManifest);
+          manifestMeta.textContent = file.name;
+          setStatus("Manifest loaded. Run Check to preview the complete diff.");
+        } catch (error) {
+          parsedManifest = undefined;
+          setStatus(error instanceof Error ? error.message : "The selected file is invalid.", "error");
+        }
+        refreshActions();
+      });
+
+      checkButton.addEventListener("click", () => {
+        setBusy(true, "Check");
+        post({ type: "check", manifest: parsedManifest });
+      });
+
+      applyButton.addEventListener("click", () => {
+        setBusy(true, "Apply");
+        post({ type: "apply" });
+      });
+
+      openPruneButton.addEventListener("click", () => {
+        confirmation.classList.add("visible");
+        confirmationValue.value = "";
+        confirmationValue.focus();
+        refreshActions();
+      });
+
+      cancelPruneButton.addEventListener("click", () => {
+        confirmation.classList.remove("visible");
+        confirmationValue.value = "";
+        openPruneButton.focus();
+        refreshActions();
+      });
+
+      confirmationValue.addEventListener("input", refreshActions);
+
+      confirmPruneButton.addEventListener("click", () => {
+        setBusy(true, "Prune");
+        post({ type: "prune", confirmation: confirmationValue.value });
+      });
+
+      window.onmessage = (event) => {
+        const message = event.data && event.data.pluginMessage;
+        if (!message) return;
+        setBusy(false);
+        if (message.type === "error") {
+          setStatus(message.message, "error");
+          return;
+        }
+        if (message.type === "result") {
+          renderPlan(message.plan);
+          confirmation.classList.remove("visible");
+          confirmationValue.value = "";
+          if (message.operation === "check") {
+            setStatus(
+              message.plan.hasBlockingConflicts
+                ? "Check complete. Resolve blocked conflicts before Apply."
+                : "Check complete. Review every entry before Apply or Prune.",
+              message.plan.hasBlockingConflicts ? "error" : "success",
+            );
+          } else if (message.operation === "apply") {
+            setStatus(
+              `Apply complete: ${message.summary.created} created, ${message.summary.updated} updated, ${message.summary.conflictsResolved} conflicts resolved.`,
+              "success",
+            );
+          } else {
+            setStatus(
+              `Prune complete: ${message.summary.variables} variables, ${message.summary.modes} modes, ${message.summary.collections} collections removed.`,
+              "success",
+            );
+          }
+        }
+      };
+
+      new ResizeObserver(() => {
+        post({ type: "resize", height: Math.ceil(document.getElementById("plugin-root").getBoundingClientRect().height) });
+      }).observe(document.getElementById("plugin-root"));
+    </script>
+  </body>
+</html>
