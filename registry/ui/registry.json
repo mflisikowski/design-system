@@ -174,6 +174,27 @@
       }
     },
     {
+      "name": "alert-dialog",
+      "type": "registry:ui",
+      "title": "Alert Dialog",
+      "description": "Modal confirmation with safe focus, explicit actions, and pending protection.",
+      "dependencies": ["@base-ui/react@1.8.0", "@mflisikowski/tokens@0.0.0", "clsx@2.1.1"],
+      "registryDependencies": [],
+      "files": [
+        { "path": "alert-dialog.tsx", "type": "registry:ui", "target": "@ui/alert-dialog.tsx" },
+        { "path": "alert-dialog.css", "type": "registry:ui", "target": "@ui/alert-dialog.css" }
+      ],
+      "docs": "Compose Root, Trigger, Content, Title, Description, Footer, Cancel, and Action. Control open state around domain actions and set pending to block repeated action and dismissal.",
+      "meta": {
+        "maturity": "experimental",
+        "version": "0.0.0",
+        "installation": {
+          "latest": "pnpm dlx shadcn@latest add @mflisikowski/alert-dialog",
+          "snapshot": "pnpm dlx shadcn@latest add https://design-system.mflisikowski.dev/r/v/0.0.0/alert-dialog.json"
+        }
+      }
+    },
+    {
       "name": "toast",
       "type": "registry:ui",
       "title": "Toast",

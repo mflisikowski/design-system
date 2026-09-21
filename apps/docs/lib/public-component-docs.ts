@@ -24,6 +24,11 @@ const commonDependencies = ["@mflisikowski/tokens@0.0.0", "clsx@2.1.1"] as const
 
 export const publicComponentDocumentation = {
   alert: component("alert", commonDependencies),
+  alertDialog: component("alert-dialog", [
+    "@base-ui/react@1.8.0",
+    "@mflisikowski/tokens@0.0.0",
+    "clsx@2.1.1",
+  ]),
   button: component("button", commonDependencies),
   emptyState: component("empty-state", commonDependencies),
   field: component("field", commonDependencies),

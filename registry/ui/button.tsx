@@ -1,3 +1,5 @@
+"use client";
+
 import { clsx } from "clsx";
 import type { ComponentPropsWithRef } from "react";
 
@@ -11,11 +13,14 @@ export type ButtonProps = ComponentPropsWithRef<"button"> & {
 };
 
 export function Button({
+  "aria-busy": ariaBusy,
+  "aria-disabled": ariaDisabled,
   children,
   className,
   disabled,
   loading = false,
   loadingLabel = "Loading",
+  onClick,
   size = "md",
   type = "button",
   variant = "accent",
@@ -24,11 +29,20 @@ export function Button({
   return (
     <button
       {...props}
-      aria-busy={loading || undefined}
+      aria-busy={loading || ariaBusy || undefined}
+      aria-disabled={loading || ariaDisabled || undefined}
       className={clsx("mfd-button", className)}
       data-size={size}
       data-variant={variant}
-      disabled={disabled || loading}
+      disabled={disabled}
+      onClick={(event) => {
+        if (loading) {
+          event.preventDefault();
+          event.stopPropagation();
+          return;
+        }
+        onClick?.(event);
+      }}
       type={type}
     >
       {loading ? (

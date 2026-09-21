@@ -1,5 +1,11 @@
 import { expect, type Page, test } from "@playwright/test";
 
+const resolvedThemeContexts = ["atlas", "bloom"].flatMap((brand) =>
+  ["light", "dark"].flatMap((colorScheme) =>
+    ["comfortable", "compact"].map((density) => ({ brand, colorScheme, density })),
+  ),
+);
+
 test.beforeEach(({ browserName }) => {
   test.skip(browserName !== "chromium", "Visual regression baselines use Chromium only.");
   test.skip(process.platform !== "linux", "Visual regression runs in pinned Linux Chromium.");
@@ -60,4 +66,36 @@ test("captures the Clients key screen in the pull-request theme matrix", async (
   await expect(page).toHaveScreenshot("clients-bloom-dark-compact.png", {
     fullPage: true,
   });
+});
+
+test("captures Add Client recovery in every resolved theme context", async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 720 });
+  await page.goto("/sign-in");
+  await page.getByRole("button", { name: "Continue as demo manager" }).click();
+  await expect(page.getByRole("cell", { exact: true, name: "Northstar Studio" })).toBeVisible();
+  await waitForStableFonts(page);
+
+  for (const { brand, colorScheme, density } of resolvedThemeContexts) {
+    const contextId = `${brand}-${colorScheme}-${density}`;
+    await page.locator("html").evaluate(
+      (element, theme) => {
+        element.dataset.brand = theme.brand;
+        element.dataset.colorScheme = theme.colorScheme;
+        element.dataset.density = theme.density;
+      },
+      { brand, colorScheme, density },
+    );
+
+    await page.getByRole("button", { name: "Add client" }).click();
+    await page.getByRole("textbox", { name: "Organization name" }).fill("Visual regression studio");
+    await page.keyboard.press("Escape");
+    await expect(page.getByRole("alertdialog", { name: "Discard changes?" })).toBeVisible();
+
+    await expect(page).toHaveScreenshot(`add-client-recovery-${contextId}.png`, {
+      fullPage: true,
+    });
+
+    await page.getByRole("button", { name: "Discard changes" }).click();
+    await expect(page.getByRole("dialog", { name: "Add client" })).toBeHidden();
+  }
 });

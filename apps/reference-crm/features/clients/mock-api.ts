@@ -45,6 +45,8 @@ function readOrSeed(storage: ClientStorage) {
 }
 
 export function createClientHandlers(storage: ClientStorage, latency = defaultLatency) {
+  let failNextCreate = true;
+
   return [
     http.get("*/api/clients", async ({ request }) => {
       const scenario = new URL(request.url).searchParams.get("scenario");
@@ -64,8 +66,35 @@ export function createClientHandlers(storage: ClientStorage, latency = defaultLa
       return HttpResponse.json(readOrSeed(storage));
     }),
     http.post("*/api/clients", async ({ request }) => {
-      await delay(latency);
+      const scenario = new URL(request.url).searchParams.get("scenario");
+      await delay(scenario === "slow" ? 1500 : latency);
+
+      if (scenario === "error" || (scenario === "error-once" && failNextCreate)) {
+        failNextCreate = false;
+        return HttpResponse.json(
+          { message: "The client could not be saved. Try again." },
+          { status: 503 },
+        );
+      }
+
       const input = createClientInputSchema.parse(await request.json());
+      const existingClients = readOrSeed(storage);
+      const duplicateEmail = existingClients.some(
+        (client) => client.contactEmail.toLowerCase() === input.contactEmail.toLowerCase(),
+      );
+
+      if (duplicateEmail) {
+        return HttpResponse.json(
+          {
+            fieldErrors: {
+              contactEmail: "A client with this contact email already exists.",
+            },
+            message: "The submitted client has a validation error.",
+          },
+          { status: 422 },
+        );
+      }
+
       const timestamp = new Date().toISOString();
       const client: Client = {
         ...input,
@@ -74,7 +103,7 @@ export function createClientHandlers(storage: ClientStorage, latency = defaultLa
         createdAt: timestamp,
         updatedAt: timestamp,
       };
-      storage.write([client, ...readOrSeed(storage)]);
+      storage.write([client, ...existingClients]);
       return HttpResponse.json(client, { status: 201 });
     }),
     http.post("*/api/clients/reset", async () => {

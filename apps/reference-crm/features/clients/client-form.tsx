@@ -1,9 +1,11 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import type { z } from "zod";
 
+import { Alert, AlertAction, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { DialogBody, DialogClose, DialogFooter } from "@/components/ui/dialog";
 import { Field, FieldDescription, FieldError, FieldLabel } from "@/components/ui/field";
@@ -11,10 +13,12 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 
 import { type CreateClientInput, createClientInputSchema } from "./model";
+import { ClientRepositoryError } from "./repository";
 
 type ClientFormValues = z.input<typeof createClientInputSchema>;
 
 type ClientFormProps = Readonly<{
+  onDirtyChange: (dirty: boolean) => void;
   onSubmit: (input: CreateClientInput) => Promise<void>;
   pending: boolean;
 }>;
@@ -27,11 +31,16 @@ const defaultValues: ClientFormValues = {
   notes: "",
 };
 
-export function ClientForm({ onSubmit, pending }: ClientFormProps) {
+export function ClientForm({ onDirtyChange, onSubmit, pending }: ClientFormProps) {
+  const failureFocusRef = useRef<HTMLElement>(null);
+  const [failedSubmission, setFailedSubmission] = useState<string | null>(null);
   const {
-    formState: { errors },
+    clearErrors,
+    formState: { errors, isDirty },
     handleSubmit,
     register,
+    setError,
+    setFocus,
   } = useForm<ClientFormValues, unknown, CreateClientInput>({
     defaultValues,
     mode: "onSubmit",
@@ -40,11 +49,69 @@ export function ClientForm({ onSubmit, pending }: ClientFormProps) {
     shouldFocusError: true,
   });
 
-  const submit = handleSubmit(onSubmit);
+  useEffect(() => {
+    onDirtyChange(isDirty);
+  }, [isDirty, onDirtyChange]);
+
+  useEffect(() => {
+    if (!pending && failedSubmission && failureFocusRef.current) {
+      failureFocusRef.current.focus();
+      failureFocusRef.current = null;
+    }
+  }, [failedSubmission, pending]);
+
+  async function submitValues(input: CreateClientInput) {
+    const activeElement = document.activeElement;
+    clearErrors();
+
+    try {
+      await onSubmit(input);
+    } catch (error) {
+      if (error instanceof ClientRepositoryError) {
+        const fieldErrors = Object.entries(error.fieldErrors ?? {}) as [
+          keyof ClientFormValues,
+          string,
+        ][];
+        if (fieldErrors.length > 0) {
+          setFailedSubmission(null);
+          for (const [field, message] of fieldErrors) {
+            setError(field, { message, type: "server" });
+          }
+          setFocus(fieldErrors[0][0]);
+          return;
+        }
+
+        failureFocusRef.current = activeElement instanceof HTMLElement ? activeElement : null;
+        setFailedSubmission(error.message);
+        return;
+      }
+
+      failureFocusRef.current = activeElement instanceof HTMLElement ? activeElement : null;
+      setFailedSubmission("The client could not be saved. Try again.");
+    }
+  }
+
+  const submit = handleSubmit(submitValues);
 
   return (
     <form aria-busy={pending || undefined} className="client-form" noValidate onSubmit={submit}>
       <DialogBody>
+        {failedSubmission ? (
+          <Alert className="client-form__failure" live tone="danger">
+            <AlertTitle>Client could not be saved</AlertTitle>
+            <AlertDescription>{failedSubmission}</AlertDescription>
+            <AlertAction>
+              <Button
+                loading={pending}
+                loadingLabel="Retrying"
+                onClick={() => void submit()}
+                variant="outline"
+              >
+                Try again
+              </Button>
+            </AlertAction>
+          </Alert>
+        ) : null}
         <fieldset className="client-form__fields" disabled={pending}>
           <Field invalid={Boolean(errors.organizationName)}>
             <FieldLabel>Organization name</FieldLabel>

@@ -20,6 +20,7 @@ published instances in DS Reference CRM.
 | Input | Control / Value | Size: Small, Medium, Large; Disabled; Read only | Compose only inside Field. Mobile text remains at least 16 CSS px and size follows the active density mode. |
 | Textarea | Control / Value | Size: Small, Medium, Large; Disabled; Read only | Compose only inside Field. Height may grow by product context without changing the control contract. |
 | Dialog | Backdrop / Content / Header / Title / Description / Body / Footer / Close | Size: Small, Medium, Large; Pending | Below 640 px, the same Content is full screen. Header and Footer remain visible while Body scrolls; pending blocks every close request. |
+| Alert Dialog | Backdrop / Content / Title / Description / Footer / Cancel / Action | Pending | Destructive contexts place initial focus on Cancel. Escape cancels, backdrop never dismisses, and pending blocks Action, Cancel, Escape, and other close requests. |
 | Toast | Container / Status icon / Message / Dismiss | Tone: Success | Runtime notes specify polite status semantics, four-second duration, at most three visible items, and queueing. |
 
 ## Reference CRM frames
@@ -30,11 +31,15 @@ columns. The narrow frame omits Added while retaining the same table structure. 
 link as the first focusable element and the main region as its stable target.
 
 Add Client is specified in wide default, wide invalid, wide submitting, wide success-return, and
-320 px full-screen frames. Default has Organization name as the initial keyboard/pointer focus;
+320 px full-screen frames, plus dirty-dismissal confirmation, duplicate-email, and server-failure
+states. Default has Organization name as the initial keyboard/pointer focus;
 the mobile touch annotation places initial focus on Content. Invalid shows all three required-field
-errors and Organization name focus. Submitting marks the form busy, disables every control and
-close path, and replaces the submit label with `Saving client`. Success returns to the populated
-Clients frame with the created row first, Add client focused, and the polite `Client added` Toast.
+errors and Organization name focus. Dirty dismissal nests Alert Dialog with Keep editing focused;
+cancel preserves values and restores the initiating focus, while Discard changes returns focus to
+Add client. Duplicate email maps to Contact email. Server failure uses a persistent Alert with Try
+again. Submitting marks the form busy, disables every control and close path, and replaces the
+submit label with `Saving client`. Success returns to the populated Clients frame with the created
+row first, Add client focused, and the polite `Client added` Toast.
 
 ## Review gate
 

@@ -1,9 +1,19 @@
 import { useState } from "react";
 import { expect, test, vi } from "vitest";
-import { page } from "vitest/browser";
+import { page, userEvent } from "vitest/browser";
 import { render } from "vitest-browser-react";
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -44,7 +54,7 @@ test("public foundations preserve native behavior and accessible names", async (
   render(
     <div>
       <Button onClick={onClick}>Retry</Button>
-      <Button loading loadingLabel="Resetting demo data">
+      <Button loading loadingLabel="Resetting demo data" onClick={onClick}>
         Reset demo data
       </Button>
       <IconButton label="More actions for Northstar Studio" onClick={onClick}>
@@ -59,7 +69,11 @@ test("public foundations preserve native behavior and accessible names", async (
 
   await page.getByRole("button", { name: "Retry" }).click();
   expect(onClick).toHaveBeenCalledTimes(1);
-  await expect.element(page.getByRole("button", { name: "Resetting demo data" })).toBeDisabled();
+  const loadingButton = page.getByRole("button", { name: "Resetting demo data" });
+  await expect.element(loadingButton).toHaveAttribute("aria-disabled", "true");
+  await loadingButton.click({ force: true });
+  expect(onClick).toHaveBeenCalledTimes(1);
+  await expect.element(loadingButton).toHaveFocus();
   await expect
     .element(page.getByRole("img", { name: "More actions for Northstar Studio" }))
     .not.toBeInTheDocument();
@@ -183,6 +197,76 @@ test("dialog manages modal focus and restores it to the trigger", async () => {
     false,
     expect.objectContaining({ cancel: expect.any(Function), reason: "close" }),
   );
+  await expect.element(trigger).toHaveFocus();
+});
+
+test("alert dialog protects consequential actions and focus", async () => {
+  function Fixture() {
+    const [pending, setPending] = useState(false);
+
+    return (
+      <AlertDialog pending={pending}>
+        <AlertDialogTrigger>Discard draft</AlertDialogTrigger>
+        <AlertDialogContent>
+          <AlertDialogTitle>Discard changes?</AlertDialogTitle>
+          <AlertDialogDescription>Your entered values will be lost.</AlertDialogDescription>
+          <AlertDialogFooter>
+            <AlertDialogCancel render={<Button variant="outline" />}>
+              Keep editing
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => setPending(true)}
+              render={<Button variant="danger" />}
+            >
+              Discard changes
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    );
+  }
+
+  render(<Fixture />);
+
+  const trigger = page.getByRole("button", { name: "Discard draft" });
+  await trigger.click();
+  await expect
+    .element(page.getByRole("alertdialog", { name: "Discard changes?" }))
+    .toBeInTheDocument();
+  await expect.element(page.getByRole("button", { name: "Keep editing" })).toHaveFocus();
+
+  const action = page.getByRole("button", { name: "Discard changes" });
+  await action.click();
+  await expect.element(page.getByRole("button", { name: "Keep editing" })).toBeDisabled();
+  await expect.element(action).toHaveAttribute("aria-disabled", "true");
+  await expect.element(action).toHaveFocus();
+  await userEvent.keyboard("{Escape}");
+  await expect
+    .element(page.getByRole("alertdialog", { name: "Discard changes?" }))
+    .toBeInTheDocument();
+});
+
+test("alert dialog treats Escape as cancel and restores trigger focus", async () => {
+  render(
+    <AlertDialog>
+      <AlertDialogTrigger>Discard draft</AlertDialogTrigger>
+      <AlertDialogContent>
+        <AlertDialogTitle>Discard changes?</AlertDialogTitle>
+        <AlertDialogDescription>Your entered values will be lost.</AlertDialogDescription>
+        <AlertDialogFooter>
+          <AlertDialogCancel>Keep editing</AlertDialogCancel>
+          <AlertDialogAction>Discard changes</AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>,
+  );
+
+  const trigger = page.getByRole("button", { name: "Discard draft" });
+  await trigger.click();
+  await userEvent.keyboard("{Escape}");
+  await expect
+    .element(page.getByRole("alertdialog", { name: "Discard changes?" }))
+    .not.toBeInTheDocument();
   await expect.element(trigger).toHaveFocus();
 });
 

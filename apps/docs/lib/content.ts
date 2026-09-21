@@ -223,6 +223,16 @@ export const documentationPages = [
     load: () => import("../content/components/dialog.mdx"),
   },
   {
+    slug: "components/alert-dialog",
+    href: "/components/alert-dialog",
+    source: "components/alert-dialog.mdx",
+    title: "Alert Dialog",
+    description: "Consequential confirmation with safe focus and pending protection.",
+    section: "Components",
+    headings: publicComponentHeadings,
+    load: () => import("../content/components/alert-dialog.mdx"),
+  },
+  {
     slug: "components/toast",
     href: "/components/toast",
     source: "components/toast.mdx",

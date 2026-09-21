@@ -1,0 +1,94 @@
+import { CodeExample, Installation, MaturityNotice } from "@/components/docs/component-documentation";
+import { publicComponentDocumentation } from "@/lib/public-component-docs";
+
+<MaturityNotice introduced="0.0.0" status="experimental" />
+
+## Installation
+
+<Installation {...publicComponentDocumentation.alertDialog.installation} />
+
+## Purpose
+
+Alert Dialog confirms a consequential choice while blocking background interaction and preserving a
+safe, understandable focus path.
+
+## Examples
+
+<CodeExample filename="components/discard-confirmation.tsx" language="tsx">
+{`"use client";
+
+import { useState } from "react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
+
+export function DiscardConfirmation() {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <AlertDialog onOpenChange={setOpen} open={open}>
+      <AlertDialogTrigger render={<Button variant="outline" />}>Discard draft</AlertDialogTrigger>
+      <AlertDialogContent>
+        <AlertDialogTitle>Discard changes?</AlertDialogTitle>
+        <AlertDialogDescription>Your entered values will be lost.</AlertDialogDescription>
+        <AlertDialogFooter>
+          <AlertDialogCancel render={<Button variant="outline" />}>Keep editing</AlertDialogCancel>
+          <AlertDialogAction onClick={() => setOpen(false)} render={<Button variant="danger" />}>
+            Discard changes
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+  );
+}`}
+</CodeExample>
+
+## Anatomy
+
+Alert Dialog composes Root, Trigger, Content, required Title and Description, Footer, Cancel, and
+Action. Consumers choose Button variants explicitly; Action never implies destructive styling.
+
+## API
+
+Root supports controlled and uncontrolled open state plus `pending`. Content accepts initial and
+final focus targets. Trigger, Cancel, and Action support render composition. Action invokes domain
+logic without closing implicitly, so the consumer controls successful completion and retry.
+
+## States
+
+Closed, open, and pending-protected states are supported. Pending marks Content busy and disables
+Cancel and Action while preventing Escape and programmatic close requests.
+
+## Accessibility
+
+Content has `alertdialog` semantics and is named by its required Title and Description. Destructive
+uses put Cancel first so it receives default focus. Focus returns to Trigger unless an explicit
+logical fallback is supplied.
+
+## Keyboard behavior
+
+Tab and Shift+Tab remain inside the modal. Escape acts as Cancel while idle and does nothing while
+pending. Backdrop interaction never dismisses the confirmation.
+
+## Figma specification
+
+Anatomy is `Backdrop / Content / Title / Description / Footer / Cancel / Action`. Pending is the
+only component property. Action tone comes from the explicitly composed Button.
+
+## Content guidance
+
+Name the irreversible or lossy outcome in the title. Explain exactly what will be lost, use a safe
+Cancel label, and make the Action label specific to the consequence.
+
+## Related patterns
+
+Add Client uses Alert Dialog to protect dirty form values. Future destructive flows reuse the same
+contract with application-owned mutations and persistent failure Alerts.

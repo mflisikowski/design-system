@@ -8,6 +8,7 @@ const appDirectory = path.dirname(fileURLToPath(import.meta.url));
 export default defineConfig({
   optimizeDeps: {
     include: [
+      "@base-ui/react/alert-dialog",
       "lucide-react",
       "react",
       "react-dom/client",

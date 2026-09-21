@@ -229,6 +229,10 @@ h1 {
   padding: 0;
 }
 
+.client-form__failure {
+  margin-block-end: var(--mfd-space-stack-md);
+}
+
 .demo-disclosure {
   background: var(--mfd-color-bg-subtle);
   border-inline-start: 3px solid var(--mfd-color-accent-solid);

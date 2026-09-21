@@ -25,7 +25,11 @@ import { AddClientDialog } from "./add-client-dialog";
 import { ClientRowActions } from "./client-row-actions";
 import type { Client } from "./model";
 import { clientQueryKeys } from "./query-keys";
-import { type ClientListScenario, createHttpClientRepository } from "./repository";
+import {
+  type ClientCreateScenario,
+  type ClientListScenario,
+  createHttpClientRepository,
+} from "./repository";
 
 const clientRepository = createHttpClientRepository();
 const dateFormatter = new Intl.DateTimeFormat("en-US", {
@@ -34,6 +38,7 @@ const dateFormatter = new Intl.DateTimeFormat("en-US", {
 });
 
 type ClientListProps = Readonly<{
+  createScenario: ClientCreateScenario;
   scenario: ClientListScenario;
   waitingForApi?: boolean;
 }>;
@@ -124,7 +129,7 @@ function ClientTable({ clients, onAnnouncement }: ClientTableProps) {
   );
 }
 
-export function ClientList({ scenario, waitingForApi = false }: ClientListProps) {
+export function ClientList({ createScenario, scenario, waitingForApi = false }: ClientListProps) {
   const queryClient = useQueryClient();
   const announcementSequence = useRef(0);
   const [announcement, setAnnouncement] = useState<{ id: number; message: string } | null>(null);
@@ -198,7 +203,7 @@ export function ClientList({ scenario, waitingForApi = false }: ClientListProps)
           </p>
         </div>
         <div className="page-heading__actions">
-          <AddClientDialog scenario={scenario} />
+          <AddClientDialog createScenario={createScenario} scenario={scenario} />
           <Button
             loading={reset.isPending}
             loadingLabel="Resetting demo data"

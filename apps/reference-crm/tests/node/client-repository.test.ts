@@ -53,6 +53,51 @@ describe("ClientRepository", () => {
     await expect(repository.list()).resolves.toEqual([created]);
   });
 
+  it("maps a duplicate contact email response to the named field", async () => {
+    const storage = createMemoryClientStorage(deterministicClients);
+    mockServer.use(...createClientHandlers(storage, 0));
+    const repository = createHttpClientRepository("http://localhost");
+
+    await expect(
+      repository.create({
+        organizationName: "Another Northstar",
+        contactName: "Jamie Chen",
+        contactEmail: deterministicClients[0].contactEmail.toUpperCase(),
+      }),
+    ).rejects.toMatchObject({
+      fieldErrors: {
+        contactEmail: "A client with this contact email already exists.",
+      },
+      name: "ClientRepositoryError",
+      status: 422,
+    });
+
+    await expect(repository.list()).resolves.toEqual(deterministicClients);
+  });
+
+  it("exposes a retryable create failure without persisting the submitted client", async () => {
+    const storage = createMemoryClientStorage([]);
+    mockServer.use(...createClientHandlers(storage, 0));
+    const repository = createHttpClientRepository("http://localhost");
+
+    await expect(
+      repository.create(
+        {
+          organizationName: "Aurora Works",
+          contactName: "Maya Ortiz",
+          contactEmail: "maya@aurora.example",
+        },
+        "error",
+      ),
+    ).rejects.toMatchObject({
+      message: "The client could not be saved. Try again.",
+      name: "ClientRepositoryError",
+      status: 503,
+    });
+
+    await expect(repository.list()).resolves.toEqual([]);
+  });
+
   it("turns an HTTP failure into a typed repository error", async () => {
     mockServer.use(
       http.get("*/api/clients", () =>

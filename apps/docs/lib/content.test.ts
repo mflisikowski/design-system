@@ -30,6 +30,7 @@ describe("documentation content manifest", () => {
       "components/input",
       "components/textarea",
       "components/dialog",
+      "components/alert-dialog",
       "components/toast",
       "patterns",
       "themes",

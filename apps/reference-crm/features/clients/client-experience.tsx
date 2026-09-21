@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { ToastViewport } from "@/components/ui/toast";
 import { startMockApi } from "@/mocks/browser";
 import { ClientList } from "./client-list";
-import type { ClientListScenario } from "./repository";
+import type { ClientCreateScenario, ClientListScenario } from "./repository";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -17,10 +17,11 @@ const queryClient = new QueryClient({
 });
 
 type ClientExperienceProps = Readonly<{
+  createScenario: ClientCreateScenario;
   scenario: ClientListScenario;
 }>;
 
-export function ClientExperience({ scenario }: ClientExperienceProps) {
+export function ClientExperience({ createScenario, scenario }: ClientExperienceProps) {
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
@@ -37,7 +38,7 @@ export function ClientExperience({ scenario }: ClientExperienceProps) {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <ClientList scenario={scenario} waitingForApi={!ready} />
+      <ClientList createScenario={createScenario} scenario={scenario} waitingForApi={!ready} />
       <ToastViewport />
     </QueryClientProvider>
   );

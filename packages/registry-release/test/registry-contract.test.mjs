@@ -71,6 +71,7 @@ describe("canonical registry sample contract", () => {
       "input",
       "textarea",
       "dialog",
+      "alert-dialog",
       "toast",
     ]) {
       expect(items.get(name)).toMatchObject({
