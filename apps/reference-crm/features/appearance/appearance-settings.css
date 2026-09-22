@@ -17,6 +17,11 @@
   opacity: 0.72;
 }
 
+.appearance-settings__actions {
+  display: flex;
+  justify-content: flex-start;
+}
+
 .appearance-settings__fieldset legend {
   font:
     var(--mfd-typography-heading-font-weight) var(--mfd-typography-heading-font-size) /

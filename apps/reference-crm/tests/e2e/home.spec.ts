@@ -142,6 +142,42 @@ test("falls back independently for invalid appearance cookies", async ({ page })
   await expect(root).toHaveAttribute("data-density", "comfortable");
 });
 
+test("resets appearance as one operation and follows system color changes", async ({ page }) => {
+  await page.goto("/sign-in");
+  await page.getByRole("button", { name: "Continue as demo manager" }).click();
+  await expect(page.getByRole("heading", { level: 1, name: "Clients" })).toBeVisible();
+  await page.goto("/settings/appearance");
+
+  await page.getByRole("radio", { name: /Bloom/ }).click();
+  await page.getByRole("radio", { name: /Dark/ }).click();
+  await page.getByRole("radio", { name: /Compact/ }).click();
+
+  const root = page.locator("html");
+  await expect(root).toHaveAttribute("data-brand", "bloom");
+  await expect(root).toHaveAttribute("data-color-scheme", "dark");
+  await expect(root).toHaveAttribute("data-density", "compact");
+
+  const reset = page.getByRole("button", { name: "Reset appearance" });
+  await reset.click();
+  await expect(root).toHaveAttribute("data-brand", "atlas");
+  await expect(root).toHaveAttribute("data-color-scheme", "system");
+  await expect(root).toHaveAttribute("data-density", "comfortable");
+  await expect(page.getByRole("status")).toHaveText("Appearance reset to the default settings.");
+  await expect(reset).toBeFocused();
+
+  await page.emulateMedia({ colorScheme: "dark" });
+  await expect(root).toHaveAttribute("data-color-scheme", "system");
+  await expect(root).toHaveCSS("color-scheme", "dark");
+  await page.emulateMedia({ colorScheme: "light" });
+  await expect(root).toHaveCSS("color-scheme", "light");
+
+  const reloadResponse = await page.reload();
+  const serverHtml = await reloadResponse?.text();
+  expect(serverHtml).toContain('data-brand="atlas"');
+  expect(serverHtml).toContain('data-color-scheme="system"');
+  expect(serverHtml).toContain('data-density="comfortable"');
+});
+
 test("opens the same client details state from the table and a direct URL", async ({ page }) => {
   await page.goto("/sign-in");
   await page.getByRole("button", { name: "Continue as demo manager" }).click();

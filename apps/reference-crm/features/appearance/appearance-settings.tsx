@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { type ThemeAxis, type ThemePreferences, useTheme } from "@/components/theme/theme-provider";
 import { Alert, AlertAction, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
@@ -58,22 +59,45 @@ function updateValue(
 }
 
 export function AppearanceSettings() {
-  const { errors, pendingAxes, preferences, retryPreference, setPreference } = useTheme();
+  const {
+    errors,
+    isResetPending,
+    pendingAxes,
+    preferences,
+    resetError,
+    resetPreferences,
+    retryPreference,
+    retryReset,
+    setPreference,
+  } = useTheme();
+  const [resetAnnouncement, setResetAnnouncement] = useState("");
   const failedAxes = Object.keys(errors) as ThemeAxis[];
 
+  async function handleReset() {
+    setResetAnnouncement("");
+    if (await resetPreferences()) {
+      setResetAnnouncement("Appearance reset to the default settings.");
+    }
+  }
+
   return (
-    <div className="appearance-settings">
+    <div
+      aria-busy={isResetPending || undefined}
+      className="appearance-settings"
+      data-reset-pending={isResetPending || undefined}
+    >
       {failedAxes.map((axis) => {
         const error = errors[axis];
         if (!error) {
           return null;
         }
         return (
-          <Alert key={axis}>
+          <Alert key={axis} live>
             <AlertTitle>Appearance could not be saved</AlertTitle>
             <AlertDescription>{error.message}</AlertDescription>
             <AlertAction>
               <Button
+                disabled={isResetPending}
                 loading={pendingAxes.has(axis)}
                 onClick={() => void retryPreference(axis)}
                 variant="outline"
@@ -85,14 +109,14 @@ export function AppearanceSettings() {
         );
       })}
 
-      <fieldset className="appearance-settings__fieldset">
+      <fieldset className="appearance-settings__fieldset" disabled={isResetPending}>
         <legend>Brand</legend>
         <p className="appearance-settings__description">
           Demo-only tenant context. This does not edit a production brand.
         </p>
         <RadioGroup.Root
           aria-label="Brand"
-          loading={pendingAxes.has("brand")}
+          loading={isResetPending || pendingAxes.has("brand")}
           onValueChange={(value) => updateValue(setPreference, "brand", String(value))}
           value={preferences.brand}
         >
@@ -109,14 +133,14 @@ export function AppearanceSettings() {
         </RadioGroup.Root>
       </fieldset>
 
-      <fieldset className="appearance-settings__fieldset">
+      <fieldset className="appearance-settings__fieldset" disabled={isResetPending}>
         <legend>Color scheme</legend>
         <p className="appearance-settings__description">
           System remains the stored preference and follows OS changes.
         </p>
         <RadioGroup.Root
           aria-label="Color scheme"
-          loading={pendingAxes.has("colorScheme")}
+          loading={isResetPending || pendingAxes.has("colorScheme")}
           onValueChange={(value) => updateValue(setPreference, "colorScheme", String(value))}
           value={preferences.colorScheme}
         >
@@ -134,14 +158,14 @@ export function AppearanceSettings() {
         </RadioGroup.Root>
       </fieldset>
 
-      <fieldset className="appearance-settings__fieldset">
+      <fieldset className="appearance-settings__fieldset" disabled={isResetPending}>
         <legend>Density</legend>
         <p className="appearance-settings__description">
           Density changes coordinated dimensions without changing component meaning or behavior.
         </p>
         <RadioGroup.Root
           aria-label="Density"
-          loading={pendingAxes.has("density")}
+          loading={isResetPending || pendingAxes.has("density")}
           onValueChange={(value) => updateValue(setPreference, "density", String(value))}
           value={preferences.density}
         >
@@ -160,6 +184,38 @@ export function AppearanceSettings() {
       </fieldset>
 
       <ThemePreview preferences={preferences} />
+
+      {resetError ? (
+        <Alert live>
+          <AlertTitle>Appearance could not be reset</AlertTitle>
+          <AlertDescription>{resetError.message}</AlertDescription>
+          <AlertAction>
+            <Button
+              disabled={pendingAxes.size > 0}
+              loading={isResetPending}
+              onClick={() => void retryReset()}
+              variant="outline"
+            >
+              Try again
+            </Button>
+          </AlertAction>
+        </Alert>
+      ) : null}
+
+      <div className="appearance-settings__actions">
+        <Button
+          disabled={pendingAxes.size > 0}
+          loading={isResetPending}
+          loadingLabel="Resetting appearance"
+          onClick={() => void handleReset()}
+          variant="outline"
+        >
+          Reset appearance
+        </Button>
+      </div>
+      <p aria-live="polite" className="visually-hidden" role="status">
+        {resetAnnouncement}
+      </p>
     </div>
   );
 }

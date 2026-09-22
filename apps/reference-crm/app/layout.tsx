@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { cookies } from "next/headers";
 import type { ReactNode } from "react";
 
-import { persistThemePreference } from "@/app/actions/theme";
+import { persistThemePreference, persistThemePreferences } from "@/app/actions/theme";
 import { ThemeProvider } from "@/components/theme/theme-provider";
 import "@mflisikowski/tokens/css";
 import { getThemePreferencesFromCookies, themePreferenceCookies } from "@/lib/theme-preferences";
@@ -38,6 +38,7 @@ export default async function RootLayout({ children }: RootLayoutProps) {
         <ThemeProvider
           initialPreferences={themePreferences}
           persistPreference={persistThemePreference}
+          persistPreferences={persistThemePreferences}
         >
           {children}
         </ThemeProvider>
