@@ -11,7 +11,11 @@ import {
 export type ProjectListScenario = "default" | "empty" | "error";
 export type ProjectCreateScenario = "default" | "error" | "error-once" | "slow";
 export type ProjectStatusScenario = "default" | "error" | "error-once";
+export type ProjectDeleteScenario = "default" | "error" | "error-once" | "not-found" | "slow";
 export type ProjectFieldErrors = Partial<Record<keyof CreateProjectInput, string>>;
+export type ProjectDeleteOutcome =
+  | Readonly<{ outcome: "deleted"; projectId: string }>
+  | Readonly<{ code: "NOT_FOUND"; outcome: "not-found"; projectId: string }>;
 
 export type ProjectRepository = Readonly<{
   listByClient: (clientId: string, scenario?: ProjectListScenario) => Promise<readonly Project[]>;
@@ -26,6 +30,10 @@ export type ProjectRepository = Readonly<{
     status: ProjectStatus,
     scenario?: ProjectStatusScenario,
   ) => Promise<Project>;
+  deleteProject: (
+    projectId: string,
+    scenario?: ProjectDeleteScenario,
+  ) => Promise<ProjectDeleteOutcome>;
 }>;
 
 export class ProjectRepositoryError extends Error {
@@ -88,6 +96,37 @@ export function createHttpProjectRepository(origin = ""): ProjectRepository {
         ),
         projectSchema,
       );
+    },
+    async deleteProject(projectId, scenario = "default") {
+      const query = scenario === "default" ? "" : `?scenario=${scenario}`;
+      const response = await fetch(
+        `${origin}/api/projects/${encodeURIComponent(projectId)}${query}`,
+        { method: "DELETE" },
+      );
+      const body = (await response.json().catch(() => undefined)) as
+        | { message?: string; outcome?: string; projectId?: string }
+        | undefined;
+
+      if (response.status === 404) {
+        return {
+          code: "NOT_FOUND",
+          outcome: "not-found",
+          projectId,
+        };
+      }
+
+      if (!response.ok) {
+        throw new ProjectRepositoryError(
+          body?.message ?? "The project request failed.",
+          response.status,
+        );
+      }
+
+      if (body?.outcome !== "deleted" || body.projectId !== projectId) {
+        throw new ProjectRepositoryError("The project response was invalid.", 502);
+      }
+
+      return { outcome: "deleted", projectId };
     },
   };
 }

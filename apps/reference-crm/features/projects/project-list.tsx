@@ -1,9 +1,18 @@
 "use client";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { Alert, AlertAction, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Badge, type BadgeTone } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -12,6 +21,7 @@ import {
   EmptyStateDescription,
   EmptyStateTitle,
 } from "@/components/ui/empty-state";
+import { Icon, IconButton } from "@/components/ui/icon";
 import { Select, SelectIcon, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import {
   Table,
@@ -30,6 +40,7 @@ import { projectQueryKeys } from "./query-keys";
 import {
   createHttpProjectRepository,
   type ProjectCreateScenario,
+  type ProjectDeleteScenario,
   type ProjectListScenario,
   type ProjectStatusScenario,
 } from "./repository";
@@ -42,7 +53,10 @@ const dateFormatter = new Intl.DateTimeFormat("en-US", {
 
 type ProjectListProps = Readonly<{
   clientId: string;
+  clientName?: string;
   createScenario: ProjectCreateScenario;
+  deleteScenario: ProjectDeleteScenario;
+  onAnnouncement?: (message: string) => void;
   scenario: ProjectListScenario;
   statusScenario: ProjectStatusScenario;
   waitingForApi?: boolean;
@@ -72,6 +86,7 @@ function LoadingProjects() {
             <TableHead>Project</TableHead>
             <TableHead>Status</TableHead>
             <TableHead>Updated</TableHead>
+            <TableHead>Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody aria-hidden="true">
@@ -86,6 +101,9 @@ function LoadingProjects() {
               <TableCell>
                 <span className="skeleton-line" />
               </TableCell>
+              <TableCell>
+                <span className="skeleton-dot" />
+              </TableCell>
             </TableRow>
           ))}
         </TableBody>
@@ -95,12 +113,22 @@ function LoadingProjects() {
 }
 
 type ProjectTableProps = Readonly<{
+  onDelete: (projectId: string) => void;
   onStatusChange: (projectId: string, status: ProjectStatus) => void;
+  registerDeleteButton: (projectId: string, element: HTMLButtonElement | null) => void;
+  pendingDeleteProjectId?: string;
   pendingProjectId?: string;
   projects: readonly Project[];
 }>;
 
-function ProjectTable({ onStatusChange, pendingProjectId, projects }: ProjectTableProps) {
+function ProjectTable({
+  onDelete,
+  onStatusChange,
+  pendingDeleteProjectId,
+  pendingProjectId,
+  projects,
+  registerDeleteButton,
+}: ProjectTableProps) {
   return (
     <div className="project-table-surface">
       <Table>
@@ -110,6 +138,7 @@ function ProjectTable({ onStatusChange, pendingProjectId, projects }: ProjectTab
             <TableHead>Project</TableHead>
             <TableHead>Status</TableHead>
             <TableHead>Updated</TableHead>
+            <TableHead>Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -159,6 +188,16 @@ function ProjectTable({ onStatusChange, pendingProjectId, projects }: ProjectTab
                   {dateFormatter.format(new Date(project.updatedAt))}
                 </time>
               </TableCell>
+              <TableCell>
+                <IconButton
+                  disabled={pendingDeleteProjectId === project.id}
+                  label={`Delete ${project.name}`}
+                  onClick={() => onDelete(project.id)}
+                  ref={(element) => registerDeleteButton(project.id, element)}
+                >
+                  <Icon name="trash" />
+                </IconButton>
+              </TableCell>
             </TableRow>
           ))}
         </TableBody>
@@ -169,12 +208,24 @@ function ProjectTable({ onStatusChange, pendingProjectId, projects }: ProjectTab
 
 export function ProjectList({
   clientId,
+  clientName,
   createScenario,
+  deleteScenario,
+  onAnnouncement,
   scenario,
   statusScenario,
   waitingForApi = false,
 }: ProjectListProps) {
   const queryClient = useQueryClient();
+  const addProjectTriggerRef = useRef<HTMLButtonElement>(null);
+  const cancelButtonRef = useRef<HTMLButtonElement>(null);
+  const deleteButtonRefs = useRef(new Map<string, HTMLButtonElement>());
+  const deleteFocusFallback = useRef<() => HTMLElement | null>(() => null);
+  const deleteOrder = useRef<readonly string[]>([]);
+  const wasDeleteDialogOpen = useRef(false);
+  const [deleteRequest, setDeleteRequest] = useState<Project | null>(null);
+  const [deleteFailure, setDeleteFailure] = useState<string | null>(null);
+  const [deleteNotice, setDeleteNotice] = useState(false);
   const projects = useQuery({
     enabled: !waitingForApi,
     queryFn: () => projectRepository.listByClient(clientId, scenario),
@@ -210,6 +261,99 @@ export function ProjectList({
       toast.success("Project status updated");
     },
   });
+  const deleteProject = useMutation({
+    mutationFn: ({ projectId }: { projectId: string }) =>
+      projectRepository.deleteProject(projectId, deleteScenario),
+    onError: (error) => {
+      setDeleteFailure(
+        error instanceof Error ? error.message : "The project could not be deleted. Try again.",
+      );
+    },
+    onSuccess: (outcome, variables) => {
+      const currentProjects = projects.data ?? [];
+      const currentProjectIds = currentProjects.map((project) => project.id);
+      const deletedIndex = deleteOrder.current.indexOf(variables.projectId);
+      const preferredFallbackIds =
+        deletedIndex < 0
+          ? []
+          : [deleteOrder.current[deletedIndex + 1], deleteOrder.current[deletedIndex - 1]];
+      const fallbackProjectIds = Array.from(
+        new Set([...preferredFallbackIds, ...currentProjectIds]),
+      ).filter(
+        (projectId): projectId is string =>
+          Boolean(projectId) && projectId !== variables.projectId && currentProjectIds.includes(projectId),
+      );
+
+      deleteFocusFallback.current = () => {
+        for (const projectId of fallbackProjectIds) {
+          const button = deleteButtonRefs.current.get(projectId);
+          if (button?.isConnected) {
+            return button;
+          }
+        }
+        return addProjectTriggerRef.current?.isConnected ? addProjectTriggerRef.current : null;
+      };
+
+      const removeProject = (current: readonly Project[] | undefined) =>
+        current?.filter((project) => project.id !== variables.projectId);
+      queryClient.setQueryData<readonly Project[]>(
+        projectQueryKeys.byClient(clientId, scenario),
+        removeProject,
+      );
+      queryClient.setQueryData<readonly Project[]>(
+        projectQueryKeys.byClient(clientId, "default"),
+        removeProject,
+      );
+      void queryClient.invalidateQueries({
+        queryKey: projectQueryKeys.all,
+        refetchType: "active",
+      });
+      setDeleteFailure(null);
+      setDeleteRequest(null);
+
+      if (outcome.outcome === "not-found") {
+        setDeleteNotice(true);
+        onAnnouncement?.("Project is no longer available");
+        return;
+      }
+
+      setDeleteNotice(false);
+      toast.success("Project deleted");
+    },
+  });
+
+  useEffect(() => {
+    if (wasDeleteDialogOpen.current && !deleteRequest) {
+      queueMicrotask(() => deleteFocusFallback.current()?.focus());
+    }
+    wasDeleteDialogOpen.current = Boolean(deleteRequest);
+  }, [deleteRequest]);
+
+  function registerDeleteButton(projectId: string, element: HTMLButtonElement | null) {
+    if (element) {
+      deleteButtonRefs.current.set(projectId, element);
+    } else {
+      deleteButtonRefs.current.delete(projectId);
+    }
+  }
+
+  function openDeleteDialog(projectId: string) {
+    const project = projects.data?.find((record) => record.id === projectId);
+    if (!project) {
+      return;
+    }
+
+    deleteFocusFallback.current = () =>
+      deleteButtonRefs.current.get(projectId)?.isConnected
+        ? deleteButtonRefs.current.get(projectId) ?? null
+        : addProjectTriggerRef.current?.isConnected
+          ? addProjectTriggerRef.current
+          : null;
+    deleteOrder.current = projects.data?.map((record) => record.id) ?? [];
+    setDeleteFailure(null);
+    setDeleteNotice(false);
+    setDeleteRequest(project);
+  }
 
   let content;
   if (waitingForApi || projects.isPending) {
@@ -239,6 +383,7 @@ export function ProjectList({
           <AddProjectDialog
             clientId={clientId}
             createScenario={createScenario}
+            triggerRef={addProjectTriggerRef}
             scenario={scenario}
           />
         </EmptyStateActions>
@@ -266,9 +411,14 @@ export function ProjectList({
           </Alert>
         ) : null}
         <ProjectTable
+          onDelete={openDeleteDialog}
           onStatusChange={(projectId, status) => updateStatus.mutate({ projectId, status })}
+          pendingDeleteProjectId={
+            deleteProject.isPending ? deleteProject.variables?.projectId : undefined
+          }
           pendingProjectId={updateStatus.isPending ? updateStatus.variables?.projectId : undefined}
           projects={projects.data}
+          registerDeleteButton={registerDeleteButton}
         />
       </>
     );
@@ -285,11 +435,76 @@ export function ProjectList({
           <AddProjectDialog
             clientId={clientId}
             createScenario={createScenario}
+            triggerRef={addProjectTriggerRef}
             scenario={scenario}
           />
         ) : null}
       </div>
+      {deleteNotice ? (
+        <Alert live tone="success">
+          <AlertTitle>Project is no longer available</AlertTitle>
+          <AlertDescription>
+            The project had already been removed. The project list has been refreshed.
+          </AlertDescription>
+        </Alert>
+      ) : null}
       {content}
+      <AlertDialog
+        onOpenChange={(open) => {
+          if (!open && !deleteProject.isPending) {
+            setDeleteFailure(null);
+            setDeleteRequest(null);
+          }
+        }}
+        open={Boolean(deleteRequest)}
+        pending={deleteProject.isPending}
+      >
+        {deleteRequest ? (
+          <AlertDialogContent
+            finalFocus={() => deleteFocusFallback.current() ?? false}
+            initialFocus={cancelButtonRef}
+          >
+            <AlertDialogTitle>Delete {deleteRequest.name}?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This will permanently remove {deleteRequest.name} from {clientName ?? "this client"}.
+              This action cannot be undone.
+            </AlertDialogDescription>
+            {deleteFailure ? (
+              <Alert live tone="danger">
+                <AlertTitle>Project could not be deleted</AlertTitle>
+                <AlertDescription>{deleteFailure}</AlertDescription>
+                <AlertAction>
+                  <Button
+                    loading={deleteProject.isPending}
+                    loadingLabel="Retrying"
+                    onClick={() => deleteProject.mutate({ projectId: deleteRequest.id })}
+                    variant="outline"
+                  >
+                    Try again
+                  </Button>
+                </AlertAction>
+              </Alert>
+            ) : null}
+            <AlertDialogFooter>
+              <AlertDialogCancel ref={cancelButtonRef} render={<Button variant="outline" />}>
+                Cancel
+              </AlertDialogCancel>
+              <AlertDialogAction
+                onClick={() => deleteProject.mutate({ projectId: deleteRequest.id })}
+                render={
+                  <Button
+                    loading={deleteProject.isPending}
+                    loadingLabel="Deleting project"
+                    variant="danger"
+                  />
+                }
+              >
+                Delete project
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        ) : null}
+      </AlertDialog>
     </section>
   );
 }

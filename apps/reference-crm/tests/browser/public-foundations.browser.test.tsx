@@ -320,6 +320,10 @@ test("alert dialog protects consequential actions and focus", async () => {
     .element(page.getByRole("alertdialog", { name: "Discard changes?" }))
     .toBeInTheDocument();
   await expect.element(page.getByRole("button", { name: "Keep editing" })).toHaveFocus();
+  document.querySelector<HTMLElement>(".mfd-alert-dialog__backdrop")?.click();
+  await expect
+    .element(page.getByRole("alertdialog", { name: "Discard changes?" }))
+    .toBeInTheDocument();
 
   const action = page.getByRole("button", { name: "Discard changes" });
   await action.click();

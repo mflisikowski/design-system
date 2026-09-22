@@ -80,6 +80,7 @@ export function createProjectHandlers(
 ) {
   let failNextCreate = true;
   let failNextStatusUpdate = true;
+  let failNextDelete = true;
 
   return [
     http.get("*/api/clients/:clientId/projects", async ({ params, request }) => {
@@ -177,6 +178,40 @@ export function createProjectHandlers(
       nextProjects[projectIndex] = updatedProject;
       projectStorage.write(nextProjects);
       return HttpResponse.json(updatedProject);
+    }),
+    http.delete("*/api/projects/:projectId", async ({ params, request }) => {
+      const scenario = new URL(request.url).searchParams.get("scenario");
+      await delay(scenario === "slow" ? 1500 : latency);
+
+      if (scenario === "error" || (scenario === "error-once" && failNextDelete)) {
+        failNextDelete = false;
+        return HttpResponse.json(
+          { message: "The project could not be deleted. Try again." },
+          { status: 503 },
+        );
+      }
+
+      const projectId = String(params.projectId);
+      if (scenario === "not-found") {
+        const existingProjects = readOrSeed(projectStorage);
+        projectStorage.write(existingProjects.filter((project) => project.id !== projectId));
+        return HttpResponse.json(
+          { code: "NOT_FOUND", message: "Project was not found." },
+          { status: 404 },
+        );
+      }
+
+      const existingProjects = readOrSeed(projectStorage);
+      const projectIndex = existingProjects.findIndex((project) => project.id === projectId);
+      if (projectIndex < 0) {
+        return HttpResponse.json(
+          { code: "NOT_FOUND", message: "Project was not found." },
+          { status: 404 },
+        );
+      }
+
+      projectStorage.write(existingProjects.filter((project) => project.id !== projectId));
+      return HttpResponse.json({ outcome: "deleted", projectId });
     }),
   ];
 }

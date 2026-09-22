@@ -187,4 +187,69 @@ describe("ProjectRepository", () => {
       deterministicProjects[0],
     );
   });
+
+  it("deletes only the requested project and returns a typed outcome", async () => {
+    const clientStorage = createMemoryClientStorage(deterministicClients);
+    const projectStorage = createMemoryProjectStorage(deterministicProjects);
+    mockServer.use(
+      ...createClientHandlers(clientStorage),
+      ...createProjectHandlers(projectStorage, clientStorage, 0),
+    );
+
+    const repository = createHttpProjectRepository("http://localhost");
+
+    await expect(repository.deleteProject(deterministicProjects[0].id)).resolves.toEqual({
+      outcome: "deleted",
+      projectId: deterministicProjects[0].id,
+    });
+    await expect(repository.listByClient("client_northstar")).resolves.toEqual([
+      deterministicProjects[1],
+    ]);
+    await expect(repository.listByClient("client_juniper")).resolves.toEqual([
+      deterministicProjects[2],
+    ]);
+  });
+
+  it("returns a typed stale outcome without changing stored projects", async () => {
+    const clientStorage = createMemoryClientStorage(deterministicClients);
+    const projectStorage = createMemoryProjectStorage(deterministicProjects);
+    mockServer.use(
+      ...createClientHandlers(clientStorage),
+      ...createProjectHandlers(projectStorage, clientStorage, 0),
+    );
+
+    const repository = createHttpProjectRepository("http://localhost");
+
+    await expect(repository.deleteProject("project_missing")).resolves.toEqual({
+      code: "NOT_FOUND",
+      outcome: "not-found",
+      projectId: "project_missing",
+    });
+    await expect(repository.listByClient("client_northstar")).resolves.toEqual([
+      deterministicProjects[0],
+      deterministicProjects[1],
+    ]);
+  });
+
+  it("keeps a project when deletion fails with infrastructure error", async () => {
+    const clientStorage = createMemoryClientStorage(deterministicClients);
+    const projectStorage = createMemoryProjectStorage(deterministicProjects);
+    mockServer.use(
+      ...createClientHandlers(clientStorage),
+      ...createProjectHandlers(projectStorage, clientStorage, 0),
+    );
+
+    const repository = createHttpProjectRepository("http://localhost");
+
+    await expect(
+      repository.deleteProject(deterministicProjects[0].id, "error"),
+    ).rejects.toMatchObject({
+      message: "The project could not be deleted. Try again.",
+      name: "ProjectRepositoryError",
+      status: 503,
+    });
+    await expect(repository.listByClient("client_northstar")).resolves.toContainEqual(
+      deterministicProjects[0],
+    );
+  });
 });

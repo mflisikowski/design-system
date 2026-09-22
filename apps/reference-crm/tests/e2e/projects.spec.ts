@@ -126,7 +126,121 @@ test("changes project status with keyboard feedback and keeps the failure recove
   await expect(retryableStatus).toContainText("Completed");
 });
 
+test("deletes a project safely, persists the result, and restores focus to the next action", async ({
+  page,
+}) => {
+  await signIn(page);
+  await page.goto("/clients/client_northstar");
+
+  const deleteWebsite = page.getByRole("button", { name: "Delete Website refresh" });
+  await deleteWebsite.click();
+  const confirmation = page.getByRole("alertdialog", { name: "Delete Website refresh?" });
+  await expect(confirmation).toBeVisible();
+  await expect(page.getByRole("button", { name: "Cancel" })).toBeFocused();
+
+  await page.getByRole("button", { name: "Cancel" }).click();
+  await expect(confirmation).toBeHidden();
+  await expect(deleteWebsite).toBeFocused();
+
+  await deleteWebsite.click();
+  await page.getByRole("button", { name: "Delete project" }).click();
+  await expect(page.getByText("Website refresh", { exact: true })).toBeHidden();
+  await expect(page.getByText("Brand system", { exact: true })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Delete Brand system" })).toBeFocused();
+  await expect(page.getByText("Project deleted", { exact: true })).toBeVisible();
+
+  await page.reload();
+  await expect(page.getByText("Website refresh", { exact: true })).toBeHidden();
+  await expect(page.getByText("Brand system", { exact: true })).toBeVisible();
+
+  const deleteBrand = page.getByRole("button", { name: "Delete Brand system" });
+  await deleteBrand.click();
+  await page.getByRole("button", { name: "Delete project" }).click();
+  const addProject = page.getByRole("button", { name: "Add project" });
+  await expect(page.getByRole("heading", { name: "No projects yet" })).toBeVisible();
+  await expect(addProject).toBeFocused();
+});
+
+test("keeps project deletion open through infrastructure failure and retry", async ({ page }) => {
+  await signIn(page);
+  await page.goto("/clients/client_northstar?demoProjectDeleteState=error-once");
+
+  await page.getByRole("button", { name: "Delete Website refresh" }).click();
+  await page.getByRole("button", { name: "Delete project" }).click();
+
+  const confirmation = page.getByRole("alertdialog", { name: "Delete Website refresh?" });
+  await expect(confirmation).toBeVisible();
+  await expect(confirmation).toContainText("Project could not be deleted");
+  await page.getByRole("button", { name: "Try again" }).click();
+  await expect(confirmation).toBeHidden();
+  await expect(page.getByText("Website refresh", { exact: true })).toBeHidden();
+});
+
+test("removes a stale project confirmation and focuses the surviving fallback", async ({ page }) => {
+  await signIn(page);
+  await page.goto("/clients/client_northstar?demoProjectDeleteState=not-found");
+
+  await page.getByRole("button", { name: "Delete Website refresh" }).click();
+  await page.getByRole("button", { name: "Delete project" }).click();
+
+  await expect(page.getByRole("alertdialog", { name: "Delete Website refresh?" })).toBeHidden();
+  await expect(page.getByText("Website refresh", { exact: true })).toBeHidden();
+  await expect(page.getByRole("button", { name: "Delete Brand system" })).toBeFocused();
+  await expect(
+    page.getByRole("heading", { name: "Project is no longer available" }),
+  ).toBeVisible();
+});
+
+test("blocks every project deletion dismissal path while pending", async ({ page }) => {
+  await signIn(page);
+  await page.goto("/clients/client_northstar?demoProjectDeleteState=slow");
+
+  await page.getByRole("button", { name: "Delete Website refresh" }).click();
+  await page.getByRole("button", { name: "Delete project" }).click();
+
+  const confirmation = page.getByRole("alertdialog", { name: "Delete Website refresh?" });
+  await expect(confirmation).toHaveAttribute("aria-busy", "true");
+  await expect(page.getByRole("button", { name: "Cancel" })).toBeDisabled();
+  await expect(page.getByRole("button", { name: "Deleting project" })).toHaveAttribute(
+    "aria-disabled",
+    "true",
+  );
+  await page.keyboard.press("Escape");
+  await expect(confirmation).toBeVisible();
+  await page.locator(".mfd-alert-dialog__backdrop").click({ force: true });
+  await expect(confirmation).toBeVisible();
+
+  await expect(page.getByText("Website refresh", { exact: true })).toBeHidden();
+});
+
 for (const { brand, colorScheme, density } of resolvedThemeContexts) {
+  test(`keeps Project deletion accessible in ${brand} ${colorScheme} ${density}`, async ({
+    page,
+    makeAxeBuilder,
+  }) => {
+    await signIn(page);
+    await page.goto("/clients/client_northstar");
+    await page.locator("html").evaluate(
+      (element, theme) => {
+        element.dataset.brand = theme.brand;
+        element.dataset.colorScheme = theme.colorScheme;
+        element.dataset.density = theme.density;
+      },
+      { brand, colorScheme, density },
+    );
+
+    const deleteWebsite = page.getByRole("button", { name: "Delete Website refresh" });
+    await deleteWebsite.click();
+    const confirmation = page.getByRole("alertdialog", { name: "Delete Website refresh?" });
+    await expect(confirmation).toBeVisible();
+    await expect(page.getByRole("button", { name: "Cancel" })).toBeFocused();
+    const scan = await makeAxeBuilder().include("[role='alertdialog']").analyze();
+    expect(scan.violations).toEqual([]);
+    await page.keyboard.press("Escape");
+    await expect(confirmation).toBeHidden();
+    await expect(deleteWebsite).toBeFocused();
+  });
+
   test(`keeps every Project Status accessible in ${brand} ${colorScheme} ${density}`, async ({
     page,
     makeAxeBuilder,

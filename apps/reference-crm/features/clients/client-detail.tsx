@@ -27,6 +27,7 @@ import { startMockApi } from "@/mocks/browser";
 import { ProjectList } from "../projects/project-list";
 import type {
   ProjectCreateScenario,
+  ProjectDeleteScenario,
   ProjectListScenario,
   ProjectStatusScenario,
 } from "../projects/repository";
@@ -47,6 +48,7 @@ const dateFormatter = new Intl.DateTimeFormat("en-US", {
 type ClientDetailExperienceProps = Readonly<{
   clientId: string;
   projectCreateScenario: ProjectCreateScenario;
+  projectDeleteScenario: ProjectDeleteScenario;
   projectScenario: ProjectListScenario;
   projectStatusScenario: ProjectStatusScenario;
   scenario: ClientDetailScenario;
@@ -85,6 +87,7 @@ function LoadingDetails() {
 export function ClientDetailExperience({
   clientId,
   projectCreateScenario,
+  projectDeleteScenario,
   projectScenario,
   projectStatusScenario,
   scenario,
@@ -95,6 +98,7 @@ export function ClientDetailExperience({
       <ClientDetailContent
         clientId={clientId}
         projectCreateScenario={projectCreateScenario}
+        projectDeleteScenario={projectDeleteScenario}
         projectScenario={projectScenario}
         projectStatusScenario={projectStatusScenario}
         scenario={scenario}
@@ -108,6 +112,7 @@ export function ClientDetailExperience({
 function ClientDetailContent({
   clientId,
   projectCreateScenario,
+  projectDeleteScenario,
   projectScenario,
   projectStatusScenario,
   scenario,
@@ -146,6 +151,7 @@ function ClientDetailContent({
         <ProjectList
           clientId={clientId}
           createScenario={projectCreateScenario}
+          deleteScenario={projectDeleteScenario}
           scenario={projectScenario}
           statusScenario={projectStatusScenario}
           waitingForApi={!ready}
@@ -262,7 +268,10 @@ function ClientDetailContent({
       </section>
       <ProjectList
         clientId={clientId}
+        clientName={record.organizationName}
         createScenario={projectCreateScenario}
+        deleteScenario={projectDeleteScenario}
+        onAnnouncement={announce}
         scenario={projectScenario}
         statusScenario={projectStatusScenario}
         waitingForApi={!ready}

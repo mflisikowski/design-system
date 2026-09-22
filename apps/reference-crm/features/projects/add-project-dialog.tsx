@@ -1,7 +1,7 @@
 "use client";
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useRef, useState, type RefObject } from "react";
 
 import {
   AlertDialog,
@@ -37,13 +37,20 @@ const projectRepository = createHttpProjectRepository();
 type AddProjectDialogProps = Readonly<{
   clientId: string;
   createScenario: ProjectCreateScenario;
+  triggerRef?: RefObject<HTMLButtonElement | null>;
   scenario: ProjectListScenario;
 }>;
 
-export function AddProjectDialog({ clientId, createScenario, scenario }: AddProjectDialogProps) {
+export function AddProjectDialog({
+  clientId,
+  createScenario,
+  scenario,
+  triggerRef: externalTriggerRef,
+}: AddProjectDialogProps) {
   const queryClient = useQueryClient();
   const closeRequestFocusRef = useRef<HTMLElement>(null);
-  const triggerRef = useRef<HTMLButtonElement>(null);
+  const internalTriggerRef = useRef<HTMLButtonElement>(null);
+  const triggerRef = externalTriggerRef ?? internalTriggerRef;
   const [discardOpen, setDiscardOpen] = useState(false);
   const [dirty, setDirty] = useState(false);
   const [open, setOpen] = useState(false);

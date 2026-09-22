@@ -2,6 +2,7 @@ import { ClientDetailExperience } from "@/features/clients/client-detail";
 import type { ClientDetailScenario, ClientUpdateScenario } from "@/features/clients/repository";
 import type {
   ProjectCreateScenario,
+  ProjectDeleteScenario,
   ProjectListScenario,
   ProjectStatusScenario,
 } from "@/features/projects/repository";
@@ -12,6 +13,7 @@ type ClientDetailsPageProps = Readonly<{
     demoDetailState?: string;
     demoEditState?: string;
     demoProjectCreateState?: string;
+    demoProjectDeleteState?: string;
     demoProjectState?: string;
     demoProjectStatusState?: string;
   }>;
@@ -24,6 +26,7 @@ export default async function ClientDetailsPage({ params, searchParams }: Client
       demoDetailState,
       demoEditState,
       demoProjectCreateState,
+      demoProjectDeleteState,
       demoProjectState,
       demoProjectStatusState,
     },
@@ -41,6 +44,13 @@ export default async function ClientDetailsPage({ params, searchParams }: Client
     demoProjectCreateState === "slow"
       ? demoProjectCreateState
       : "default";
+  const projectDeleteScenario: ProjectDeleteScenario =
+    demoProjectDeleteState === "error" ||
+    demoProjectDeleteState === "error-once" ||
+    demoProjectDeleteState === "not-found" ||
+    demoProjectDeleteState === "slow"
+      ? demoProjectDeleteState
+      : "default";
   const projectStatusScenario: ProjectStatusScenario =
     demoProjectStatusState === "error" || demoProjectStatusState === "error-once"
       ? demoProjectStatusState
@@ -50,6 +60,7 @@ export default async function ClientDetailsPage({ params, searchParams }: Client
     <ClientDetailExperience
       clientId={clientId}
       projectCreateScenario={projectCreateScenario}
+      projectDeleteScenario={projectDeleteScenario}
       projectScenario={projectScenario}
       projectStatusScenario={projectStatusScenario}
       scenario={scenario}
