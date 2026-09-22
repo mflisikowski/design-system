@@ -5,6 +5,7 @@ const baseURL = "http://127.0.0.1:3000";
 export default defineConfig({
   testDir: "./tests/e2e",
   fullyParallel: true,
+  workers: process.env.CI ? 1 : undefined,
   forbidOnly: Boolean(process.env.CI),
   retries: process.env.CI ? 1 : 0,
   reporter: process.env.CI ? [["github"], ["html", { open: "never" }]] : "list",
@@ -12,7 +13,6 @@ export default defineConfig({
     baseURL,
     colorScheme: "light",
     locale: "en-US",
-    permissions: ["clipboard-read", "clipboard-write"],
     reducedMotion: "reduce",
     timezoneId: "UTC",
     trace: "retain-on-failure",
@@ -31,7 +31,10 @@ export default defineConfig({
   projects: [
     {
       name: "chromium",
-      use: { ...devices["Desktop Chrome"] },
+      use: {
+        ...devices["Desktop Chrome"],
+        permissions: ["clipboard-read", "clipboard-write"],
+      },
     },
     {
       name: "firefox",

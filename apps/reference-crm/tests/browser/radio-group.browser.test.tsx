@@ -81,8 +81,8 @@ test("radio group preserves one-value semantics and keyboard selection", async (
 
   render(
     <RadioGroup.Root aria-label="Color scheme" defaultValue="system">
-      <label>
-        <RadioGroupItem value="system">
+      <label htmlFor="test-color-scheme-system">
+        <RadioGroupItem id="test-color-scheme-system" value="system">
           <RadioGroupIndicator />
         </RadioGroupItem>
         System
@@ -131,6 +131,28 @@ test("radio group maps orientation to arrow-key behavior", async () => {
   await userEvent.keyboard("{ArrowRight}");
   await expect.element(bloom).toHaveAttribute("aria-checked", "true");
   await expect.element(bloom).toHaveFocus();
+});
+
+test("appearance radios keep the effective 44px touch target in compact density", async () => {
+  document.documentElement.dataset.brand = "bloom";
+  document.documentElement.dataset.colorScheme = "dark";
+  document.documentElement.dataset.density = "compact";
+
+  render(
+    <ThemeProvider initialPreferences={{ brand: "bloom", colorScheme: "dark", density: "compact" }}>
+      <AppearanceSettings />
+    </ThemeProvider>,
+  );
+
+  await expect.element(page.getByRole("radio", { name: /Atlas/ })).toBeInTheDocument();
+
+  const radioBoxes = [...document.querySelectorAll<HTMLElement>('[role="radio"]')].map((radio) => {
+    const { height, width } = radio.getBoundingClientRect();
+    return { height, width };
+  });
+
+  expect(radioBoxes).toHaveLength(7);
+  expect(radioBoxes.every(({ height, width }) => height >= 44 && width >= 44)).toBe(true);
 });
 
 test("theme rollback preserves another axis that is still saving", async () => {

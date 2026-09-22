@@ -338,6 +338,8 @@ export const documentationPages = [
         label: "0.2.0 — Client details and Projects",
       },
       { depth: 3, id: "migration-from-010", label: "Migration from 0.1.0" },
+      { depth: 2, id: "030-appearance", label: "0.3.0 — Appearance" },
+      { depth: 3, id: "migration-from-020", label: "Migration from 0.2.0" },
       { depth: 2, id: "unreleased", label: "Unreleased" },
       { depth: 2, id: "release-model", label: "Release model" },
       { depth: 2, id: "maturity-transitions", label: "Maturity transitions" },

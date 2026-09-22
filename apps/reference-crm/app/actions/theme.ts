@@ -2,6 +2,7 @@
 
 import { cookies } from "next/headers";
 
+import { shouldUseSecureCookies } from "@/lib/cookie-security";
 import {
   getThemeCookieName,
   isThemePreferenceAxis,
@@ -15,7 +16,7 @@ function cookieOptions() {
     maxAge: 60 * 60 * 24 * 365,
     path: "/",
     sameSite: "lax" as const,
-    secure: process.env.NODE_ENV === "production",
+    secure: shouldUseSecureCookies(),
   };
 }
 

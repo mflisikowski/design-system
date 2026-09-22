@@ -40,11 +40,36 @@ The coordinated public package version is `0.2.0` for `@mflisikowski/tokens` and
 `@mflisikowski/lint-config`. Consumers that pin MFD packages should update them together with the
 registry snapshot so installed source and semantic tokens remain aligned.
 
+## 0.3.0 — Appearance
+
+The third immutable MFD Design System release completes the Appearance tracer with independent
+brand, color-scheme, and density preferences, pre-hydration root attributes, persistence recovery,
+atomic reset, Theme Preview, and the experimental Radio Group registry contract.
+
+- Reference CRM validates preference cookies on the server and applies all three root attributes
+  before hydration. System remains a stored preference that follows the operating-system scheme.
+- Individual persistence failures roll back only the affected axis and retain a retryable Alert.
+  Reset persists Atlas, System, and Comfortable as one operation and restores the last confirmed
+  tuple on failure.
+- Radio Group and RadioCard preserve roving keyboard behavior, non-color-only selection, and 44px
+  effective touch targets. The public `radio-group` registry snapshot is available under
+  `/r/v/0.3.0/`.
+
+### Migration from 0.2.0
+
+Existing 0.2.0 consumers require no changes. The 0.2.0 package and registry snapshot remain
+available, and Client details, Projects, Badge, and Select contracts are not silently changed by
+this release.
+
+To adopt the Appearance contracts, update the coordinated `@mflisikowski/tokens` and
+`@mflisikowski/lint-config` packages to `0.3.0` and install the public `radio-group` item from the
+latest registry channel or its immutable `/r/v/0.3.0/radio-group.json` URL. Radio Group is
+experimental and owns selection semantics and presentation only; tenant resolution, persistence,
+and Appearance settings orchestration remain application-owned.
+
 ## Unreleased
 
-The `0.3.0` Appearance milestone adds independent brand, color-scheme, and density preferences,
-pre-hydration root attributes, Theme Preview, and the experimental Radio Group registry contract.
-Persistence recovery and atomic reset remain part of the follow-up qualification work.
+The next planned milestone is `0.4.0`, covering canonical Client search and edit flows.
 
 ## Release model
 

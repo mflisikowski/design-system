@@ -37,7 +37,7 @@ test("exposes the authenticated shell and deterministic client table", async ({
       httpOnly: true,
       name: "mfd-demo-session",
       sameSite: "Lax",
-      secure: true,
+      secure: process.env.MFD_E2E_INSECURE_HTTP_COOKIES !== "1",
     }),
   );
   await expect(page.getByRole("table", { name: "Clients" })).toBeVisible();
@@ -87,20 +87,40 @@ test("exposes the authenticated shell and deterministic client table", async ({
 test("changes appearance axes independently and preserves them before hydration", async ({
   page,
 }) => {
+  const hydrationDiagnostics: string[] = [];
+  page.on("console", (message) => {
+    if (message.type() === "error" && /hydration|mismatch/i.test(message.text())) {
+      hydrationDiagnostics.push(message.text());
+    }
+  });
+  page.on("pageerror", (error) => {
+    if (/hydration|mismatch/i.test(error.message)) {
+      hydrationDiagnostics.push(error.message);
+    }
+  });
+
   await page.goto("/sign-in");
   await page.getByRole("button", { name: "Continue as demo manager" }).click();
   await expect(page.getByRole("heading", { level: 1, name: "Clients" })).toBeVisible();
-  await page.goto("/settings/appearance");
+  const initialResponse = await page.goto("/settings/appearance");
+  const initialServerHtml = await initialResponse?.text();
+  expect(initialServerHtml).toContain('data-brand="atlas"');
+  expect(initialServerHtml).toContain('data-color-scheme="system"');
+  expect(initialServerHtml).toContain('data-density="comfortable"');
 
   const root = page.locator("html");
   await expect(root).toHaveAttribute("data-brand", "atlas");
   await expect(root).toHaveAttribute("data-color-scheme", "system");
   await expect(root).toHaveAttribute("data-density", "comfortable");
+  const mainContent = await page.locator("#main-content").elementHandle();
 
   const bloom = page.getByRole("radio", { name: /Bloom/ });
   await bloom.click();
   await expect(root).toHaveAttribute("data-brand", "bloom");
   await expect(bloom).toBeFocused();
+  expect(
+    await mainContent?.evaluate((element) => element === document.querySelector("#main-content")),
+  ).toBe(true);
 
   const dark = page.getByRole("radio", { name: /Dark/ });
   await dark.click();
@@ -124,6 +144,28 @@ test("changes appearance axes independently and preserves them before hydration"
   await expect(root).toHaveAttribute("data-brand", "bloom");
   await expect(root).toHaveAttribute("data-color-scheme", "dark");
   await expect(root).toHaveAttribute("data-density", "compact");
+  expect(hydrationDiagnostics).toEqual([]);
+});
+
+test("keeps appearance radio targets at least 44px at 320px in compact density", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 320, height: 800 });
+  await page.goto("/sign-in");
+  await page.getByRole("button", { name: "Continue as demo manager" }).click();
+  await expect(page.getByRole("heading", { level: 1, name: "Clients" })).toBeVisible();
+  await page.goto("/settings/appearance");
+  await page.getByRole("radio", { name: /Compact/ }).click();
+
+  const radioBoxes = await page.locator('[role="radio"]').evaluateAll((radios) =>
+    radios.map((radio) => {
+      const { height, width } = radio.getBoundingClientRect();
+      return { height, width };
+    }),
+  );
+
+  expect(radioBoxes).toHaveLength(7);
+  expect(radioBoxes.every(({ height, width }) => height >= 44 && width >= 44)).toBe(true);
 });
 
 test("falls back independently for invalid appearance cookies", async ({ page }) => {

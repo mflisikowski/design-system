@@ -99,3 +99,30 @@ test("captures Add Client recovery in every resolved theme context", async ({ pa
     await expect(page.getByRole("dialog", { name: "Add client" })).toBeHidden();
   }
 });
+
+test("captures Appearance in every resolved theme context", async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 720 });
+  await page.goto("/sign-in");
+  await page.getByRole("button", { name: "Continue as demo manager" }).click();
+  await expect(page.getByRole("cell", { exact: true, name: "Northstar Studio" })).toBeVisible();
+  await waitForStableFonts(page);
+
+  const origin = new URL(page.url()).origin;
+  for (const { brand, colorScheme, density } of resolvedThemeContexts) {
+    const contextId = `${brand}-${colorScheme}-${density}`;
+    await page.context().addCookies([
+      { name: "mfd-demo-brand", value: brand, url: origin, httpOnly: true },
+      { name: "mfd-color-scheme", value: colorScheme, url: origin, httpOnly: true },
+      { name: "mfd-density", value: density, url: origin, httpOnly: true },
+    ]);
+    await page.goto("/settings/appearance");
+    await expect(page.locator("html")).toHaveAttribute("data-brand", brand);
+    await expect(page.locator("html")).toHaveAttribute("data-color-scheme", colorScheme);
+    await expect(page.locator("html")).toHaveAttribute("data-density", density);
+    await waitForStableFonts(page);
+
+    await expect(page).toHaveScreenshot(`appearance-${contextId}.png`, {
+      fullPage: true,
+    });
+  }
+});

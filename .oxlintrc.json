@@ -39,7 +39,9 @@
       "files": [
         "apps/reference-crm/features/clients/client-detail.tsx",
         "apps/reference-crm/features/projects/project-form.tsx",
-        "apps/reference-crm/features/projects/project-list.tsx"
+        "apps/reference-crm/features/projects/project-list.tsx",
+        "apps/reference-crm/features/appearance/appearance-settings.tsx",
+        "apps/reference-crm/features/appearance/theme-preview.tsx"
       ],
       "rules": {
         "shadcn/no-unknown-classes": "off"

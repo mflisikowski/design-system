@@ -3,6 +3,7 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
+import { shouldUseSecureCookies } from "@/lib/cookie-security";
 import { demoSessionCookie, demoSessionValue, safeReturnTo } from "@/lib/demo-session";
 
 export async function continueDemoSession(returnTo: string) {
@@ -12,7 +13,7 @@ export async function continueDemoSession(returnTo: string) {
     maxAge: 60 * 60 * 8,
     path: "/",
     sameSite: "lax",
-    secure: true,
+    secure: shouldUseSecureCookies(),
   });
   redirect(safeReturnTo(returnTo));
 }

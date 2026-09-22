@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 type CopyCommandProps = Readonly<{
   command: string;
@@ -8,6 +8,13 @@ type CopyCommandProps = Readonly<{
 
 export function CopyCommand({ command }: CopyCommandProps) {
   const [status, setStatus] = useState<"idle" | "copied" | "failed">("idle");
+  const buttonRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    if (status !== "idle") {
+      buttonRef.current?.focus();
+    }
+  }, [status]);
 
   async function copyCommand() {
     try {
@@ -22,7 +29,7 @@ export function CopyCommand({ command }: CopyCommandProps) {
 
   return (
     <>
-      <button data-docs="copy-command" onClick={copyCommand} type="button">
+      <button data-docs="copy-command" onClick={copyCommand} ref={buttonRef} type="button">
         {label}
       </button>
       <span aria-live="polite" data-docs="visually-hidden">

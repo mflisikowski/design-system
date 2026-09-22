@@ -145,8 +145,12 @@ export function AppearanceSettings() {
           value={preferences.colorScheme}
         >
           {colorSchemeOptions.map((option) => (
-            <label className="appearance-settings__radio" key={option.value}>
-              <RadioGroupItem value={option.value}>
+            <label
+              className="appearance-settings__radio"
+              htmlFor={`appearance-color-scheme-${option.value}`}
+              key={option.value}
+            >
+              <RadioGroupItem id={`appearance-color-scheme-${option.value}`} value={option.value}>
                 <RadioGroupIndicator />
               </RadioGroupItem>
               <span>
@@ -170,8 +174,12 @@ export function AppearanceSettings() {
           value={preferences.density}
         >
           {densityOptions.map((option) => (
-            <label className="appearance-settings__radio" key={option.value}>
-              <RadioGroupItem value={option.value}>
+            <label
+              className="appearance-settings__radio"
+              htmlFor={`appearance-density-${option.value}`}
+              key={option.value}
+            >
+              <RadioGroupItem id={`appearance-density-${option.value}`} value={option.value}>
                 <RadioGroupIndicator />
               </RadioGroupItem>
               <span>
@@ -213,9 +221,9 @@ export function AppearanceSettings() {
           Reset appearance
         </Button>
       </div>
-      <p aria-live="polite" className="visually-hidden" role="status">
+      <output aria-live="polite" className="visually-hidden">
         {resetAnnouncement}
-      </p>
+      </output>
     </div>
   );
 }
