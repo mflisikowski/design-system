@@ -67,15 +67,38 @@ latest registry channel or its immutable `/r/v/0.3.0/radio-group.json` URL. Radi
 experimental and owns selection semantics and presentation only; tenant resolution, persistence,
 and Appearance settings orchestration remain application-owned.
 
+## 0.4.0 — Search and edit
+
+The fourth immutable MFD Design System release completes the Client search and edit tracers with
+canonical URL state, stale-request protection, preserved user work, non-optimistic updates, and
+the experimental Search Field registry contract.
+
+- Search Field provides native search semantics, explicit submit and clear events, and no
+  application-owned routing or fetching behavior. Reference CRM owns normalized organization,
+  contact, and email matching, the canonical `q` URL parameter, debounce, retained results,
+  counts, no-results recovery, and retryable failures.
+- ClientForm now supports create and edit modes without duplicating validation. Background refetches
+  preserve dirty values; unchanged edits stay unavailable; successful updates synchronize detail and
+  list caches, restore focus, and announce completion; failures retain submitted values for retry.
+- The public Search Field snapshot is available under `/r/v/0.4.0/search-field.json`. Earlier
+  package versions and immutable registry snapshots remain available.
+
+### Migration from 0.3.0
+
+Existing 0.3.0 consumers require no changes. The 0.3.0 package and registry snapshot remain
+available, and Appearance, Radio Group, Client details, Projects, Badge, and Select contracts are
+not silently changed by this release.
+
+To adopt the Search Field contract, update the coordinated `@mflisikowski/tokens` and
+`@mflisikowski/lint-config` packages to `0.4.0` and install the public `search-field` item from the
+latest registry channel or its immutable `/r/v/0.4.0/search-field.json` URL. Search Field owns
+input behavior only; query routing, fetching, debounce, result announcements, and ClientForm
+orchestration remain application-owned.
+
 ## Unreleased
 
-The next planned milestone is `0.4.0`, covering canonical Client search and edit flows.
-
-- Search Field is available as an experimental registry contract with native search semantics,
-  explicit submit and clear events, and no application-owned routing or fetching behavior.
-- Reference CRM search matches normalized organization, contact, and email text through a canonical
-  `q` URL parameter with debounce, retained results, counts, no-results recovery, and retryable
-  failures.
+The next planned milestone is `0.5.0`, covering safe deletion flows and relationship-status
+filtering.
 
 ## Release model
 
