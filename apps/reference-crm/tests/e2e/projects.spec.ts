@@ -2,6 +2,12 @@ import type { Page } from "@playwright/test";
 
 import { expect, test } from "./fixtures";
 
+const resolvedThemeContexts = ["atlas", "bloom"].flatMap((brand) =>
+  ["light", "dark"].flatMap((colorScheme) =>
+    ["comfortable", "compact"].map((density) => ({ brand, colorScheme, density })),
+  ),
+);
+
 async function signIn(page: Page) {
   await page.goto("/sign-in");
   await page.getByRole("button", { name: "Continue as demo manager" }).click();
@@ -119,3 +125,40 @@ test("changes project status with keyboard feedback and keeps the failure recove
   await expect(page.getByText("Project status updated", { exact: true })).toBeVisible();
   await expect(retryableStatus).toContainText("Completed");
 });
+
+for (const { brand, colorScheme, density } of resolvedThemeContexts) {
+  test(`keeps every Project Status accessible in ${brand} ${colorScheme} ${density}`, async ({
+    page,
+    makeAxeBuilder,
+  }) => {
+    await signIn(page);
+    await page.goto("/clients/client_northstar");
+    await expect(page.getByRole("table", { name: "Projects" })).toBeVisible();
+
+    await page.locator("html").evaluate(
+      (element, theme) => {
+        element.dataset.brand = theme.brand;
+        element.dataset.colorScheme = theme.colorScheme;
+        element.dataset.density = theme.density;
+      },
+      { brand, colorScheme, density },
+    );
+
+    await expect(page.getByRole("combobox", { name: "Status for Website refresh" })).toContainText(
+      "Active",
+    );
+    await expect(page.getByRole("combobox", { name: "Status for Brand system" })).toContainText(
+      "Completed",
+    );
+
+    const status = page.getByRole("combobox", { name: "Status for Website refresh" });
+    await status.click();
+    for (const label of ["Planned", "Active", "On hold", "Completed"]) {
+      await expect(page.getByRole("option", { name: label, exact: true })).toBeVisible();
+    }
+    await page.keyboard.press("Escape");
+
+    const scan = await makeAxeBuilder().include(".projects-section").analyze();
+    expect(scan.violations).toEqual([]);
+  });
+}

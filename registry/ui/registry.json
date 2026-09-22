@@ -31,13 +31,8 @@
       "type": "registry:ui",
       "title": "Registry Sample",
       "description": "A minimal semantic component that proves the MFD registry distribution path.",
-      "dependencies": [
-        "@mflisikowski/tokens@0.2.0",
-        "clsx@2.1.1"
-      ],
-      "registryDependencies": [
-        "@mflisikowski/registry-sample-label"
-      ],
+      "dependencies": ["@mflisikowski/tokens@0.2.0", "clsx@2.1.1"],
+      "registryDependencies": ["@mflisikowski/registry-sample-label"],
       "files": [
         {
           "path": "registry-sample.tsx",
@@ -60,10 +55,7 @@
       "type": "registry:ui",
       "title": "Button",
       "description": "Accessible action control with MFD variants, sizes, and loading behavior.",
-      "dependencies": [
-        "@mflisikowski/tokens@0.2.0",
-        "clsx@2.1.1"
-      ],
+      "dependencies": ["@mflisikowski/tokens@0.2.0", "clsx@2.1.1"],
       "registryDependencies": [],
       "files": [
         {
@@ -92,11 +84,7 @@
       "type": "registry:ui",
       "title": "Icon and Icon Button",
       "description": "Approved Lucide icon map and accessible icon-only action control.",
-      "dependencies": [
-        "@mflisikowski/tokens@0.2.0",
-        "clsx@2.1.1",
-        "lucide-react@1.47.0"
-      ],
+      "dependencies": ["@mflisikowski/tokens@0.2.0", "clsx@2.1.1", "lucide-react@1.47.0"],
       "registryDependencies": [],
       "files": [
         {
@@ -125,10 +113,7 @@
       "type": "registry:ui",
       "title": "Field",
       "description": "Accessible form-field composition for labels, descriptions, errors, and controls.",
-      "dependencies": [
-        "@mflisikowski/tokens@0.2.0",
-        "clsx@2.1.1"
-      ],
+      "dependencies": ["@mflisikowski/tokens@0.2.0", "clsx@2.1.1"],
       "registryDependencies": [],
       "files": [
         {
@@ -157,13 +142,8 @@
       "type": "registry:ui",
       "title": "Input",
       "description": "Density-aware native text input for use inside Field.",
-      "dependencies": [
-        "@mflisikowski/tokens@0.2.0",
-        "clsx@2.1.1"
-      ],
-      "registryDependencies": [
-        "@mflisikowski/field"
-      ],
+      "dependencies": ["@mflisikowski/tokens@0.2.0", "clsx@2.1.1"],
+      "registryDependencies": ["@mflisikowski/field"],
       "files": [
         {
           "path": "input.tsx",
@@ -191,14 +171,8 @@
       "type": "registry:ui",
       "title": "Textarea",
       "description": "Density-aware native multiline text control for use inside Field.",
-      "dependencies": [
-        "@mflisikowski/tokens@0.2.0",
-        "clsx@2.1.1"
-      ],
-      "registryDependencies": [
-        "@mflisikowski/field",
-        "@mflisikowski/input"
-      ],
+      "dependencies": ["@mflisikowski/tokens@0.2.0", "clsx@2.1.1"],
+      "registryDependencies": ["@mflisikowski/field", "@mflisikowski/input"],
       "files": [
         {
           "path": "textarea.tsx",
@@ -221,11 +195,7 @@
       "type": "registry:ui",
       "title": "Dialog",
       "description": "Compositional modal dialog with responsive full-screen presentation.",
-      "dependencies": [
-        "@base-ui/react@1.8.0",
-        "@mflisikowski/tokens@0.2.0",
-        "clsx@2.1.1"
-      ],
+      "dependencies": ["@base-ui/react@1.8.0", "@mflisikowski/tokens@0.2.0", "clsx@2.1.1"],
       "registryDependencies": [],
       "files": [
         {
@@ -254,11 +224,7 @@
       "type": "registry:ui",
       "title": "Alert Dialog",
       "description": "Modal confirmation with safe focus, explicit actions, and pending protection.",
-      "dependencies": [
-        "@base-ui/react@1.8.0",
-        "@mflisikowski/tokens@0.2.0",
-        "clsx@2.1.1"
-      ],
+      "dependencies": ["@base-ui/react@1.8.0", "@mflisikowski/tokens@0.2.0", "clsx@2.1.1"],
       "registryDependencies": [],
       "files": [
         {
@@ -287,10 +253,7 @@
       "type": "registry:ui",
       "title": "Toast",
       "description": "Polite success acknowledgement adapter with bounded visibility and queueing.",
-      "dependencies": [
-        "@mflisikowski/tokens@0.2.0",
-        "sonner@2.0.8"
-      ],
+      "dependencies": ["@mflisikowski/tokens@0.2.0", "sonner@2.0.8"],
       "registryDependencies": [],
       "files": [
         {
@@ -319,11 +282,7 @@
       "type": "registry:ui",
       "title": "Link",
       "description": "Semantic anchor styling for inline and standalone navigation.",
-      "dependencies": [
-        "@base-ui/react@1.8.0",
-        "@mflisikowski/tokens@0.2.0",
-        "clsx@2.1.1"
-      ],
+      "dependencies": ["@base-ui/react@1.8.0", "@mflisikowski/tokens@0.2.0", "clsx@2.1.1"],
       "registryDependencies": [],
       "files": [
         {
@@ -352,13 +311,8 @@
       "type": "registry:ui",
       "title": "Breadcrumb",
       "description": "Accessible ordered navigation for the current location hierarchy.",
-      "dependencies": [
-        "@mflisikowski/tokens@0.2.0",
-        "clsx@2.1.1"
-      ],
-      "registryDependencies": [
-        "@mflisikowski/link"
-      ],
+      "dependencies": ["@mflisikowski/tokens@0.2.0", "clsx@2.1.1"],
+      "registryDependencies": ["@mflisikowski/link"],
       "files": [
         {
           "path": "breadcrumb.tsx",
@@ -386,13 +340,8 @@
       "type": "registry:ui",
       "title": "Page Header",
       "description": "Structural page heading with breadcrumb, description, and responsive actions.",
-      "dependencies": [
-        "@mflisikowski/tokens@0.2.0",
-        "clsx@2.1.1"
-      ],
-      "registryDependencies": [
-        "@mflisikowski/breadcrumb"
-      ],
+      "dependencies": ["@mflisikowski/tokens@0.2.0", "clsx@2.1.1"],
+      "registryDependencies": ["@mflisikowski/breadcrumb"],
       "files": [
         {
           "path": "page-header.tsx",
@@ -420,10 +369,7 @@
       "type": "registry:ui",
       "title": "Alert",
       "description": "Persistent danger or success feedback with optional urgent live semantics.",
-      "dependencies": [
-        "@mflisikowski/tokens@0.2.0",
-        "clsx@2.1.1"
-      ],
+      "dependencies": ["@mflisikowski/tokens@0.2.0", "clsx@2.1.1"],
       "registryDependencies": [],
       "files": [
         {
@@ -452,10 +398,7 @@
       "type": "registry:ui",
       "title": "Empty State",
       "description": "Compositional empty-content pattern with a required visible title.",
-      "dependencies": [
-        "@mflisikowski/tokens@0.2.0",
-        "clsx@2.1.1"
-      ],
+      "dependencies": ["@mflisikowski/tokens@0.2.0", "clsx@2.1.1"],
       "registryDependencies": [],
       "files": [
         {
@@ -484,10 +427,7 @@
       "type": "registry:ui",
       "title": "Table",
       "description": "Native semantic table primitives for ordinary tabular data.",
-      "dependencies": [
-        "@mflisikowski/tokens@0.2.0",
-        "clsx@2.1.1"
-      ],
+      "dependencies": ["@mflisikowski/tokens@0.2.0", "clsx@2.1.1"],
       "registryDependencies": [],
       "files": [
         {
@@ -516,10 +456,7 @@
       "type": "registry:ui",
       "title": "Badge",
       "description": "Non-interactive status label with semantic tone and density-aware size.",
-      "dependencies": [
-        "@mflisikowski/tokens@0.2.0",
-        "clsx@2.1.1"
-      ],
+      "dependencies": ["@mflisikowski/tokens@0.2.0", "clsx@2.1.1"],
       "registryDependencies": [],
       "files": [
         {
@@ -548,11 +485,7 @@
       "type": "registry:ui",
       "title": "Select",
       "description": "Accessible single-value selection with keyboard navigation and pending state.",
-      "dependencies": [
-        "@base-ui/react@1.8.0",
-        "@mflisikowski/tokens@0.2.0",
-        "clsx@2.1.1"
-      ],
+      "dependencies": ["@base-ui/react@1.8.0", "@mflisikowski/tokens@0.2.0", "clsx@2.1.1"],
       "registryDependencies": [],
       "files": [
         {

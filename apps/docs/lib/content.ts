@@ -322,6 +322,12 @@ export const documentationPages = [
     section: "Changelog",
     headings: [
       { depth: 2, id: "010-add-client", label: "0.1.0 — Add Client" },
+      {
+        depth: 2,
+        id: "020-client-details-and-projects",
+        label: "0.2.0 — Client details and Projects",
+      },
+      { depth: 3, id: "migration-from-010", label: "Migration from 0.1.0" },
       { depth: 2, id: "unreleased", label: "Unreleased" },
       { depth: 2, id: "release-model", label: "Release model" },
       { depth: 2, id: "maturity-transitions", label: "Maturity transitions" },

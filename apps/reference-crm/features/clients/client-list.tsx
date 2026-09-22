@@ -218,15 +218,14 @@ export function ClientList({ createScenario, scenario, waitingForApi = false }: 
         </div>
       </div>
       <p className="demo-disclosure">Demo data is fictional and stored only in this browser.</p>
-      <p
+      <output
         aria-atomic="true"
         aria-live="polite"
         className="visually-hidden"
         data-announcement-id={announcement?.id}
-        role="status"
       >
         {announcement ? <span key={announcement.id}>{announcement.message}</span> : null}
-      </p>
+      </output>
       {content}
     </section>
   );

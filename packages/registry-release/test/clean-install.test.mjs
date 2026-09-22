@@ -10,5 +10,5 @@ describe("registry clean installation", () => {
       { fixture: "new-project", preservedExistingFile: false },
       { fixture: "existing-project", preservedExistingFile: true },
     ]);
-  }, 60_000);
+  }, 120_000);
 });

@@ -70,6 +70,18 @@ function readBaseJson(baseReference, relativePath) {
   );
 }
 
+/**
+ * A release snapshot may be versioned while its tracer is being developed so the immutable
+ * registry URL can be exercised before the release PR consumes its Changesets. In that case the
+ * release commit still has to contain only generated release metadata and deleted Changesets.
+ *
+ * @param {Record<string, unknown>} baseManifest
+ * @param {Record<string, unknown>} releaseManifest
+ */
+function isPreparedReleaseManifest(baseManifest, releaseManifest) {
+  return JSON.stringify(baseManifest) === JSON.stringify(releaseManifest);
+}
+
 /** @param {string | undefined} baseReference */
 function releaseState(baseReference) {
   if (!baseReference) {
@@ -104,8 +116,10 @@ function releaseState(baseReference) {
       lintConfig.version === version &&
       itemsMatch &&
       mfdDependenciesMatch &&
-      hasOnlyGeneratedManifestChanges(baseTokens, tokens) &&
-      hasOnlyGeneratedManifestChanges(baseLintConfig, lintConfig) &&
+      (hasOnlyGeneratedManifestChanges(baseTokens, tokens) ||
+        isPreparedReleaseManifest(baseTokens, tokens)) &&
+      (hasOnlyGeneratedManifestChanges(baseLintConfig, lintConfig) ||
+        isPreparedReleaseManifest(baseLintConfig, lintConfig)) &&
       hasOnlyGeneratedRegistryMetadataChanges(baseRegistry, registry) &&
       snapshot.meta?.version === version,
     version,

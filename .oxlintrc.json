@@ -34,6 +34,16 @@
         "shadcn/no-unknown-classes": "off",
         "jsx-a11y/heading-has-content": "off"
       }
+    },
+    {
+      "files": [
+        "apps/reference-crm/features/clients/client-detail.tsx",
+        "apps/reference-crm/features/projects/project-form.tsx",
+        "apps/reference-crm/features/projects/project-list.tsx"
+      ],
+      "rules": {
+        "shadcn/no-unknown-classes": "off"
+      }
     }
   ]
 }

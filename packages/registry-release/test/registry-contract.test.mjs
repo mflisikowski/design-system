@@ -62,8 +62,10 @@ describe("canonical registry sample contract", () => {
 
     for (const name of [
       "button",
+      "breadcrumb",
       "icon",
       "link",
+      "page-header",
       "alert",
       "empty-state",
       "table",
@@ -73,6 +75,8 @@ describe("canonical registry sample contract", () => {
       "dialog",
       "alert-dialog",
       "toast",
+      "badge",
+      "select",
     ]) {
       expect(items.get(name)).toMatchObject({
         dependencies: expect.arrayContaining([`@mflisikowski/tokens@${releaseManifest.version}`]),

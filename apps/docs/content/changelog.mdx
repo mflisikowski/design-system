@@ -11,16 +11,38 @@ milestones.
   `@mflisikowski/lint-config`.
 - The next planned milestone is `0.2.0`, covering Client details and Projects.
 
+## 0.2.0 — Client details and Projects
+
+The second immutable MFD Design System release completes the Client details and Projects tracer:
+safe client navigation, independent Project data states, responsive Add Project, and accessible
+Project Status changes.
+
+- Organization names link to directly addressable Client details routes with Breadcrumb, Page Header,
+  and an explicit Not Found state.
+- Project data loads independently from Client data. Add Project preserves the approved validation,
+  dirty-dismissal, retry, loading, success-feedback, and focus-restoration contracts.
+- Badge and Select are available as experimental registry contracts. Project Status uses the four
+  approved visible labels, contextual accessible names, non-optimistic updates, and persistent
+  retryable failure feedback.
+- Registry snapshots are available under `/r/v/0.2.0/` and preserve the immutable `0.1.0` paths.
+
+### Migration from 0.1.0
+
+Existing 0.1.0 consumers require no changes. The 0.1.0 package and registry snapshot remain
+available, and the Add Client APIs and behavior are not silently changed by this release.
+
+To adopt the new public primitives, install the latest registry item or use its complete immutable
+`/r/v/0.2.0/{item}.json` URL. Breadcrumb, Page Header, Badge, and Select are experimental and may
+receive compatible-contract changes in a later pre-1.0 minor release. ProjectTable and Project
+Status orchestration remain Reference CRM application patterns; they are not registry components.
+
+The coordinated public package version is `0.2.0` for `@mflisikowski/tokens` and
+`@mflisikowski/lint-config`. Consumers that pin MFD packages should update them together with the
+registry snapshot so installed source and semantic tokens remain aligned.
+
 ## Unreleased
 
-Client details navigation is prepared for the coordinated `0.2.0` milestone.
-
-- Organization names now link to safe, directly addressable Client details routes.
-- Breadcrumb and Page Header are available as experimental registry contracts with immutable `0.2.0`
-  installation paths.
-- Badge and Select are available as experimental registry contracts. Project Status now uses the
-  four approved visible labels, contextual Select names, non-optimistic updates, and persistent
-  retryable failure feedback. No Client Relationship Status behavior is changed.
+The next planned milestone is `0.3.0`, covering Appearance settings and runtime theme persistence.
 
 ## Release model
 

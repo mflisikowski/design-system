@@ -23,14 +23,13 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { toast } from "@/components/ui/toast";
-
-import { ProjectForm } from "./project-form";
 import type { CreateProjectInput, Project } from "./model";
+import { ProjectForm } from "./project-form";
 import { projectQueryKeys } from "./query-keys";
 import {
+  createHttpProjectRepository,
   type ProjectCreateScenario,
   type ProjectListScenario,
-  createHttpProjectRepository,
 } from "./repository";
 
 const projectRepository = createHttpProjectRepository();
@@ -118,7 +117,9 @@ export function AddProjectDialog({ clientId, createScenario, scenario }: AddProj
       <AlertDialog onOpenChange={setDiscardOpen} open={discardOpen}>
         <AlertDialogContent finalFocus={closeRequestFocusRef}>
           <AlertDialogTitle>Discard changes?</AlertDialogTitle>
-          <AlertDialogDescription>Your entered project information will be lost.</AlertDialogDescription>
+          <AlertDialogDescription>
+            Your entered project information will be lost.
+          </AlertDialogDescription>
           <AlertDialogFooter>
             <AlertDialogCancel render={<Button variant="outline" />}>
               Keep editing

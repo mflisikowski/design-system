@@ -1,13 +1,7 @@
 import { setupWorker } from "msw/browser";
 
-import {
-  createBrowserClientStorage,
-  createClientHandlers,
-} from "@/features/clients/mock-api";
-import {
-  createBrowserProjectStorage,
-  createProjectHandlers,
-} from "@/features/projects/mock-api";
+import { createBrowserClientStorage, createClientHandlers } from "@/features/clients/mock-api";
+import { createBrowserProjectStorage, createProjectHandlers } from "@/features/projects/mock-api";
 import { deterministicProjects } from "@/features/projects/seed";
 
 let startPromise: Promise<ServiceWorkerRegistration | undefined> | undefined;

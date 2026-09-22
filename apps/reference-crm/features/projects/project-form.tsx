@@ -1,9 +1,9 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import type { ComponentPropsWithoutRef } from "react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import type { ComponentPropsWithoutRef } from "react";
 import type { z } from "zod";
 
 import { Alert, AlertAction, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -20,8 +20,8 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 
 import {
-  createProjectInputSchema,
   type CreateProjectInput,
+  createProjectInputSchema,
   projectStatusLabels,
   projectStatusSchema,
 } from "./model";
@@ -41,9 +41,7 @@ const defaultValues: ProjectFormValues = {
   status: "planned",
 };
 
-function ProjectStatusSelect({
-  ...props
-}: Readonly<ComponentPropsWithoutRef<"select">>) {
+function ProjectStatusSelect({ ...props }: Readonly<ComponentPropsWithoutRef<"select">>) {
   const fieldProps = useFieldControlProps(props);
 
   return (
