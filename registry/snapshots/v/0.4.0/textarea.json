@@ -1,0 +1,32 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "textarea",
+  "title": "Textarea",
+  "description": "Density-aware native multiline text control for use inside Field.",
+  "dependencies": [
+    "@mflisikowski/tokens@0.4.0",
+    "clsx@2.1.1"
+  ],
+  "registryDependencies": [
+    "https://design-system.mflisikowski.dev/r/v/0.4.0/field.json",
+    "https://design-system.mflisikowski.dev/r/v/0.4.0/input.json"
+  ],
+  "files": [
+    {
+      "path": "registry/ui/textarea.tsx",
+      "content": "\"use client\";\n\nimport { clsx } from \"clsx\";\nimport type { ComponentPropsWithRef } from \"react\";\n\nimport { useFieldControlProps } from \"./field\";\nimport \"./input.css\";\n\nexport type TextareaProps = Omit<ComponentPropsWithRef<\"textarea\">, \"size\"> & {\n  size?: \"sm\" | \"md\" | \"lg\";\n};\n\nexport function Textarea({ className, size = \"md\", ...props }: TextareaProps) {\n  const fieldProps = useFieldControlProps(props);\n  return (\n    <textarea\n      {...props}\n      {...fieldProps}\n      className={clsx(\"mfd-textarea\", className)}\n      data-size={size}\n    />\n  );\n}\n",
+      "type": "registry:ui",
+      "target": "@ui/textarea.tsx"
+    }
+  ],
+  "meta": {
+    "maturity": "experimental",
+    "version": "0.4.0",
+    "installation": {
+      "latest": "pnpm dlx shadcn@latest add @mflisikowski/textarea",
+      "snapshot": "pnpm dlx shadcn@latest add https://design-system.mflisikowski.dev/r/v/0.4.0/textarea.json"
+    }
+  },
+  "docs": "Use Textarea inside Field. Native textarea properties and refs are forwarded; size maps to density-aware control tokens.",
+  "type": "registry:ui"
+}

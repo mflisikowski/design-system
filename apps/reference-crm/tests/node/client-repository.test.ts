@@ -38,6 +38,26 @@ describe("ClientRepository", () => {
     await expect(repository.list()).resolves.toEqual(deterministicClients);
   });
 
+  it("matches organization, contact, and email with normalized search text", async () => {
+    const clients = [
+      {
+        ...deterministicClients[0],
+        organizationName: "  Café Élan  ",
+        contactName: "Zoë Ångström",
+        contactEmail: "zoe@cafe-elan.example",
+      },
+      deterministicClients[1],
+    ];
+    mockServer.use(...createClientHandlers(createMemoryClientStorage(clients), 0));
+    const repository = createHttpClientRepository("http://localhost");
+
+    await expect(repository.list({ query: "  CAFE elan " })).resolves.toEqual([clients[0]]);
+    await expect(repository.list({ query: "angstrom" })).resolves.toEqual([clients[0]]);
+    await expect(repository.list({ query: " ZOE@CAFE-ELAN.EXAMPLE " })).resolves.toEqual([
+      clients[0],
+    ]);
+  });
+
   it("persists resets atomically through the repository contract", async () => {
     const storage = createMemoryClientStorage([]);
     mockServer.use(...createClientHandlers(storage));

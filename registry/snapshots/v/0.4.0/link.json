@@ -1,0 +1,36 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "link",
+  "title": "Link",
+  "description": "Semantic anchor styling for inline and standalone navigation.",
+  "dependencies": [
+    "@base-ui/react@1.8.0",
+    "@mflisikowski/tokens@0.4.0",
+    "clsx@2.1.1"
+  ],
+  "registryDependencies": [],
+  "files": [
+    {
+      "path": "registry/ui/link.tsx",
+      "content": "\"use client\";\n\nimport { useRender } from \"@base-ui/react/use-render\";\nimport { clsx } from \"clsx\";\n\nimport \"./link.css\";\n\nexport type LinkProps = useRender.ComponentProps<\"a\"> & {\n  variant?: \"inline\" | \"standalone\";\n};\n\nexport function Link({ className, render, variant = \"inline\", ...props }: LinkProps) {\n  return useRender({\n    defaultTagName: \"a\",\n    props: {\n      ...props,\n      className: clsx(\"mfd-link\", className),\n      \"data-variant\": variant,\n    },\n    render,\n  });\n}\n",
+      "type": "registry:ui",
+      "target": "@ui/link.tsx"
+    },
+    {
+      "path": "registry/ui/link.css",
+      "content": ".mfd-link {\n  color: var(--mfd-color-accent-text);\n  text-decoration-line: underline;\n  text-decoration-thickness: 0.08em;\n  text-underline-offset: 0.16em;\n}\n\n.mfd-link[data-variant=\"standalone\"] {\n  color: var(--mfd-color-text-primary);\n  font-weight: var(--mfd-typography-label-font-weight);\n  text-decoration-color: transparent;\n}\n\n@media (hover: hover) {\n  .mfd-link:hover {\n    color: var(--mfd-color-accent-text);\n    text-decoration-color: currentColor;\n  }\n}\n\n.mfd-link:focus-visible {\n  border-radius: var(--mfd-radius-control);\n  outline: 2px solid var(--mfd-color-border-focus);\n  outline-offset: 2px;\n}\n",
+      "type": "registry:ui",
+      "target": "@ui/link.css"
+    }
+  ],
+  "meta": {
+    "maturity": "experimental",
+    "version": "0.4.0",
+    "installation": {
+      "latest": "pnpm dlx shadcn@latest add @mflisikowski/link",
+      "snapshot": "pnpm dlx shadcn@latest add https://design-system.mflisikowski.dev/r/v/0.4.0/link.json"
+    }
+  },
+  "docs": "Link remains a native anchor and exposes a render seam for application routers. Inline links stay underlined; standalone navigation reveals its underline on hover and focus.",
+  "type": "registry:ui"
+}

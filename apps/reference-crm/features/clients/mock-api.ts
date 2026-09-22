@@ -1,6 +1,7 @@
 import { delay, HttpResponse, http } from "msw";
 
 import { type Client, clientsSchema, createClientInputSchema } from "./model";
+import { clientMatchesSearch, normalizeClientSearchQuery } from "./search";
 import { deterministicClients } from "./seed";
 
 const clientsStorageKey = "mfd-demo-clients";
@@ -53,10 +54,12 @@ export function createClientHandlers(
 
   return [
     http.get("*/api/clients", async ({ request }) => {
-      const scenario = new URL(request.url).searchParams.get("scenario");
-      await delay(latency);
+      const parameters = new URL(request.url).searchParams;
+      const scenario = parameters.get("scenario");
+      const query = normalizeClientSearchQuery(parameters.get("q"));
+      await delay(scenario === "slow-search" && query === "northstar" ? latency * 4 : latency);
 
-      if (scenario === "error") {
+      if (scenario === "error" || (scenario === "error-search" && query === "failure")) {
         return HttpResponse.json(
           { message: "Client data is temporarily unavailable." },
           { status: 503 },
@@ -67,7 +70,10 @@ export function createClientHandlers(
         return HttpResponse.json([]);
       }
 
-      return HttpResponse.json(readOrSeed(storage));
+      const clients = readOrSeed(storage);
+      return HttpResponse.json(
+        query ? clients.filter((client) => clientMatchesSearch(client, query)) : clients,
+      );
     }),
     http.get("*/api/clients/:clientId", async ({ params, request }) => {
       const scenario = new URL(request.url).searchParams.get("scenario");

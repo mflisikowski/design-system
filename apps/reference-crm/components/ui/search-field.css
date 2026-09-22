@@ -1,0 +1,99 @@
+.mfd-search-field {
+  align-items: center;
+  background: var(--mfd-color-bg-canvas);
+  border: 1px solid var(--mfd-color-border-default);
+  border-radius: var(--mfd-radius-control);
+  color: var(--mfd-color-text-primary);
+  display: flex;
+  gap: var(--mfd-space-inline-sm);
+  min-height: var(--mfd-size-control-height-md);
+  padding-inline: var(--mfd-space-inline-md);
+}
+
+.mfd-search-field[data-size="sm"] {
+  min-height: var(--mfd-size-control-height-sm);
+}
+
+.mfd-search-field[data-size="lg"] {
+  min-height: var(--mfd-size-control-height-lg);
+}
+
+.mfd-search-field:focus-within {
+  border-color: var(--mfd-color-border-focus);
+  outline: 2px solid var(--mfd-color-border-focus);
+  outline-offset: 1px;
+}
+
+.mfd-search-field__leading-icon {
+  color: var(--mfd-color-text-secondary);
+  flex: none;
+}
+
+.mfd-search-field__input {
+  appearance: none;
+  background: transparent;
+  border: 0;
+  color: inherit;
+  flex: 1;
+  font: inherit;
+  min-width: 0;
+  outline: 0;
+  padding: var(--mfd-space-stack-sm) 0;
+}
+
+.mfd-search-field__input::-webkit-search-cancel-button {
+  appearance: none;
+}
+
+.mfd-search-field__clear {
+  align-items: center;
+  appearance: none;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--mfd-radius-control);
+  color: var(--mfd-color-text-secondary);
+  cursor: pointer;
+  display: inline-flex;
+  flex: none;
+  height: var(--mfd-size-hit-target-minimum);
+  justify-content: center;
+  margin-inline-end: calc(var(--mfd-space-inline-md) * -1);
+  min-width: var(--mfd-size-hit-target-minimum);
+  padding: 0;
+}
+
+.mfd-search-field__clear:hover {
+  background: var(--mfd-color-bg-subtle);
+}
+
+.mfd-search-field__clear:focus-visible {
+  outline: 2px solid var(--mfd-color-border-focus);
+  outline-offset: 1px;
+}
+
+.mfd-search-field__loading {
+  border: 2px solid var(--mfd-color-border-subtle);
+  border-radius: var(--mfd-radius-pill);
+  border-top-color: var(--mfd-color-accent-solid);
+  flex: none;
+  height: var(--mfd-icon-size-md);
+  width: var(--mfd-icon-size-md);
+}
+
+@media (max-width: 639px) {
+  .mfd-search-field__input {
+    font-size: 1rem;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .mfd-search-field__loading {
+    animation: mfd-search-field-spin 0.8s linear infinite;
+  }
+}
+
+@keyframes mfd-search-field-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

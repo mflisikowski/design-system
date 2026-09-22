@@ -1,5 +1,16 @@
 # @mflisikowski/registry-release
 
+## 0.4.0
+
+### Minor Changes
+
+- Add the Search Field contract and canonical Client search flow with reloadable URL state.
+
+### Patch Changes
+
+- Updated dependencies
+  - @mflisikowski/tokens@0.4.0
+
 ## 0.3.0
 
 ### Minor Changes

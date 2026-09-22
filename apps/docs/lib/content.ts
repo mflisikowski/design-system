@@ -293,6 +293,16 @@ export const documentationPages = [
     load: () => import("../content/components/radio-group.mdx"),
   },
   {
+    slug: "components/search-field",
+    href: "/components/search-field",
+    source: "components/search-field.mdx",
+    title: "Search Field",
+    description: "Native search input with clear and submit events, without query orchestration.",
+    section: "Components",
+    headings: publicComponentHeadings,
+    load: () => import("../content/components/search-field.mdx"),
+  },
+  {
     slug: "patterns",
     href: "/patterns",
     source: "patterns.mdx",

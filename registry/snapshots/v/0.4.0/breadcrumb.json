@@ -1,0 +1,37 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "breadcrumb",
+  "title": "Breadcrumb",
+  "description": "Accessible ordered navigation for the current location hierarchy.",
+  "dependencies": [
+    "@mflisikowski/tokens@0.4.0",
+    "clsx@2.1.1"
+  ],
+  "registryDependencies": [
+    "https://design-system.mflisikowski.dev/r/v/0.4.0/link.json"
+  ],
+  "files": [
+    {
+      "path": "registry/ui/breadcrumb.tsx",
+      "content": "\"use client\";\n\nimport { clsx } from \"clsx\";\nimport type { ComponentPropsWithoutRef } from \"react\";\n\nimport { Link, type LinkProps } from \"./link\";\n\nimport \"./breadcrumb.css\";\n\nexport function Breadcrumb({ className, ...props }: ComponentPropsWithoutRef<\"nav\">) {\n  return <nav {...props} aria-label=\"Breadcrumb\" className={clsx(\"mfd-breadcrumb\", className)} />;\n}\n\nexport function BreadcrumbList({ className, ...props }: ComponentPropsWithoutRef<\"ol\">) {\n  return <ol {...props} className={clsx(\"mfd-breadcrumb__list\", className)} />;\n}\n\nexport function BreadcrumbItem({ className, ...props }: ComponentPropsWithoutRef<\"li\">) {\n  return <li {...props} className={clsx(\"mfd-breadcrumb__item\", className)} />;\n}\n\nexport function BreadcrumbLink({ className, ...props }: Omit<LinkProps, \"variant\">) {\n  return <Link {...props} className={className} variant=\"standalone\" />;\n}\n\nexport function BreadcrumbCurrent({ className, ...props }: ComponentPropsWithoutRef<\"span\">) {\n  return (\n    <span {...props} aria-current=\"page\" className={clsx(\"mfd-breadcrumb__current\", className)} />\n  );\n}\n\nexport function BreadcrumbSeparator({ className, ...props }: ComponentPropsWithoutRef<\"li\">) {\n  return (\n    <li {...props} aria-hidden=\"true\" className={clsx(\"mfd-breadcrumb__separator\", className)}>\n      <span>/</span>\n    </li>\n  );\n}\n",
+      "type": "registry:ui",
+      "target": "@ui/breadcrumb.tsx"
+    },
+    {
+      "path": "registry/ui/breadcrumb.css",
+      "content": ".mfd-breadcrumb {\n  color: var(--mfd-color-text-secondary);\n  font:\n    var(--mfd-typography-label-font-weight) var(--mfd-typography-label-font-size) /\n    var(--mfd-typography-label-line-height) var(--mfd-typography-label-font-family);\n  min-width: 0;\n}\n\n.mfd-breadcrumb__list {\n  align-items: center;\n  display: flex;\n  gap: var(--mfd-space-inline-sm);\n  list-style: none;\n  margin: 0;\n  min-width: 0;\n  padding: 0;\n}\n\n.mfd-breadcrumb__item,\n.mfd-breadcrumb__separator {\n  align-items: center;\n  display: flex;\n  min-width: 0;\n}\n\n.mfd-breadcrumb__item:last-child {\n  flex: 1 1 auto;\n}\n\n.mfd-breadcrumb__current {\n  color: var(--mfd-color-text-primary);\n  display: block;\n  max-width: min(38rem, 60vw);\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n}\n\n.mfd-breadcrumb__separator {\n  color: var(--mfd-color-text-tertiary);\n  flex: 0 0 auto;\n  user-select: none;\n}\n\n@media (max-width: 40rem) {\n  .mfd-breadcrumb__current {\n    max-width: 12rem;\n  }\n}\n",
+      "type": "registry:ui",
+      "target": "@ui/breadcrumb.css"
+    }
+  ],
+  "meta": {
+    "maturity": "experimental",
+    "version": "0.4.0",
+    "installation": {
+      "latest": "pnpm dlx shadcn@latest add @mflisikowski/breadcrumb",
+      "snapshot": "pnpm dlx shadcn@latest add https://design-system.mflisikowski.dev/r/v/0.4.0/breadcrumb.json"
+    }
+  },
+  "docs": "Compose Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbLink, BreadcrumbSeparator, and BreadcrumbCurrent. The final item is not a link and carries aria-current=page.",
+  "type": "registry:ui"
+}

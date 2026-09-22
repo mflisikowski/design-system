@@ -260,6 +260,21 @@ h1 {
   padding: var(--mfd-space-stack-sm) var(--mfd-space-inline-md);
 }
 
+.client-search {
+  max-width: 42rem;
+}
+
+.client-results {
+  display: grid;
+  gap: var(--mfd-space-stack-md);
+}
+
+.client-results__summary {
+  color: var(--mfd-color-text-secondary);
+  font-size: var(--mfd-typography-caption-font-size);
+  margin: 0;
+}
+
 .client-table-surface {
   background: var(--mfd-color-bg-surface);
   border: 1px solid var(--mfd-color-border-subtle);

@@ -37,6 +37,7 @@ describe("documentation content manifest", () => {
       "components/toast",
       "components/select",
       "components/radio-group",
+      "components/search-field",
       "patterns",
       "themes",
       "changelog",

@@ -27,10 +27,15 @@ export function ClientQueryProvider({ children }: ClientQueryProviderProps) {
 
 type ClientExperienceProps = Readonly<{
   createScenario: ClientCreateScenario;
+  initialQuery: string;
   scenario: ClientListScenario;
 }>;
 
-export function ClientExperience({ createScenario, scenario }: ClientExperienceProps) {
+export function ClientExperience({
+  createScenario,
+  initialQuery,
+  scenario,
+}: ClientExperienceProps) {
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
@@ -47,7 +52,12 @@ export function ClientExperience({ createScenario, scenario }: ClientExperienceP
 
   return (
     <ClientQueryProvider>
-      <ClientList createScenario={createScenario} scenario={scenario} waitingForApi={!ready} />
+      <ClientList
+        createScenario={createScenario}
+        initialQuery={initialQuery}
+        scenario={scenario}
+        waitingForApi={!ready}
+      />
       <ToastViewport />
     </ClientQueryProvider>
   );

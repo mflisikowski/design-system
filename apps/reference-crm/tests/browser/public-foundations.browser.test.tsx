@@ -37,6 +37,7 @@ import { Field, FieldDescription, FieldError, FieldLabel } from "@/components/ui
 import { Icon, IconButton } from "@/components/ui/icon";
 import { Input } from "@/components/ui/input";
 import { Link } from "@/components/ui/link";
+import { SearchField } from "@/components/ui/search-field";
 import { Select } from "@/components/ui/select";
 import {
   Table,
@@ -164,6 +165,37 @@ test("form controls expose labels, descriptions, and validation errors", async (
       "Use the client organization, not the contact. Organization name is required.",
     );
   await expect.element(page.getByRole("textbox", { name: "Notes" })).toBeInTheDocument();
+});
+
+test("Search Field owns native value, submit, clear, and Escape behavior", async () => {
+  const onSubmit = vi.fn();
+  const onClear = vi.fn();
+
+  render(
+    <Field>
+      <FieldLabel>Search clients</FieldLabel>
+      <FieldDescription>Search by organization, contact, or email.</FieldDescription>
+      <SearchField defaultValue="Northstar" onClear={onClear} onSubmit={onSubmit} />
+    </Field>,
+  );
+
+  const field = page.getByRole("searchbox", { name: "Search clients" });
+  await expect
+    .element(field)
+    .toHaveAccessibleDescription("Search by organization, contact, or email.");
+  await field.click();
+  await userEvent.keyboard("{Enter}");
+  expect(onSubmit).toHaveBeenCalledWith("Northstar");
+
+  await userEvent.keyboard("{Escape}");
+  await expect.element(field).toHaveValue("");
+  expect(onClear).toHaveBeenCalledTimes(1);
+
+  await field.fill("Juniper");
+  await expect.element(page.getByRole("button", { name: "Clear search" })).toBeInTheDocument();
+  await page.getByRole("button", { name: "Clear search" }).click();
+  await expect.element(field).toHaveValue("");
+  expect(onClear).toHaveBeenCalledTimes(2);
 });
 
 test("status Badge tones and Select keyboard behavior remain explicit", async () => {

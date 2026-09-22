@@ -8,7 +8,7 @@ function component(
   name: string,
   dependencies: readonly string[],
   registryDependencies: readonly string[] = [],
-  version = "0.3.0",
+  version = "0.4.0",
 ) {
   return {
     installation: {
@@ -21,13 +21,13 @@ function component(
   };
 }
 
-const commonDependencies = ["@mflisikowski/tokens@0.3.0", "clsx@2.1.1"] as const;
+const commonDependencies = ["@mflisikowski/tokens@0.4.0", "clsx@2.1.1"] as const;
 
 export const publicComponentDocumentation = {
   alert: component("alert", commonDependencies),
   alertDialog: component("alert-dialog", [
     "@base-ui/react@1.8.0",
-    "@mflisikowski/tokens@0.3.0",
+    "@mflisikowski/tokens@0.4.0",
     "clsx@2.1.1",
   ]),
   badge: component("badge", commonDependencies),
@@ -42,14 +42,18 @@ export const publicComponentDocumentation = {
     "@mflisikowski/field",
     "@mflisikowski/input",
   ]),
-  dialog: component("dialog", ["@base-ui/react@1.8.0", "@mflisikowski/tokens@0.3.0", "clsx@2.1.1"]),
-  toast: component("toast", ["@mflisikowski/tokens@0.3.0", "sonner@2.0.8"]),
+  dialog: component("dialog", ["@base-ui/react@1.8.0", "@mflisikowski/tokens@0.4.0", "clsx@2.1.1"]),
+  toast: component("toast", ["@mflisikowski/tokens@0.4.0", "sonner@2.0.8"]),
   breadcrumb: component("breadcrumb", commonDependencies, ["@mflisikowski/link"]),
   pageHeader: component("page-header", commonDependencies, ["@mflisikowski/breadcrumb"]),
-  select: component("select", ["@base-ui/react@1.8.0", "@mflisikowski/tokens@0.3.0", "clsx@2.1.1"]),
+  select: component("select", ["@base-ui/react@1.8.0", "@mflisikowski/tokens@0.4.0", "clsx@2.1.1"]),
   radioGroup: component("radio-group", [
     "@base-ui/react@1.8.0",
-    "@mflisikowski/tokens@0.3.0",
+    "@mflisikowski/tokens@0.4.0",
     "clsx@2.1.1",
+  ]),
+  searchField: component("search-field", commonDependencies, [
+    "@mflisikowski/field",
+    "@mflisikowski/icon",
   ]),
 } as const;

@@ -27,6 +27,7 @@ published instances in DS Reference CRM.
 | Badge | Container / Label | Tone: Neutral, Accent, Warning, Success, Danger; Size: Small, Medium | Non-interactive visible status text. Tone never carries meaning alone; Project Status maps Planned to neutral, Active to accent, On hold to warning, and Completed to success. |
 | Select | Root / Trigger / Value / Icon / Content / Item | Size: Small, Medium, Large; Disabled; Read only; Invalid; Loading | Contextual accessible name includes the affected Project. Loading keeps the trigger focused, makes only the control read-only, and replaces the disclosure affordance with progress. Escape closes without committing. |
 | Radio Group | Root / Item / Indicator; optional Radio Card / Preview / Label / Description | Orientation: Horizontal, Vertical; Disabled; Read only; Loading; Selected | One-value selection uses native radio semantics and roving focus. Selected and focus-visible states are not color-only; each option keeps a 44 px effective target. |
+| Search Field | Leading icon / input / optional clear / optional loading | Size: Small, Medium, Large; Disabled; Loading | Compose inside Field. The input is native search; Enter submits, Escape clears without moving focus, and the clear control is named `Clear search` with a 44 px effective target. Loading is visual only; the application owns result busy state and announcements. |
 
 ## Reference CRM frames
 
@@ -45,6 +46,12 @@ Add client. Duplicate email maps to Contact email. Server failure uses a persist
 again. Submitting marks the form busy, disables every control and close path, and replaces the
 submit label with `Saving client`. Success returns to the populated Clients frame with the created
 row first, Add client focused, and the polite `Client added` Toast.
+
+The fourth-tracer search frames include direct URL initialization with a matching result, a
+debounced refresh retaining the last successful rows, a no-results Empty State containing the
+visible query and `Clear search`, and a persistent retryable failure Alert. Annotate the canonical
+`q` URL parameter, result-region busy state, settled singular/plural count, Escape and clear focus
+retention, and the absence of combobox semantics at wide and 320 px widths.
 
 The second-tracer Project frame is specified in Atlas and Bloom, light and dark, comfortable and
 compact contexts. The populated frame includes Project and Status columns, with Updated omitted at

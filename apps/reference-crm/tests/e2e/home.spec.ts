@@ -303,6 +303,90 @@ test("renders loading, empty, and persistent error states accessibly", async ({ 
   await expect(page.getByRole("button", { name: "Try again" })).toBeVisible();
 });
 
+test("searches clients through a canonical URL and restores the complete list", async ({
+  page,
+}) => {
+  await page.goto("/sign-in");
+  await page.getByRole("button", { name: "Continue as demo manager" }).click();
+  await expect(page.getByRole("heading", { level: 1, name: "Clients" })).toBeVisible();
+
+  await page.goto("/clients?q=juniper");
+  const search = page.getByRole("searchbox", { name: "Search clients" });
+  await expect(search).toHaveValue("juniper");
+  await expect(page.getByRole("cell", { exact: true, name: "Juniper & Field" })).toBeVisible();
+  await expect(page.getByRole("cell", { exact: true, name: "Northstar Studio" })).toBeHidden();
+  await expect(page.getByText("1 client found matching “juniper”", { exact: true })).toBeVisible();
+
+  await page.getByRole("button", { name: "Clear search" }).click();
+  await expect(page).toHaveURL(/\/clients$/);
+  await expect(search).toHaveValue("");
+  await expect(page.getByRole("cell", { exact: true, name: "Northstar Studio" })).toBeVisible();
+  await expect(page.getByText("3 clients found", { exact: true })).toBeVisible();
+});
+
+test("debounces search, submits immediately, and exposes a no-results recovery", async ({
+  page,
+}) => {
+  await page.goto("/sign-in");
+  await page.getByRole("button", { name: "Continue as demo manager" }).click();
+  await expect(page.getByRole("heading", { level: 1, name: "Clients" })).toBeVisible();
+
+  await page.goto("/clients");
+  await expect(page.getByRole("table", { name: "Clients" })).toBeVisible();
+  const search = page.getByRole("searchbox", { name: "Search clients" });
+  await search.fill("lumen");
+  await expect(page).toHaveURL(/\/clients$/);
+  await search.press("Enter");
+  await expect(page).toHaveURL(/\/clients\?q=lumen$/);
+  await expect(page.getByRole("cell", { exact: true, name: "Lumen Works" })).toBeVisible();
+
+  await search.fill("does-not-exist");
+  await expect(page).toHaveURL(/\/clients\?q=lumen$/);
+  await expect(page).toHaveURL(/\/clients\?q=does-not-exist$/, { timeout: 2_000 });
+  await expect(page.getByRole("heading", { name: "No clients found" })).toBeVisible();
+  await expect(
+    page.getByText("No clients match “does-not-exist”.", { exact: false }),
+  ).toBeVisible();
+
+  await page.getByRole("button", { name: "Clear search" }).last().click();
+  await expect(page).toHaveURL(/\/clients$/);
+  await expect(page.getByRole("table", { name: "Clients" })).toBeVisible();
+});
+
+test("keeps the newest search result when an older request resolves later", async ({ page }) => {
+  await page.goto("/sign-in");
+  await page.getByRole("button", { name: "Continue as demo manager" }).click();
+  await expect(page.getByRole("heading", { level: 1, name: "Clients" })).toBeVisible();
+  await page.goto("/clients?demoState=slow-search");
+  await expect(page.getByRole("table", { name: "Clients" })).toBeVisible();
+
+  const search = page.getByRole("searchbox", { name: "Search clients" });
+  await search.fill("northstar");
+  await expect(page).toHaveURL(/\/clients\?demoState=slow-search&q=northstar$/);
+  await search.fill("juniper");
+  await expect(page).toHaveURL(/\/clients\?demoState=slow-search&q=juniper$/);
+  await expect(page.getByRole("cell", { exact: true, name: "Juniper & Field" })).toBeVisible();
+  await expect(page.getByRole("cell", { exact: true, name: "Northstar Studio" })).toBeHidden();
+});
+
+test("retains successful rows and the canonical query after a search failure", async ({ page }) => {
+  await page.goto("/sign-in");
+  await page.getByRole("button", { name: "Continue as demo manager" }).click();
+  await expect(page.getByRole("heading", { level: 1, name: "Clients" })).toBeVisible();
+  await page.goto("/clients?demoState=error-search");
+  await expect(page.getByRole("cell", { exact: true, name: "Northstar Studio" })).toBeVisible();
+
+  const search = page.getByRole("searchbox", { name: "Search clients" });
+  await search.fill("failure");
+  await expect(page).toHaveURL(/\/clients\?demoState=error-search&q=failure$/);
+  await expect(page.locator(".mfd-alert[role='alert']")).toContainText(
+    "last successful results have been preserved",
+  );
+  await expect(page.getByRole("cell", { exact: true, name: "Northstar Studio" })).toBeVisible();
+  await expect(search).toHaveValue("failure");
+  await expect(page.getByRole("button", { name: "Try again" })).toBeVisible();
+});
+
 test("resets locally persisted demo data and survives narrow reflow", async ({ page }) => {
   await page.goto("/sign-in");
   await page.getByRole("button", { name: "Continue as demo manager" }).click();

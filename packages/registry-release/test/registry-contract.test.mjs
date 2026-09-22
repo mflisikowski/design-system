@@ -78,6 +78,7 @@ describe("canonical registry sample contract", () => {
       "badge",
       "select",
       "radio-group",
+      "search-field",
     ]) {
       expect(items.get(name)).toMatchObject({
         dependencies: expect.arrayContaining([`@mflisikowski/tokens@${releaseManifest.version}`]),

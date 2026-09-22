@@ -71,6 +71,12 @@ and Appearance settings orchestration remain application-owned.
 
 The next planned milestone is `0.4.0`, covering canonical Client search and edit flows.
 
+- Search Field is available as an experimental registry contract with native search semantics,
+  explicit submit and clear events, and no application-owned routing or fetching behavior.
+- Reference CRM search matches normalized organization, contact, and email text through a canonical
+  `q` URL parameter with debounce, retained results, counts, no-results recovery, and retryable
+  failures.
+
 ## Release model
 
 Tokens, lint configuration, and registry metadata share one version. Immutable registry snapshots

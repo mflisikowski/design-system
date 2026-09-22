@@ -1,0 +1,72 @@
+import { Field, FieldDescription, FieldLabel } from "../../../../registry/ui/field";
+import { SearchField } from "../../../../registry/ui/search-field";
+import { Installation, LiveExample, MaturityNotice } from "@/components/docs/component-documentation";
+import { publicComponentDocumentation } from "@/lib/public-component-docs";
+
+<MaturityNotice introduced="0.4.0" status="experimental" />
+
+## Installation
+
+<Installation {...publicComponentDocumentation.searchField.installation} />
+
+## Purpose
+
+Search Field provides a native search input with a consistent leading icon, explicit clear
+control, and application-friendly submit and value-change events.
+
+## Examples
+
+<LiveExample label="Client search">
+  <Field>
+    <FieldLabel>Search clients</FieldLabel>
+    <FieldDescription>Search by organization, contact, or email.</FieldDescription>
+    <SearchField defaultValue="Northstar" />
+  </Field>
+</LiveExample>
+
+## Anatomy
+
+Search Field composes a decorative Search icon, one native `input type="search"`, an optional
+clear button, and an optional visual loading indicator. Compose it inside Field for its label and
+description relationship.
+
+## API
+
+`value` and `defaultValue` support controlled and uncontrolled use. `onValueChange` receives the
+raw input value, `onSubmit` receives the current value on Enter, and `onClear` fires after the
+value is cleared. `size` accepts `sm`, `md`, or `lg`; `disabled` follows native input behavior;
+`loading` changes presentation only.
+
+## States
+
+Default, focus-visible, disabled, and loading presentation are supported. A non-empty enabled
+field exposes the clear control. Loading does not make the input busy or announce application
+request progress.
+
+## Accessibility
+
+Use a visible or visually hidden FieldLabel. The Search icon is decorative. The clear control has
+the accessible name `Clear search`, keeps a 44px effective target, and returns focus to the input.
+The application owns result-region busy state and announcements.
+
+## Keyboard behavior
+
+Tab focuses the native search input. Enter invokes `onSubmit`. Escape clears a non-empty value and
+keeps focus in the input. Search Field does not expose combobox or autocomplete-list semantics.
+
+## Figma specification
+
+Anatomy is `Search Field / Leading icon / Input / optional Clear / optional Loading`. Properties
+are Size: Small, Medium, Large; Disabled; and Loading. The clear action is labelled `Clear
+search`, and loading is visual only.
+
+## Content guidance
+
+Label the domain being searched, such as `Search clients`. Keep durable instructions in Field
+description rather than placeholder text. Debouncing, URL state, fetching, filtering, counts, and
+retry feedback belong to the consuming application.
+
+## Related patterns
+
+Reference CRM owns the Client search URL, 300ms debounce, normalized matching, retained results,
+counts, no-results state, and retryable failure Alert around Search Field.

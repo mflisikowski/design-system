@@ -12,6 +12,7 @@
     "table",
     "field",
     "input",
+    "search-field",
     "textarea",
     "dialog",
     "alert-dialog",

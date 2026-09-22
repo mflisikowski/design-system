@@ -1,13 +1,18 @@
 import type { ZodType } from "zod";
 import { type Client, type CreateClientInput, clientSchema, clientsSchema } from "./model";
+import { normalizeClientSearchQuery } from "./search";
 
-export type ClientListScenario = "default" | "empty" | "error";
+export type ClientListScenario = "default" | "empty" | "error" | "slow-search" | "error-search";
 export type ClientDetailScenario = "default" | "error";
 export type ClientCreateScenario = "default" | "error" | "error-once" | "slow";
 export type ClientFieldErrors = Partial<Record<keyof CreateClientInput, string>>;
+export type ClientListOptions = Readonly<{
+  query?: string;
+  scenario?: ClientListScenario;
+}>;
 
 export type ClientRepository = Readonly<{
-  list: (scenario?: ClientListScenario) => Promise<readonly Client[]>;
+  list: (options?: ClientListOptions) => Promise<readonly Client[]>;
   get: (id: string, scenario?: ClientDetailScenario) => Promise<Client>;
   create: (input: CreateClientInput, scenario?: ClientCreateScenario) => Promise<Client>;
   reset: () => Promise<readonly Client[]>;
@@ -42,9 +47,17 @@ async function parseResponse<Output>(response: Response, schema: ZodType<Output>
 
 export function createHttpClientRepository(origin = ""): ClientRepository {
   return {
-    async list(scenario = "default") {
-      const query = scenario === "default" ? "" : `?scenario=${scenario}`;
-      return parseResponse(await fetch(`${origin}/api/clients${query}`), clientsSchema);
+    async list({ query: rawQuery = "", scenario = "default" } = {}) {
+      const parameters = new URLSearchParams();
+      const query = normalizeClientSearchQuery(rawQuery);
+      if (query) {
+        parameters.set("q", query);
+      }
+      if (scenario !== "default") {
+        parameters.set("scenario", scenario);
+      }
+      const search = parameters.size > 0 ? `?${parameters.toString()}` : "";
+      return parseResponse(await fetch(`${origin}/api/clients${search}`), clientsSchema);
     },
     async get(id, scenario = "default") {
       const query = scenario === "default" ? "" : `?scenario=${scenario}`;

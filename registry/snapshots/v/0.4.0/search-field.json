@@ -1,0 +1,38 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "search-field",
+  "title": "Search Field",
+  "description": "Native search input with a predictable clear control and explicit events.",
+  "dependencies": [
+    "@mflisikowski/tokens@0.4.0",
+    "clsx@2.1.1"
+  ],
+  "registryDependencies": [
+    "https://design-system.mflisikowski.dev/r/v/0.4.0/field.json",
+    "https://design-system.mflisikowski.dev/r/v/0.4.0/icon.json"
+  ],
+  "files": [
+    {
+      "path": "registry/ui/search-field.tsx",
+      "content": "\"use client\";\n\nimport { clsx } from \"clsx\";\nimport type { ChangeEventHandler, ComponentPropsWithRef, KeyboardEvent } from \"react\";\nimport { useRef, useState } from \"react\";\n\nimport { useFieldControlProps } from \"./field\";\nimport { Icon } from \"./icon\";\nimport \"./search-field.css\";\n\nexport type SearchFieldProps = Omit<\n  ComponentPropsWithRef<\"input\">,\n  \"defaultValue\" | \"onChange\" | \"onKeyDown\" | \"onSubmit\" | \"size\" | \"type\" | \"value\"\n> & {\n  defaultValue?: string;\n  loading?: boolean;\n  onChange?: ChangeEventHandler<HTMLInputElement>;\n  onClear?: () => void;\n  onKeyDown?: (event: KeyboardEvent<HTMLInputElement>) => void;\n  onSubmit?: (value: string) => void;\n  onValueChange?: (value: string) => void;\n  size?: \"sm\" | \"md\" | \"lg\";\n  value?: string;\n};\n\nexport function SearchField({\n  className,\n  defaultValue = \"\",\n  disabled,\n  loading = false,\n  onChange,\n  onClear,\n  onKeyDown,\n  onSubmit,\n  onValueChange,\n  size = \"md\",\n  value,\n  ...props\n}: SearchFieldProps) {\n  const inputRef = useRef<HTMLInputElement>(null);\n  const [uncontrolledValue, setUncontrolledValue] = useState(defaultValue);\n  const currentValue = value ?? uncontrolledValue;\n  const fieldProps = useFieldControlProps(props);\n\n  function updateValue(nextValue: string) {\n    if (value === undefined) {\n      setUncontrolledValue(nextValue);\n    }\n    onValueChange?.(nextValue);\n  }\n\n  function clearValue() {\n    if (disabled) {\n      return;\n    }\n\n    updateValue(\"\");\n    onClear?.();\n    inputRef.current?.focus();\n  }\n\n  function handleKeyDown(event: KeyboardEvent<HTMLInputElement>) {\n    onKeyDown?.(event);\n    if (event.defaultPrevented) {\n      return;\n    }\n\n    if (event.key === \"Escape\" && currentValue) {\n      event.preventDefault();\n      clearValue();\n      return;\n    }\n\n    if (event.key === \"Enter\") {\n      event.preventDefault();\n      onSubmit?.(event.currentTarget.value);\n    }\n  }\n\n  return (\n    <div\n      className={clsx(\"mfd-search-field\", className)}\n      data-loading={loading || undefined}\n      data-size={size}\n    >\n      <span aria-hidden=\"true\" className=\"mfd-search-field__leading-icon\">\n        <Icon name=\"search\" />\n      </span>\n      <input\n        {...props}\n        {...fieldProps}\n        ref={inputRef}\n        className=\"mfd-search-field__input\"\n        disabled={disabled}\n        onChange={(event) => {\n          updateValue(event.target.value);\n          onChange?.(event);\n        }}\n        onKeyDown={handleKeyDown}\n        type=\"search\"\n        value={currentValue}\n      />\n      {currentValue && !disabled ? (\n        <button\n          aria-label=\"Clear search\"\n          className=\"mfd-search-field__clear\"\n          onClick={clearValue}\n          type=\"button\"\n        >\n          <Icon name=\"close\" />\n        </button>\n      ) : null}\n      {loading ? <span aria-hidden=\"true\" className=\"mfd-search-field__loading\" /> : null}\n    </div>\n  );\n}\n",
+      "type": "registry:ui",
+      "target": "@ui/search-field.tsx"
+    },
+    {
+      "path": "registry/ui/search-field.css",
+      "content": ".mfd-search-field {\n  align-items: center;\n  background: var(--mfd-color-bg-canvas);\n  border: 1px solid var(--mfd-color-border-default);\n  border-radius: var(--mfd-radius-control);\n  color: var(--mfd-color-text-primary);\n  display: flex;\n  gap: var(--mfd-space-inline-sm);\n  min-height: var(--mfd-size-control-height-md);\n  padding-inline: var(--mfd-space-inline-md);\n}\n\n.mfd-search-field[data-size=\"sm\"] {\n  min-height: var(--mfd-size-control-height-sm);\n}\n\n.mfd-search-field[data-size=\"lg\"] {\n  min-height: var(--mfd-size-control-height-lg);\n}\n\n.mfd-search-field:focus-within {\n  border-color: var(--mfd-color-border-focus);\n  outline: 2px solid var(--mfd-color-border-focus);\n  outline-offset: 1px;\n}\n\n.mfd-search-field__leading-icon {\n  color: var(--mfd-color-text-secondary);\n  flex: none;\n}\n\n.mfd-search-field__input {\n  appearance: none;\n  background: transparent;\n  border: 0;\n  color: inherit;\n  flex: 1;\n  font: inherit;\n  min-width: 0;\n  outline: 0;\n  padding: var(--mfd-space-stack-sm) 0;\n}\n\n.mfd-search-field__input::-webkit-search-cancel-button {\n  appearance: none;\n}\n\n.mfd-search-field__clear {\n  align-items: center;\n  appearance: none;\n  background: transparent;\n  border: 1px solid transparent;\n  border-radius: var(--mfd-radius-control);\n  color: var(--mfd-color-text-secondary);\n  cursor: pointer;\n  display: inline-flex;\n  flex: none;\n  height: var(--mfd-size-hit-target-minimum);\n  justify-content: center;\n  margin-inline-end: calc(var(--mfd-space-inline-md) * -1);\n  min-width: var(--mfd-size-hit-target-minimum);\n  padding: 0;\n}\n\n.mfd-search-field__clear:hover {\n  background: var(--mfd-color-bg-subtle);\n}\n\n.mfd-search-field__clear:focus-visible {\n  outline: 2px solid var(--mfd-color-border-focus);\n  outline-offset: 1px;\n}\n\n.mfd-search-field__loading {\n  border: 2px solid var(--mfd-color-border-subtle);\n  border-radius: var(--mfd-radius-pill);\n  border-top-color: var(--mfd-color-accent-solid);\n  flex: none;\n  height: var(--mfd-icon-size-md);\n  width: var(--mfd-icon-size-md);\n}\n\n@media (max-width: 639px) {\n  .mfd-search-field__input {\n    font-size: 1rem;\n  }\n}\n\n@media (prefers-reduced-motion: no-preference) {\n  .mfd-search-field__loading {\n    animation: mfd-search-field-spin 0.8s linear infinite;\n  }\n}\n\n@keyframes mfd-search-field-spin {\n  to {\n    transform: rotate(360deg);\n  }\n}\n",
+      "type": "registry:ui",
+      "target": "@ui/search-field.css"
+    }
+  ],
+  "meta": {
+    "maturity": "experimental",
+    "version": "0.4.0",
+    "installation": {
+      "latest": "pnpm dlx shadcn@latest add @mflisikowski/search-field",
+      "snapshot": "pnpm dlx shadcn@latest add https://design-system.mflisikowski.dev/r/v/0.4.0/search-field.json"
+    }
+  },
+  "docs": "Compose Search Field inside Field. Routing, debouncing, fetching, filtering, and result announcements remain application-owned.",
+  "type": "registry:ui"
+}

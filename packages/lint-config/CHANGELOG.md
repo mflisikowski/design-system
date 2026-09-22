@@ -1,5 +1,11 @@
 # @mflisikowski/lint-config
 
+## 0.4.0
+
+### Minor Changes
+
+- Add the Search Field contract and canonical Client search flow with reloadable URL state.
+
 ## 0.3.0
 
 ### Minor Changes
