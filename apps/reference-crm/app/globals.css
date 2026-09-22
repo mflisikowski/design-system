@@ -338,6 +338,10 @@ h1 {
   width: 90%;
 }
 
+.skeleton-line--short {
+  width: 40%;
+}
+
 .skeleton-dot {
   border-radius: var(--mfd-radius-pill);
   height: var(--mfd-icon-size-md);

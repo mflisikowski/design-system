@@ -21,8 +21,11 @@ import {
 } from "@/components/ui/empty-state";
 import { Link } from "@/components/ui/link";
 import { PageHeader } from "@/components/ui/page-header";
+import { ToastViewport } from "@/components/ui/toast";
 import { startMockApi } from "@/mocks/browser";
 
+import { ProjectList } from "../projects/project-list";
+import type { ProjectCreateScenario, ProjectListScenario } from "../projects/repository";
 import { ClientQueryProvider } from "./client-experience";
 import { clientQueryKeys } from "./query-keys";
 import type { ClientDetailScenario } from "./repository";
@@ -38,6 +41,8 @@ const dateFormatter = new Intl.DateTimeFormat("en-US", {
 
 type ClientDetailExperienceProps = Readonly<{
   clientId: string;
+  projectCreateScenario: ProjectCreateScenario;
+  projectScenario: ProjectListScenario;
   scenario: ClientDetailScenario;
 }>;
 
@@ -70,15 +75,31 @@ function LoadingDetails() {
   );
 }
 
-export function ClientDetailExperience({ clientId, scenario }: ClientDetailExperienceProps) {
+export function ClientDetailExperience({
+  clientId,
+  projectCreateScenario,
+  projectScenario,
+  scenario,
+}: ClientDetailExperienceProps) {
   return (
     <ClientQueryProvider>
-      <ClientDetailContent clientId={clientId} scenario={scenario} />
+      <ClientDetailContent
+        clientId={clientId}
+        projectCreateScenario={projectCreateScenario}
+        projectScenario={projectScenario}
+        scenario={scenario}
+      />
+      <ToastViewport />
     </ClientQueryProvider>
   );
 }
 
-function ClientDetailContent({ clientId, scenario }: ClientDetailExperienceProps) {
+function ClientDetailContent({
+  clientId,
+  projectCreateScenario,
+  projectScenario,
+  scenario,
+}: ClientDetailExperienceProps) {
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
@@ -107,6 +128,12 @@ function ClientDetailContent({ clientId, scenario }: ClientDetailExperienceProps
           title="Client details"
         />
         <LoadingDetails />
+        <ProjectList
+          clientId={clientId}
+          createScenario={projectCreateScenario}
+          scenario={projectScenario}
+          waitingForApi={!ready}
+        />
       </section>
     );
   }
@@ -205,6 +232,12 @@ function ClientDetailContent({ clientId, scenario }: ClientDetailExperienceProps
           </div>
         ) : null}
       </section>
+      <ProjectList
+        clientId={clientId}
+        createScenario={projectCreateScenario}
+        scenario={projectScenario}
+        waitingForApi={!ready}
+      />
     </section>
   );
 }

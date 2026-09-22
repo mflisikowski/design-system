@@ -44,7 +44,11 @@ function readOrSeed(storage: ClientStorage) {
   return structuredClone(deterministicClients);
 }
 
-export function createClientHandlers(storage: ClientStorage, latency = defaultLatency) {
+export function createClientHandlers(
+  storage: ClientStorage,
+  latency = defaultLatency,
+  onReset?: () => void,
+) {
   let failNextCreate = true;
 
   return [
@@ -127,6 +131,7 @@ export function createClientHandlers(storage: ClientStorage, latency = defaultLa
     http.post("*/api/clients/reset", async () => {
       await delay(latency);
       storage.write(deterministicClients);
+      onReset?.();
       return HttpResponse.json(deterministicClients);
     }),
   ];
