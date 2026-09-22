@@ -2,6 +2,7 @@ import { ClientDetailExperience } from "@/features/clients/client-detail";
 import type {
   ClientDeleteScenario,
   ClientDetailScenario,
+  ClientStatusScenario,
   ClientUpdateScenario,
 } from "@/features/clients/repository";
 import type {
@@ -21,6 +22,7 @@ type ClientDetailsPageProps = Readonly<{
     demoProjectDeleteState?: string;
     demoProjectState?: string;
     demoProjectStatusState?: string;
+    demoStatusState?: string;
   }>;
 }>;
 
@@ -35,6 +37,7 @@ export default async function ClientDetailsPage({ params, searchParams }: Client
       demoProjectDeleteState,
       demoProjectState,
       demoProjectStatusState,
+      demoStatusState,
     },
   ] = await Promise.all([params, searchParams]);
   const scenario: ClientDetailScenario = demoDetailState === "error" ? "error" : "default";
@@ -69,6 +72,10 @@ export default async function ClientDetailsPage({ params, searchParams }: Client
     demoProjectStatusState === "error" || demoProjectStatusState === "error-once"
       ? demoProjectStatusState
       : "default";
+  const statusScenario: ClientStatusScenario =
+    demoStatusState === "error" || demoStatusState === "error-once" || demoStatusState === "slow"
+      ? demoStatusState
+      : "default";
 
   return (
     <ClientDetailExperience
@@ -78,6 +85,7 @@ export default async function ClientDetailsPage({ params, searchParams }: Client
       projectScenario={projectScenario}
       projectStatusScenario={projectStatusScenario}
       deleteScenario={deleteScenario}
+      statusScenario={statusScenario}
       scenario={scenario}
       updateScenario={updateScenario}
     />

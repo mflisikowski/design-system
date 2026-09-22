@@ -55,12 +55,18 @@
   margin: 0;
 }
 
-.client-details-status {
-  background: var(--mfd-color-status-success-bg);
-  border: 1px solid var(--mfd-color-status-success-border);
-  border-radius: var(--mfd-radius-pill);
-  color: var(--mfd-color-status-success-text);
-  padding: var(--mfd-space-inline-xs) var(--mfd-space-inline-sm);
+.client-details-status-control {
+  display: grid;
+  gap: var(--mfd-space-stack-sm);
+  margin-block-start: var(--mfd-space-stack-sm);
+}
+
+.client-details-status-control .mfd-select__trigger {
+  min-width: 9rem;
+}
+
+.client-details-status-control > .mfd-alert {
+  max-width: 32rem;
 }
 
 .client-details-data {

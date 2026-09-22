@@ -14,6 +14,7 @@ import {
   AlertDialogFooter,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { Badge, type BadgeTone } from "@/components/ui/badge";
 import {
   Breadcrumb,
   BreadcrumbCurrent,
@@ -31,6 +32,7 @@ import {
 } from "@/components/ui/empty-state";
 import { Link } from "@/components/ui/link";
 import { PageHeader } from "@/components/ui/page-header";
+import { Select, SelectIcon, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ToastViewport } from "@/components/ui/toast";
 import { startMockApi } from "@/mocks/browser";
 
@@ -46,10 +48,16 @@ import { createHttpProjectRepository } from "../projects/repository";
 import { ClientQueryProvider } from "./client-experience";
 import { clientDeletionAnnouncementStorageKey } from "./deletion-feedback";
 import { EditClientDialog } from "./edit-client-dialog";
+import {
+  clientRelationshipStatusLabels,
+  type Client,
+  type ClientRelationshipStatus,
+} from "./model";
 import { clientQueryKeys } from "./query-keys";
 import type {
   ClientDeleteScenario,
   ClientDetailScenario,
+  ClientStatusScenario,
   ClientUpdateScenario,
 } from "./repository";
 import { ClientRepositoryError, createHttpClientRepository } from "./repository";
@@ -63,6 +71,12 @@ const dateFormatter = new Intl.DateTimeFormat("en-US", {
   timeZone: "UTC",
 });
 
+const relationshipStatuses: readonly ClientRelationshipStatus[] = ["active", "inactive"];
+const relationshipStatusTones: Record<ClientRelationshipStatus, BadgeTone> = {
+  active: "success",
+  inactive: "neutral",
+};
+
 type ClientDetailExperienceProps = Readonly<{
   clientId: string;
   projectCreateScenario: ProjectCreateScenario;
@@ -70,6 +84,7 @@ type ClientDetailExperienceProps = Readonly<{
   projectScenario: ProjectListScenario;
   projectStatusScenario: ProjectStatusScenario;
   deleteScenario: ClientDeleteScenario;
+  statusScenario: ClientStatusScenario;
   scenario: ClientDetailScenario;
   updateScenario: ClientUpdateScenario;
 }>;
@@ -87,6 +102,111 @@ function DetailBreadcrumb({ current }: Readonly<{ current: string }>) {
         </BreadcrumbItem>
       </BreadcrumbList>
     </Breadcrumb>
+  );
+}
+
+type ClientRelationshipStatusControlProps = Readonly<{
+  client: Client;
+  detailScenario: ClientDetailScenario;
+  onAnnouncement: (message: string) => void;
+  statusScenario: ClientStatusScenario;
+}>;
+
+function ClientRelationshipStatusControl({
+  client,
+  detailScenario,
+  onAnnouncement,
+  statusScenario,
+}: ClientRelationshipStatusControlProps) {
+  const queryClient = useQueryClient();
+  const [statusFailure, setStatusFailure] = useState<{
+    status: ClientRelationshipStatus;
+  }>();
+  const updateStatus = useMutation({
+    mutationFn: ({ status }: { status: ClientRelationshipStatus }) =>
+      clientRepository.updateRelationshipStatus(client.id, status, statusScenario),
+    onError: (_error, variables) => {
+      setStatusFailure(variables);
+    },
+    onSuccess: (updatedClient) => {
+      setStatusFailure(undefined);
+      queryClient.setQueryData(clientQueryKeys.detail(client.id, detailScenario), updatedClient);
+      queryClient.setQueriesData<readonly Client[]>(
+        { queryKey: clientQueryKeys.lists },
+        (clients) =>
+          clients?.map((currentClient) =>
+            currentClient.id === updatedClient.id ? updatedClient : currentClient,
+          ),
+      );
+      void queryClient.invalidateQueries({
+        queryKey: clientQueryKeys.lists,
+        refetchType: "all",
+      });
+      onAnnouncement("Client status updated");
+    },
+  });
+  const pending = updateStatus.isPending;
+  const retryStatus = statusFailure?.status;
+
+  function changeStatus(status: ClientRelationshipStatus | null) {
+    if (status && status !== client.relationshipStatus) {
+      setStatusFailure(undefined);
+      updateStatus.mutate({ status });
+    }
+  }
+
+  return (
+    <div className="client-details-status-control">
+      <Select.Root
+        items={relationshipStatuses.map((status) => ({
+          label: clientRelationshipStatusLabels[status],
+          value: status,
+        }))}
+        onValueChange={changeStatus}
+        value={client.relationshipStatus}
+        loading={pending}
+      >
+        <SelectTrigger
+          aria-label={`Relationship status for ${client.organizationName}`}
+          loading={pending}
+          size="sm"
+        >
+          <Badge size="sm" tone={relationshipStatusTones[client.relationshipStatus]}>
+            <SelectValue />
+          </Badge>
+          <SelectIcon />
+        </SelectTrigger>
+        <Select.Content>
+          {relationshipStatuses.map((status) => (
+            <SelectItem key={status} value={status}>
+              {clientRelationshipStatusLabels[status]}
+            </SelectItem>
+          ))}
+        </Select.Content>
+      </Select.Root>
+      {statusFailure ? (
+        <Alert live tone="danger">
+          <AlertTitle>Client status could not be updated</AlertTitle>
+          <AlertDescription>
+            The previous status is still saved. Try again to set the selected status.
+          </AlertDescription>
+          <AlertAction>
+            <Button
+              loading={pending}
+              loadingLabel="Retrying"
+              onClick={() => {
+                if (retryStatus) {
+                  updateStatus.mutate({ status: retryStatus });
+                }
+              }}
+              variant="outline"
+            >
+              Try again
+            </Button>
+          </AlertAction>
+        </Alert>
+      ) : null}
+    </div>
   );
 }
 
@@ -279,6 +399,7 @@ export function ClientDetailExperience({
   projectScenario,
   projectStatusScenario,
   deleteScenario,
+  statusScenario,
   scenario,
   updateScenario,
 }: ClientDetailExperienceProps) {
@@ -291,6 +412,7 @@ export function ClientDetailExperience({
         projectScenario={projectScenario}
         projectStatusScenario={projectStatusScenario}
         deleteScenario={deleteScenario}
+        statusScenario={statusScenario}
         scenario={scenario}
         updateScenario={updateScenario}
       />
@@ -306,6 +428,7 @@ function ClientDetailContent({
   projectScenario,
   projectStatusScenario,
   deleteScenario,
+  statusScenario,
   scenario,
   updateScenario,
 }: ClientDetailExperienceProps) {
@@ -416,7 +539,12 @@ function ClientDetailContent({
         <div className="client-details-card__heading">
           <div>
             <h2 id="client-contact-title">Primary contact</h2>
-            <span className="client-details-status">{record.relationshipStatus}</span>
+            <ClientRelationshipStatusControl
+              client={record}
+              detailScenario={scenario}
+              onAnnouncement={announce}
+              statusScenario={statusScenario}
+            />
           </div>
           <div className="client-details-card__actions">
             <EditClientDialog

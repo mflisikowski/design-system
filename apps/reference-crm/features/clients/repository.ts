@@ -1,6 +1,7 @@
 import type { ZodType } from "zod";
 import {
   type Client,
+  type ClientRelationshipStatus,
   type CreateClientInput,
   clientSchema,
   clientsSchema,
@@ -12,6 +13,7 @@ export type ClientListScenario = "default" | "empty" | "error" | "slow-search" |
 export type ClientDetailScenario = "default" | "error";
 export type ClientCreateScenario = "default" | "error" | "error-once" | "slow";
 export type ClientUpdateScenario = "default" | "error" | "error-once" | "slow";
+export type ClientStatusScenario = "default" | "error" | "error-once" | "slow";
 export type ClientDeleteScenario =
   | "default"
   | "error"
@@ -42,6 +44,11 @@ export type ClientRepository = Readonly<{
     id: string,
     input: UpdateClientInput,
     scenario?: ClientUpdateScenario,
+  ) => Promise<Client>;
+  updateRelationshipStatus: (
+    id: string,
+    status: ClientRelationshipStatus,
+    scenario?: ClientStatusScenario,
   ) => Promise<Client>;
   deleteClient: (id: string, scenario?: ClientDeleteScenario) => Promise<ClientDeleteOutcome>;
   reset: () => Promise<readonly Client[]>;
@@ -111,6 +118,17 @@ export function createHttpClientRepository(origin = ""): ClientRepository {
       return parseResponse(
         await fetch(`${origin}/api/clients/${encodeURIComponent(id)}${query}`, {
           body: JSON.stringify(input),
+          headers: { "content-type": "application/json" },
+          method: "PATCH",
+        }),
+        clientSchema,
+      );
+    },
+    async updateRelationshipStatus(id, status, scenario = "default") {
+      const query = scenario === "default" ? "" : `?scenario=${scenario}`;
+      return parseResponse(
+        await fetch(`${origin}/api/clients/${encodeURIComponent(id)}${query}`, {
+          body: JSON.stringify({ relationshipStatus: status }),
           headers: { "content-type": "application/json" },
           method: "PATCH",
         }),

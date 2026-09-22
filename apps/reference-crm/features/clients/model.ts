@@ -2,6 +2,11 @@ import { z } from "zod";
 
 export const clientRelationshipStatusSchema = z.enum(["active", "inactive"]);
 
+export const clientRelationshipStatusLabels = {
+  active: "Active",
+  inactive: "Inactive",
+} as const satisfies Record<ClientRelationshipStatus, string>;
+
 export const clientSchema = z.object({
   id: z.string().min(1),
   organizationName: z.string().min(2).max(100),
@@ -44,5 +49,6 @@ export const createClientInputSchema = z.object({
 export const updateClientInputSchema = createClientInputSchema;
 
 export type Client = z.infer<typeof clientSchema>;
+export type ClientRelationshipStatus = z.infer<typeof clientRelationshipStatusSchema>;
 export type CreateClientInput = z.infer<typeof createClientInputSchema>;
 export type UpdateClientInput = z.infer<typeof updateClientInputSchema>;

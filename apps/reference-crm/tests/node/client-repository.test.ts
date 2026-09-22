@@ -185,6 +185,37 @@ describe("ClientRepository", () => {
     await expect(repository.get("client_northstar")).resolves.toEqual(deterministicClients[0]);
   });
 
+  it("updates only a client's relationship status and persists the transition", async () => {
+    const storage = createMemoryClientStorage(deterministicClients);
+    mockServer.use(...createClientHandlers(storage, 0));
+    const repository = createHttpClientRepository("http://localhost");
+
+    const updated = await repository.updateRelationshipStatus("client_northstar", "inactive");
+
+    expect(updated).toMatchObject({
+      id: "client_northstar",
+      organizationName: "Northstar Studio",
+      relationshipStatus: "inactive",
+    });
+    expect(updated.updatedAt).not.toBe(deterministicClients[0].updatedAt);
+    await expect(repository.get("client_northstar")).resolves.toEqual(updated);
+  });
+
+  it("exposes a retryable relationship-status failure without changing the client", async () => {
+    const storage = createMemoryClientStorage(deterministicClients);
+    mockServer.use(...createClientHandlers(storage, 0));
+    const repository = createHttpClientRepository("http://localhost");
+
+    await expect(
+      repository.updateRelationshipStatus("client_northstar", "inactive", "error"),
+    ).rejects.toMatchObject({
+      message: "The client relationship status could not be updated. Try again.",
+      name: "ClientRepositoryError",
+      status: 503,
+    });
+    await expect(repository.get("client_northstar")).resolves.toEqual(deterministicClients[0]);
+  });
+
   it("turns an HTTP failure into a typed repository error", async () => {
     mockServer.use(
       http.get("*/api/clients", () =>

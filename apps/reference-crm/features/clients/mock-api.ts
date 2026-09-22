@@ -2,6 +2,7 @@ import { delay, HttpResponse, http } from "msw";
 
 import {
   type Client,
+  clientRelationshipStatusSchema,
   clientsSchema,
   createClientInputSchema,
   updateClientInputSchema,
@@ -60,6 +61,7 @@ export function createClientHandlers(
 ) {
   let failNextCreate = true;
   let failNextUpdate = true;
+  let failNextStatusUpdate = true;
   let failNextDelete = true;
 
   return [
@@ -148,6 +150,43 @@ export function createClientHandlers(
       const scenario = new URL(request.url).searchParams.get("scenario");
       await delay(scenario === "slow" ? 1500 : latency);
 
+      const body = await request.json();
+      if (typeof body === "object" && body !== null && "relationshipStatus" in body) {
+        if (scenario === "error" || (scenario === "error-once" && failNextStatusUpdate)) {
+          failNextStatusUpdate = false;
+          return HttpResponse.json(
+            { message: "The client relationship status could not be updated. Try again." },
+            { status: 503 },
+          );
+        }
+
+        const status = clientRelationshipStatusSchema.safeParse(
+          (body as { relationshipStatus?: unknown }).relationshipStatus,
+        );
+        if (!status.success) {
+          return HttpResponse.json(
+            { message: "The submitted relationship status is invalid." },
+            { status: 422 },
+          );
+        }
+
+        const existingClients = readOrSeed(storage);
+        const clientIndex = existingClients.findIndex((client) => client.id === params.clientId);
+        if (clientIndex < 0) {
+          return HttpResponse.json({ message: "Client was not found." }, { status: 404 });
+        }
+
+        const updatedClient: Client = {
+          ...existingClients[clientIndex],
+          relationshipStatus: status.data,
+          updatedAt: new Date().toISOString(),
+        };
+        const nextClients = [...existingClients];
+        nextClients[clientIndex] = updatedClient;
+        storage.write(nextClients);
+        return HttpResponse.json(updatedClient);
+      }
+
       if (scenario === "error" || (scenario === "error-once" && failNextUpdate)) {
         failNextUpdate = false;
         return HttpResponse.json(
@@ -156,7 +195,7 @@ export function createClientHandlers(
         );
       }
 
-      const input = updateClientInputSchema.parse(await request.json());
+      const input = updateClientInputSchema.parse(body);
       const existingClients = readOrSeed(storage);
       const clientIndex = existingClients.findIndex((client) => client.id === params.clientId);
       if (clientIndex < 0) {
