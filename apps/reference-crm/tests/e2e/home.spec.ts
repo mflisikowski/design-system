@@ -273,6 +273,107 @@ test("shows an accessible not found state with a safe return path", async ({ pag
   await expect(breadcrumb).toContainText("Client not found");
 });
 
+test("edits a client without losing dirty work and restores focus after success", async ({
+  page,
+}) => {
+  await page.goto("/sign-in");
+  await page.getByRole("button", { name: "Continue as demo manager" }).click();
+  await expect(page.getByRole("heading", { level: 1, name: "Clients" })).toBeVisible();
+  await page.goto("/clients/client_northstar");
+  await expect(page.getByRole("heading", { level: 1, name: "Northstar Studio" })).toBeVisible();
+
+  const editClient = page.getByRole("button", { name: "Edit client" });
+  await editClient.click();
+  const dialog = page.getByRole("dialog", { name: "Edit client" });
+  const organizationName = page.getByRole("textbox", { name: "Organization name" });
+  await expect(dialog).toBeVisible();
+  await expect(organizationName).toHaveValue("Northstar Studio");
+  await expect(page.getByRole("button", { name: "Save changes" })).toBeDisabled();
+
+  await organizationName.fill("Northstar Studio Updated");
+  await expect(page.getByRole("button", { name: "Save changes" })).toBeEnabled();
+  await organizationName.fill("Northstar Studio");
+  await expect(page.getByRole("button", { name: "Save changes" })).toBeDisabled();
+  await organizationName.fill("Northstar Studio Updated");
+  await page.getByRole("button", { name: "Cancel" }).click();
+  const confirmation = page.getByRole("alertdialog", { name: "Discard changes?" });
+  await expect(confirmation).toBeVisible();
+  await page.getByRole("button", { name: "Keep editing" }).click();
+  await expect(organizationName).toHaveValue("Northstar Studio Updated");
+
+  await page.getByRole("button", { name: "Save changes" }).click();
+  await expect(dialog).toBeHidden();
+  await expect(
+    page.getByRole("heading", { level: 1, name: "Northstar Studio Updated" }),
+  ).toBeVisible();
+  await expect(page.getByRole("status").filter({ hasText: "Client updated" })).toHaveText(
+    "Client updated",
+  );
+  await expect(editClient).toBeFocused();
+
+  await page.goto("/clients");
+  await expect(
+    page.getByRole("cell", { exact: true, name: "Northstar Studio Updated" }),
+  ).toBeVisible();
+  await page.reload();
+  await expect(
+    page.getByRole("cell", { exact: true, name: "Northstar Studio Updated" }),
+  ).toBeVisible();
+});
+
+test("keeps edited values through update failure and retry", async ({ page }) => {
+  await page.goto("/sign-in");
+  await page.getByRole("button", { name: "Continue as demo manager" }).click();
+  await expect(page.getByRole("heading", { level: 1, name: "Clients" })).toBeVisible();
+  await page.goto("/clients/client_northstar?demoEditState=error-once");
+  await expect(page.getByRole("heading", { level: 1, name: "Northstar Studio" })).toBeVisible();
+
+  await page.getByRole("button", { name: "Edit client" }).click();
+  const dialog = page.getByRole("dialog", { name: "Edit client" });
+  const organizationName = page.getByRole("textbox", { name: "Organization name" });
+  await organizationName.fill("Recovery Northstar");
+  await page.getByRole("button", { name: "Save changes" }).click();
+
+  await expect(
+    page.getByRole("alert").filter({ hasText: "Client could not be updated" }),
+  ).toContainText("The client could not be updated. Try again.");
+  await expect(organizationName).toHaveValue("Recovery Northstar");
+  await expect(page.getByRole("button", { name: "Save changes" })).toBeFocused();
+
+  await page.getByRole("button", { name: "Try again" }).click();
+  await expect(dialog).toBeHidden();
+  await expect(page.getByRole("heading", { level: 1, name: "Recovery Northstar" })).toBeVisible();
+  await expect(page.getByRole("status").filter({ hasText: "Client updated" })).toHaveText(
+    "Client updated",
+  );
+});
+
+test("blocks duplicate actions and dismissal while Client update is pending", async ({ page }) => {
+  await page.goto("/sign-in");
+  await page.getByRole("button", { name: "Continue as demo manager" }).click();
+  await expect(page.getByRole("heading", { level: 1, name: "Clients" })).toBeVisible();
+  await page.goto("/clients/client_northstar?demoEditState=slow");
+  await expect(page.getByRole("heading", { level: 1, name: "Northstar Studio" })).toBeVisible();
+
+  await page.getByRole("button", { name: "Edit client" }).click();
+  const dialog = page.getByRole("dialog", { name: "Edit client" });
+  await page.getByRole("textbox", { name: "Organization name" }).fill("Patient Northstar");
+  await page.getByRole("button", { name: "Save changes" }).click();
+
+  await expect(dialog.locator("form")).toHaveAttribute("aria-busy", "true");
+  await expect(page.getByRole("button", { name: "Saving changes" })).toHaveAttribute(
+    "aria-disabled",
+    "true",
+  );
+  await expect(page.getByRole("textbox", { name: "Organization name" })).toBeDisabled();
+  await expect(page.getByRole("button", { name: "Cancel" })).toBeDisabled();
+  await expect(page.getByRole("button", { name: "Close" })).toBeDisabled();
+  await page.keyboard.press("Escape");
+  await expect(dialog).toBeVisible();
+  await expect(dialog).toBeHidden({ timeout: 5_000 });
+  await expect(page.getByRole("heading", { level: 1, name: "Patient Northstar" })).toBeVisible();
+});
+
 test("signs out and protects the session again", async ({ page }) => {
   await page.goto("/sign-in");
   await page.getByRole("button", { name: "Continue as demo manager" }).click();

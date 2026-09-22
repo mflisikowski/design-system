@@ -41,5 +41,8 @@ export const createClientInputSchema = z.object({
     .optional(),
 });
 
+export const updateClientInputSchema = createClientInputSchema;
+
 export type Client = z.infer<typeof clientSchema>;
 export type CreateClientInput = z.infer<typeof createClientInputSchema>;
+export type UpdateClientInput = z.infer<typeof updateClientInputSchema>;

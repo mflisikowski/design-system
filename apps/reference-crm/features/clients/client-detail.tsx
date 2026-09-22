@@ -1,7 +1,7 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { Alert, AlertAction, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import {
@@ -31,8 +31,9 @@ import type {
   ProjectStatusScenario,
 } from "../projects/repository";
 import { ClientQueryProvider } from "./client-experience";
+import { EditClientDialog } from "./edit-client-dialog";
 import { clientQueryKeys } from "./query-keys";
-import type { ClientDetailScenario } from "./repository";
+import type { ClientDetailScenario, ClientUpdateScenario } from "./repository";
 import { ClientRepositoryError, createHttpClientRepository } from "./repository";
 
 import "./client-detail.css";
@@ -49,6 +50,7 @@ type ClientDetailExperienceProps = Readonly<{
   projectScenario: ProjectListScenario;
   projectStatusScenario: ProjectStatusScenario;
   scenario: ClientDetailScenario;
+  updateScenario: ClientUpdateScenario;
 }>;
 
 function DetailBreadcrumb({ current }: Readonly<{ current: string }>) {
@@ -86,6 +88,7 @@ export function ClientDetailExperience({
   projectScenario,
   projectStatusScenario,
   scenario,
+  updateScenario,
 }: ClientDetailExperienceProps) {
   return (
     <ClientQueryProvider>
@@ -95,6 +98,7 @@ export function ClientDetailExperience({
         projectScenario={projectScenario}
         projectStatusScenario={projectStatusScenario}
         scenario={scenario}
+        updateScenario={updateScenario}
       />
       <ToastViewport />
     </ClientQueryProvider>
@@ -107,8 +111,11 @@ function ClientDetailContent({
   projectScenario,
   projectStatusScenario,
   scenario,
+  updateScenario,
 }: ClientDetailExperienceProps) {
   const [ready, setReady] = useState(false);
+  const announcementSequence = useRef(0);
+  const [announcement, setAnnouncement] = useState<{ id: number; message: string } | null>(null);
 
   useEffect(() => {
     let active = true;
@@ -196,6 +203,11 @@ function ClientDetailContent({
   }
 
   const record = client.data;
+  function announce(message: string) {
+    announcementSequence.current += 1;
+    setAnnouncement({ id: announcementSequence.current, message });
+  }
+
   return (
     <section className="client-details-page">
       <PageHeader
@@ -205,8 +217,15 @@ function ClientDetailContent({
       />
       <section aria-labelledby="client-contact-title" className="client-details-card">
         <div className="client-details-card__heading">
-          <h2 id="client-contact-title">Primary contact</h2>
-          <span className="client-details-status">{record.relationshipStatus}</span>
+          <div>
+            <h2 id="client-contact-title">Primary contact</h2>
+            <span className="client-details-status">{record.relationshipStatus}</span>
+          </div>
+          <EditClientDialog
+            client={record}
+            onAnnouncement={announce}
+            updateScenario={updateScenario}
+          />
         </div>
         <dl className="client-details-data">
           <div>
@@ -248,6 +267,14 @@ function ClientDetailContent({
         statusScenario={projectStatusScenario}
         waitingForApi={!ready}
       />
+      <output
+        aria-atomic="true"
+        aria-live="polite"
+        className="visually-hidden"
+        data-announcement-id={announcement?.id}
+      >
+        {announcement ? <span key={announcement.id}>{announcement.message}</span> : null}
+      </output>
     </section>
   );
 }

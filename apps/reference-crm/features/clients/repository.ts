@@ -1,10 +1,17 @@
 import type { ZodType } from "zod";
-import { type Client, type CreateClientInput, clientSchema, clientsSchema } from "./model";
+import {
+  type Client,
+  type CreateClientInput,
+  clientSchema,
+  clientsSchema,
+  type UpdateClientInput,
+} from "./model";
 import { normalizeClientSearchQuery } from "./search";
 
 export type ClientListScenario = "default" | "empty" | "error" | "slow-search" | "error-search";
 export type ClientDetailScenario = "default" | "error";
 export type ClientCreateScenario = "default" | "error" | "error-once" | "slow";
+export type ClientUpdateScenario = "default" | "error" | "error-once" | "slow";
 export type ClientFieldErrors = Partial<Record<keyof CreateClientInput, string>>;
 export type ClientListOptions = Readonly<{
   query?: string;
@@ -15,6 +22,11 @@ export type ClientRepository = Readonly<{
   list: (options?: ClientListOptions) => Promise<readonly Client[]>;
   get: (id: string, scenario?: ClientDetailScenario) => Promise<Client>;
   create: (input: CreateClientInput, scenario?: ClientCreateScenario) => Promise<Client>;
+  update: (
+    id: string,
+    input: UpdateClientInput,
+    scenario?: ClientUpdateScenario,
+  ) => Promise<Client>;
   reset: () => Promise<readonly Client[]>;
 }>;
 
@@ -73,6 +85,17 @@ export function createHttpClientRepository(origin = ""): ClientRepository {
           body: JSON.stringify(input),
           headers: { "content-type": "application/json" },
           method: "POST",
+        }),
+        clientSchema,
+      );
+    },
+    async update(id, input, scenario = "default") {
+      const query = scenario === "default" ? "" : `?scenario=${scenario}`;
+      return parseResponse(
+        await fetch(`${origin}/api/clients/${encodeURIComponent(id)}${query}`, {
+          body: JSON.stringify(input),
+          headers: { "content-type": "application/json" },
+          method: "PATCH",
         }),
         clientSchema,
       );

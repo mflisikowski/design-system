@@ -1,7 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import type { z } from "zod";
 
@@ -16,8 +16,12 @@ import { type CreateClientInput, createClientInputSchema } from "./model";
 import { ClientRepositoryError } from "./repository";
 
 type ClientFormValues = z.input<typeof createClientInputSchema>;
+export type ClientFormMode = "create" | "edit";
 
 type ClientFormProps = Readonly<{
+  initialValues?: ClientFormValues;
+  initialValuesVersion?: string;
+  mode?: ClientFormMode;
   onDirtyChange: (dirty: boolean) => void;
   onSubmit: (input: CreateClientInput) => Promise<void>;
   pending: boolean;
@@ -31,23 +35,43 @@ const defaultValues: ClientFormValues = {
   notes: "",
 };
 
-export function ClientForm({ onDirtyChange, onSubmit, pending }: ClientFormProps) {
+export function ClientForm({
+  initialValues,
+  initialValuesVersion,
+  mode = "create",
+  onDirtyChange,
+  onSubmit,
+  pending,
+}: ClientFormProps) {
   const [failureFocusTarget, setFailureFocusTarget] = useState<HTMLElement | null>(null);
   const [failedSubmission, setFailedSubmission] = useState<string | null>(null);
+  const confirmedValues = initialValues ?? defaultValues;
+  const confirmedVersion = mode === "edit" ? (initialValuesVersion ?? "") : "create";
+  const previousConfirmedVersion = useRef<string | undefined>(undefined);
   const {
     clearErrors,
     formState: { errors, isDirty },
     handleSubmit,
     register,
+    reset,
     setError,
     setFocus,
   } = useForm<ClientFormValues, unknown, CreateClientInput>({
-    defaultValues,
+    defaultValues: confirmedValues,
     mode: "onSubmit",
     reValidateMode: "onChange",
     resolver: zodResolver(createClientInputSchema),
     shouldFocusError: true,
   });
+
+  useEffect(() => {
+    if (previousConfirmedVersion.current === confirmedVersion) {
+      return;
+    }
+
+    previousConfirmedVersion.current = confirmedVersion;
+    reset(confirmedValues, { keepDirtyValues: true });
+  }, [confirmedValues, confirmedVersion, reset]);
 
   useEffect(() => {
     onDirtyChange(isDirty);
@@ -87,7 +111,11 @@ export function ClientForm({ onDirtyChange, onSubmit, pending }: ClientFormProps
       }
 
       setFailureFocusTarget(activeElement instanceof HTMLElement ? activeElement : null);
-      setFailedSubmission("The client could not be saved. Try again.");
+      setFailedSubmission(
+        mode === "edit"
+          ? "The client could not be updated. Try again."
+          : "The client could not be saved. Try again.",
+      );
     }
   }
 
@@ -99,7 +127,7 @@ export function ClientForm({ onDirtyChange, onSubmit, pending }: ClientFormProps
         {failedSubmission ? (
           <div className="client-form__failure">
             <Alert live tone="danger">
-              <AlertTitle>Client could not be saved</AlertTitle>
+              <AlertTitle>Client could not be {mode === "edit" ? "updated" : "saved"}</AlertTitle>
               <AlertDescription>{failedSubmission}</AlertDescription>
               <AlertAction>
                 <Button
@@ -147,8 +175,13 @@ export function ClientForm({ onDirtyChange, onSubmit, pending }: ClientFormProps
         <DialogClose disabled={pending} render={<Button variant="outline" />}>
           Cancel
         </DialogClose>
-        <Button loading={pending} loadingLabel="Saving client" type="submit">
-          Save client
+        <Button
+          disabled={mode === "edit" && !isDirty}
+          loading={pending}
+          loadingLabel={mode === "edit" ? "Saving changes" : "Saving client"}
+          type="submit"
+        >
+          {mode === "edit" ? "Save changes" : "Save client"}
         </Button>
       </DialogFooter>
     </form>

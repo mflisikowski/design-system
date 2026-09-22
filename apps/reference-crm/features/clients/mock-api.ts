@@ -1,6 +1,11 @@
 import { delay, HttpResponse, http } from "msw";
 
-import { type Client, clientsSchema, createClientInputSchema } from "./model";
+import {
+  type Client,
+  clientsSchema,
+  createClientInputSchema,
+  updateClientInputSchema,
+} from "./model";
 import { clientMatchesSearch, normalizeClientSearchQuery } from "./search";
 import { deterministicClients } from "./seed";
 
@@ -51,6 +56,7 @@ export function createClientHandlers(
   onReset?: () => void,
 ) {
   let failNextCreate = true;
+  let failNextUpdate = true;
 
   return [
     http.get("*/api/clients", async ({ request }) => {
@@ -133,6 +139,53 @@ export function createClientHandlers(
       };
       storage.write([client, ...existingClients]);
       return HttpResponse.json(client, { status: 201 });
+    }),
+    http.patch("*/api/clients/:clientId", async ({ params, request }) => {
+      const scenario = new URL(request.url).searchParams.get("scenario");
+      await delay(scenario === "slow" ? 1500 : latency);
+
+      if (scenario === "error" || (scenario === "error-once" && failNextUpdate)) {
+        failNextUpdate = false;
+        return HttpResponse.json(
+          { message: "The client could not be updated. Try again." },
+          { status: 503 },
+        );
+      }
+
+      const input = updateClientInputSchema.parse(await request.json());
+      const existingClients = readOrSeed(storage);
+      const clientIndex = existingClients.findIndex((client) => client.id === params.clientId);
+      if (clientIndex < 0) {
+        return HttpResponse.json({ message: "Client was not found." }, { status: 404 });
+      }
+
+      const duplicateEmail = existingClients.some(
+        (client) =>
+          client.id !== params.clientId &&
+          client.contactEmail.toLowerCase() === input.contactEmail.toLowerCase(),
+      );
+      if (duplicateEmail) {
+        return HttpResponse.json(
+          {
+            fieldErrors: {
+              contactEmail: "A client with this contact email already exists.",
+            },
+            message: "The submitted client has a validation error.",
+          },
+          { status: 422 },
+        );
+      }
+
+      const currentClient = existingClients[clientIndex];
+      const updatedClient: Client = {
+        ...currentClient,
+        ...input,
+        updatedAt: new Date().toISOString(),
+      };
+      const nextClients = [...existingClients];
+      nextClients[clientIndex] = updatedClient;
+      storage.write(nextClients);
+      return HttpResponse.json(updatedClient);
     }),
     http.post("*/api/clients/reset", async () => {
       await delay(latency);

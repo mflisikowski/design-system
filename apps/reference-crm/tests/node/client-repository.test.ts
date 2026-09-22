@@ -137,6 +137,52 @@ describe("ClientRepository", () => {
     await expect(repository.list()).resolves.toEqual([]);
   });
 
+  it("updates a client through the HTTP boundary and persists the returned record", async () => {
+    const storage = createMemoryClientStorage(deterministicClients);
+    mockServer.use(...createClientHandlers(storage, 0));
+    const repository = createHttpClientRepository("http://localhost");
+
+    const updated = await repository.update("client_northstar", {
+      organizationName: "Northstar Studio Updated",
+      contactName: "Jamie Chen",
+      contactEmail: "jamie.chen@northstar.example",
+      contactPhone: "+48 555 010 999",
+      notes: "Updated account notes.",
+    });
+
+    expect(updated).toMatchObject({
+      id: "client_northstar",
+      organizationName: "Northstar Studio Updated",
+      contactPhone: "+48 555 010 999",
+      notes: "Updated account notes.",
+      relationshipStatus: "active",
+    });
+    expect(updated.updatedAt).not.toBe(deterministicClients[0].updatedAt);
+    await expect(repository.get("client_northstar")).resolves.toEqual(updated);
+  });
+
+  it("maps update validation failures to the edited field", async () => {
+    const storage = createMemoryClientStorage(deterministicClients);
+    mockServer.use(...createClientHandlers(storage, 0));
+    const repository = createHttpClientRepository("http://localhost");
+
+    await expect(
+      repository.update("client_northstar", {
+        organizationName: "Another Northstar",
+        contactName: "Jamie Chen",
+        contactEmail: deterministicClients[1].contactEmail,
+      }),
+    ).rejects.toMatchObject({
+      fieldErrors: {
+        contactEmail: "A client with this contact email already exists.",
+      },
+      name: "ClientRepositoryError",
+      status: 422,
+    });
+
+    await expect(repository.get("client_northstar")).resolves.toEqual(deterministicClients[0]);
+  });
+
   it("turns an HTTP failure into a typed repository error", async () => {
     mockServer.use(
       http.get("*/api/clients", () =>
