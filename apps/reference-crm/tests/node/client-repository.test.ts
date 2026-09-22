@@ -60,6 +60,19 @@ describe("ClientRepository", () => {
     ]);
   });
 
+  it("combines normalized search and relationship status with AND semantics", async () => {
+    mockServer.use(...createClientHandlers(createMemoryClientStorage(deterministicClients), 0));
+    const repository = createHttpClientRepository("http://localhost");
+
+    await expect(repository.list({ status: "inactive" })).resolves.toEqual([deterministicClients[2]]);
+    await expect(
+      repository.list({ query: " NORTHSTAR ", status: "active" }),
+    ).resolves.toEqual([deterministicClients[0]]);
+    await expect(
+      repository.list({ query: " NORTHSTAR ", status: "inactive" }),
+    ).resolves.toEqual([]);
+  });
+
   it("persists resets atomically through the repository contract", async () => {
     const storage = createMemoryClientStorage([]);
     mockServer.use(...createClientHandlers(storage));

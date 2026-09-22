@@ -33,6 +33,7 @@ export type ClientDeleteOutcome =
   | Readonly<{ clientId: string; code: "NOT_FOUND"; outcome: "not-found" }>;
 export type ClientListOptions = Readonly<{
   query?: string;
+  status?: ClientRelationshipStatus;
   scenario?: ClientListScenario;
 }>;
 
@@ -83,11 +84,14 @@ async function parseResponse<Output>(response: Response, schema: ZodType<Output>
 
 export function createHttpClientRepository(origin = ""): ClientRepository {
   return {
-    async list({ query: rawQuery = "", scenario = "default" } = {}) {
+    async list({ query: rawQuery = "", status, scenario = "default" } = {}) {
       const parameters = new URLSearchParams();
       const query = normalizeClientSearchQuery(rawQuery);
       if (query) {
         parameters.set("q", query);
+      }
+      if (status) {
+        parameters.set("status", status);
       }
       if (scenario !== "default") {
         parameters.set("scenario", scenario);

@@ -3,7 +3,7 @@ import type { ClientCreateScenario, ClientListScenario } from "@/features/client
 import { normalizeClientSearchQuery } from "@/features/clients/search";
 
 type ClientsPageProps = Readonly<{
-  searchParams: Promise<{ demoCreateState?: string; demoState?: string; q?: string }>;
+  searchParams: Promise<{ demoCreateState?: string; demoState?: string; q?: string; status?: string }>;
 }>;
 
 export default async function ClientsPage({ searchParams }: ClientsPageProps) {

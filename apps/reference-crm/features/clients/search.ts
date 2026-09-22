@@ -1,4 +1,13 @@
-import type { Client } from "./model";
+import { clientRelationshipStatusSchema, type Client, type ClientRelationshipStatus } from "./model";
+
+export type ClientFilterStatus = ClientRelationshipStatus | "all";
+
+export function normalizeClientRelationshipStatus(
+  value: string | null | undefined,
+): ClientRelationshipStatus | undefined {
+  const result = clientRelationshipStatusSchema.safeParse(value);
+  return result.success ? result.data : undefined;
+}
 
 export function normalizeClientSearchQuery(value: string | null | undefined) {
   return (value ?? "").trim().replace(/\s+/gu, " ");

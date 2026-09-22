@@ -17,6 +17,7 @@ import { Field, FieldDescription, FieldLabel } from "@/components/ui/field";
 import { Icon } from "@/components/ui/icon";
 import { Link } from "@/components/ui/link";
 import { SearchField } from "@/components/ui/search-field";
+import { Select } from "@/components/ui/select";
 import {
   Table,
   TableBody,
@@ -29,20 +30,33 @@ import {
 import { AddClientDialog } from "./add-client-dialog";
 import { ClientRowActions } from "./client-row-actions";
 import { clientDeletionAnnouncementStorageKey } from "./deletion-feedback";
-import type { Client } from "./model";
+import {
+  clientRelationshipStatusLabels,
+  type Client,
+} from "./model";
 import { clientQueryKeys } from "./query-keys";
 import {
   type ClientCreateScenario,
   type ClientListScenario,
   createHttpClientRepository,
 } from "./repository";
-import { normalizeClientSearchQuery } from "./search";
+import {
+  type ClientFilterStatus,
+  normalizeClientRelationshipStatus,
+  normalizeClientSearchQuery,
+} from "./search";
 
 const clientRepository = createHttpClientRepository();
 const dateFormatter = new Intl.DateTimeFormat("en-US", {
   dateStyle: "medium",
   timeZone: "UTC",
 });
+const clientFilterStatuses = ["all", "active", "inactive"] as const satisfies readonly ClientFilterStatus[];
+const clientFilterStatusLabels: Record<ClientFilterStatus, string> = {
+  all: "All clients",
+  active: clientRelationshipStatusLabels.active,
+  inactive: clientRelationshipStatusLabels.inactive,
+};
 
 type ClientListProps = Readonly<{
   createScenario: ClientCreateScenario;
@@ -159,22 +173,28 @@ export function ClientList({
   const currentSearch = searchParams.toString();
   const rawQuery = searchParams.get("q") ?? "";
   const query = normalizeClientSearchQuery(rawQuery);
+  const rawStatus = searchParams.get("status");
+  const status = normalizeClientRelationshipStatus(rawStatus) ?? "all";
   const [inputQuery, setInputQuery] = useState(initialQuery);
 
-  const replaceQuery = useCallback(
-    (nextQuery: string) => {
+  const replaceFilters = useCallback(
+    (nextQuery: string, nextStatus: ClientFilterStatus) => {
       const normalizedQuery = normalizeClientSearchQuery(nextQuery);
-      if ((new URLSearchParams(currentSearch).get("q") ?? "") === normalizedQuery) {
-        return;
-      }
-
       const nextParams = new URLSearchParams(currentSearch);
       if (normalizedQuery) {
         nextParams.set("q", normalizedQuery);
       } else {
         nextParams.delete("q");
       }
+      if (nextStatus === "all") {
+        nextParams.delete("status");
+      } else {
+        nextParams.set("status", nextStatus);
+      }
       const nextSearch = nextParams.toString();
+      if (nextSearch === currentSearch) {
+        return;
+      }
       router.replace(nextSearch ? `${pathname}?${nextSearch}` : pathname, { scroll: false });
     },
     [currentSearch, pathname, router],
@@ -185,10 +205,10 @@ export function ClientList({
       // oxlint-disable-next-line react/set-state-in-effect -- URL navigation is external state that must resynchronize the controlled search input.
       setInputQuery(query);
     }
-    if (rawQuery !== query) {
-      replaceQuery(query);
+    if (rawQuery !== query || (rawStatus !== null && !normalizeClientRelationshipStatus(rawStatus))) {
+      replaceFilters(query, status);
     }
-  }, [query, rawQuery, replaceQuery]);
+  }, [query, rawQuery, rawStatus, replaceFilters, status]);
 
   useEffect(
     () => () => {
@@ -221,12 +241,12 @@ export function ClientList({
 
     const normalizedQuery = normalizeClientSearchQuery(nextValue);
     if (!normalizedQuery) {
-      replaceQuery("");
+      replaceFilters("", status);
       return;
     }
 
     debounceTimer.current = setTimeout(() => {
-      replaceQuery(normalizedQuery);
+      replaceFilters(normalizedQuery, status);
       debounceTimer.current = null;
     }, 300);
   }
@@ -237,7 +257,28 @@ export function ClientList({
       debounceTimer.current = null;
     }
     setInputQuery(nextValue);
-    replaceQuery(nextValue);
+    replaceFilters(nextValue, status);
+  }
+
+  function changeStatus(nextValue: string | null) {
+    if (debounceTimer.current) {
+      clearTimeout(debounceTimer.current);
+      debounceTimer.current = null;
+    }
+
+    const nextStatus: ClientFilterStatus =
+      nextValue === "active" || nextValue === "inactive" ? nextValue : "all";
+    replaceFilters(inputQuery, nextStatus);
+  }
+
+  function clearFilters() {
+    if (debounceTimer.current) {
+      clearTimeout(debounceTimer.current);
+      debounceTimer.current = null;
+    }
+    setInputQuery("");
+    replaceFilters("", "all");
+    queueMicrotask(() => clientsHeadingRef.current?.focus());
   }
 
   function announce(message: string) {
@@ -248,8 +289,8 @@ export function ClientList({
   const clients = useQuery({
     enabled: !waitingForApi,
     placeholderData: keepPreviousData,
-    queryFn: () => clientRepository.list({ query, scenario }),
-    queryKey: clientQueryKeys.list(query, scenario),
+    queryFn: () => clientRepository.list({ query, scenario, status: status === "all" ? undefined : status }),
+    queryKey: clientQueryKeys.list(query, status, scenario),
   });
   useEffect(() => {
     if (!clients.isPending && !clients.isError && clients.data) {
@@ -260,7 +301,7 @@ export function ClientList({
   const reset = useMutation({
     mutationFn: () => clientRepository.reset(),
     onSuccess: (records) => {
-      queryClient.setQueryData(clientQueryKeys.list("", "default"), records);
+      queryClient.setQueryData(clientQueryKeys.list("", "all", "default"), records);
       void queryClient.invalidateQueries({ queryKey: clientQueryKeys.all });
       announce("Demo data reset");
     },
@@ -277,8 +318,12 @@ export function ClientList({
   const displayedClients = clients.data ?? lastSuccessfulClients;
   const hasResults = Array.isArray(displayedClients);
   const resultCount = displayedClients?.length ?? 0;
+  const resultCriteria = [
+    query ? `matching “${query}”` : null,
+    status !== "all" ? `with ${clientFilterStatusLabels[status].toLowerCase()} relationship status` : null,
+  ].filter((criterion): criterion is string => Boolean(criterion));
   const resultSummary = `${resultCount} ${resultCount === 1 ? "client" : "clients"} found${
-    query ? ` matching “${query}”` : ""
+    resultCriteria.length > 0 ? ` ${resultCriteria.join(" and ")}` : ""
   }`;
 
   function retrySearch() {
@@ -290,8 +335,8 @@ export function ClientList({
       <Alert live tone="danger">
         <AlertTitle>Clients could not be loaded</AlertTitle>
         <AlertDescription>
-          The local demo service did not respond. Your search and last successful results have been
-          preserved.
+          The local demo service did not respond. Your search, relationship status filter, and last
+          successful results have been preserved.
         </AlertDescription>
         <AlertAction>
           <Button onClick={retrySearch} variant="outline">
@@ -303,7 +348,7 @@ export function ClientList({
   }
 
   function renderNoResults() {
-    if (!query) {
+    if (!query && status === "all") {
       return (
         <EmptyState>
           <EmptyStateIcon>
@@ -324,11 +369,18 @@ export function ClientList({
         </EmptyStateIcon>
         <EmptyStateTitle>No clients found</EmptyStateTitle>
         <EmptyStateDescription>
-          No clients match “{query}”. Try another organization, contact, or email.
+          {query
+            ? status === "all"
+              ? `No clients match “${query}”. Try another organization, contact, or email.`
+              : `No clients match “${query}” with an ${clientFilterStatusLabels[status].toLowerCase()} relationship status.`
+            : `No ${clientFilterStatusLabels[status].toLowerCase()} clients found. Try another relationship status.`}
         </EmptyStateDescription>
         <EmptyStateActions>
-          <Button onClick={() => submitQuery("")} variant="outline">
-            Clear search
+          <Button
+            onClick={status === "all" ? () => submitQuery("") : clearFilters}
+            variant="outline"
+          >
+            {status === "all" ? "Clear search" : "Clear filters"}
           </Button>
         </EmptyStateActions>
       </EmptyState>
@@ -393,7 +445,7 @@ export function ClientList({
         </div>
       </div>
       <p className="demo-disclosure">Demo data is fictional and stored only in this browser.</p>
-      <div className="client-search">
+      <div aria-label="Client filters" className="client-filter-bar" role="group">
         <Field>
           <FieldLabel>Search clients</FieldLabel>
           <FieldDescription>Search by organization, contact, or email.</FieldDescription>
@@ -404,6 +456,35 @@ export function ClientList({
             value={inputQuery}
           />
         </Field>
+        <Field>
+          <FieldLabel>Filter by relationship status</FieldLabel>
+          <FieldDescription>Show active or inactive client relationships.</FieldDescription>
+          <Select.Root
+            items={clientFilterStatuses.map((filterStatus) => ({
+              label: clientFilterStatusLabels[filterStatus],
+              value: filterStatus,
+            }))}
+            onValueChange={changeStatus}
+            value={status}
+          >
+            <Select.Trigger aria-label="Filter by relationship status">
+              <Select.Value />
+              <Select.Icon />
+            </Select.Trigger>
+            <Select.Content>
+              {clientFilterStatuses.map((filterStatus) => (
+                <Select.Item key={filterStatus} value={filterStatus}>
+                  {clientFilterStatusLabels[filterStatus]}
+                </Select.Item>
+              ))}
+            </Select.Content>
+          </Select.Root>
+        </Field>
+        {status !== "all" ? (
+          <Button onClick={clearFilters} variant="outline">
+            Clear filters
+          </Button>
+        ) : null}
       </div>
       <output
         aria-atomic="true"

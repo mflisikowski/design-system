@@ -69,7 +69,14 @@ export function createClientHandlers(
       const parameters = new URL(request.url).searchParams;
       const scenario = parameters.get("scenario");
       const query = normalizeClientSearchQuery(parameters.get("q"));
-      await delay(scenario === "slow-search" && query === "northstar" ? latency * 4 : latency);
+      const status = clientRelationshipStatusSchema.safeParse(parameters.get("status")).data;
+      await delay(
+        scenario === "slow-search" &&
+          query === "northstar" &&
+          (!status || status === "active")
+          ? latency * 4
+          : latency,
+      );
 
       if (scenario === "error" || (scenario === "error-search" && query === "failure")) {
         return HttpResponse.json(
@@ -84,7 +91,11 @@ export function createClientHandlers(
 
       const clients = readOrSeed(storage);
       return HttpResponse.json(
-        query ? clients.filter((client) => clientMatchesSearch(client, query)) : clients,
+        clients.filter(
+          (client) =>
+            (!query || clientMatchesSearch(client, query)) &&
+            (!status || client.relationshipStatus === status),
+        ),
       );
     }),
     http.get("*/api/clients/:clientId", async ({ params, request }) => {

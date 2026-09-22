@@ -49,12 +49,12 @@ export function AddClientDialog({ createScenario, scenario }: AddClientDialogPro
   const createClient = useMutation({
     mutationFn: (input: CreateClientInput) => clientRepository.create(input, createScenario),
     onSuccess: (client) => {
-      queryClient.setQueryData<readonly Client[]>(clientQueryKeys.list("", scenario), (clients) => [
+      queryClient.setQueryData<readonly Client[]>(clientQueryKeys.list("", "all", scenario), (clients) => [
         client,
         ...(clients ?? []),
       ]);
       queryClient.setQueryData<readonly Client[]>(
-        clientQueryKeys.list("", "default"),
+        clientQueryKeys.list("", "all", "default"),
         (clients) => [client, ...(clients?.filter((record) => record.id !== client.id) ?? [])],
       );
       void queryClient.invalidateQueries({
