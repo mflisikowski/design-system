@@ -1,0 +1,37 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "input",
+  "title": "Input",
+  "description": "Density-aware native text input for use inside Field.",
+  "dependencies": [
+    "@mflisikowski/tokens@0.5.0",
+    "clsx@2.1.1"
+  ],
+  "registryDependencies": [
+    "https://design-system.mflisikowski.dev/r/v/0.5.0/field.json"
+  ],
+  "files": [
+    {
+      "path": "registry/ui/input.tsx",
+      "content": "\"use client\";\n\nimport { clsx } from \"clsx\";\nimport type { ComponentPropsWithRef } from \"react\";\n\nimport { useFieldControlProps } from \"./field\";\nimport \"./input.css\";\n\nexport type InputProps = Omit<ComponentPropsWithRef<\"input\">, \"size\"> & {\n  size?: \"sm\" | \"md\" | \"lg\";\n};\n\nexport function Input({ className, size = \"md\", ...props }: InputProps) {\n  const fieldProps = useFieldControlProps(props);\n  return (\n    <input {...props} {...fieldProps} className={clsx(\"mfd-input\", className)} data-size={size} />\n  );\n}\n",
+      "type": "registry:ui",
+      "target": "@ui/input.tsx"
+    },
+    {
+      "path": "registry/ui/input.css",
+      "content": ".mfd-input,\n.mfd-textarea {\n  background: var(--mfd-color-bg-canvas);\n  border: 1px solid var(--mfd-color-border-default);\n  border-radius: var(--mfd-radius-control);\n  color: var(--mfd-color-text-primary);\n  font: inherit;\n  inline-size: 100%;\n  min-height: var(--mfd-size-control-height-md);\n  padding: var(--mfd-space-stack-sm) var(--mfd-space-inline-md);\n}\n\n.mfd-input[data-size=\"sm\"],\n.mfd-textarea[data-size=\"sm\"] {\n  min-height: var(--mfd-size-control-height-sm);\n}\n\n.mfd-input[data-size=\"lg\"],\n.mfd-textarea[data-size=\"lg\"] {\n  min-height: var(--mfd-size-control-height-lg);\n}\n\n.mfd-input:focus-visible,\n.mfd-textarea:focus-visible {\n  border-color: var(--mfd-color-border-focus);\n  outline: 2px solid var(--mfd-color-border-focus);\n  outline-offset: 1px;\n}\n\n.mfd-input[aria-invalid=\"true\"],\n.mfd-textarea[aria-invalid=\"true\"] {\n  border-color: var(--mfd-color-status-danger-border);\n}\n\n.mfd-input:disabled,\n.mfd-textarea:disabled {\n  cursor: not-allowed;\n  opacity: 0.55;\n}\n\n@media (max-width: 639px) {\n  .mfd-input,\n  .mfd-textarea {\n    font-size: 1rem;\n  }\n}\n",
+      "type": "registry:ui",
+      "target": "@ui/input.css"
+    }
+  ],
+  "meta": {
+    "maturity": "experimental",
+    "version": "0.5.0",
+    "installation": {
+      "latest": "pnpm dlx shadcn@latest add @mflisikowski/input",
+      "snapshot": "pnpm dlx shadcn@latest add https://design-system.mflisikowski.dev/r/v/0.5.0/input.json"
+    }
+  },
+  "docs": "Use Input inside Field. Native input properties and refs are forwarded; size maps to density-aware control tokens.",
+  "type": "registry:ui"
+}

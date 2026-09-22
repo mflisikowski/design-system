@@ -1,0 +1,35 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "table",
+  "title": "Table",
+  "description": "Native semantic table primitives for ordinary tabular data.",
+  "dependencies": [
+    "@mflisikowski/tokens@0.5.0",
+    "clsx@2.1.1"
+  ],
+  "registryDependencies": [],
+  "files": [
+    {
+      "path": "registry/ui/table.tsx",
+      "content": "import { clsx } from \"clsx\";\nimport type { ComponentPropsWithoutRef } from \"react\";\n\nimport \"./table.css\";\n\nexport function Table({ className, ...props }: ComponentPropsWithoutRef<\"table\">) {\n  return <table {...props} className={clsx(\"mfd-table\", className)} />;\n}\n\nexport function TableCaption({ className, ...props }: ComponentPropsWithoutRef<\"caption\">) {\n  return <caption {...props} className={clsx(\"mfd-table__caption\", className)} />;\n}\n\nexport function TableHeader({ className, ...props }: ComponentPropsWithoutRef<\"thead\">) {\n  return <thead {...props} className={clsx(\"mfd-table__header\", className)} />;\n}\n\nexport function TableBody({ className, ...props }: ComponentPropsWithoutRef<\"tbody\">) {\n  return <tbody {...props} className={clsx(\"mfd-table__body\", className)} />;\n}\n\nexport function TableRow({ className, ...props }: ComponentPropsWithoutRef<\"tr\">) {\n  return <tr {...props} className={clsx(\"mfd-table__row\", className)} />;\n}\n\nexport function TableHead({ className, scope = \"col\", ...props }: ComponentPropsWithoutRef<\"th\">) {\n  return <th {...props} className={clsx(\"mfd-table__head\", className)} scope={scope} />;\n}\n\nexport function TableCell({ className, ...props }: ComponentPropsWithoutRef<\"td\">) {\n  return <td {...props} className={clsx(\"mfd-table__cell\", className)} />;\n}\n",
+      "type": "registry:ui",
+      "target": "@ui/table.tsx"
+    },
+    {
+      "path": "registry/ui/table.css",
+      "content": ".mfd-table {\n  border-collapse: collapse;\n  table-layout: fixed;\n  width: 100%;\n}\n\n.mfd-table__caption {\n  color: var(--mfd-color-text-secondary);\n  font:\n    var(--mfd-typography-caption-font-weight) var(--mfd-typography-caption-font-size) /\n    var(--mfd-typography-caption-line-height) var(--mfd-typography-caption-font-family);\n  margin-block-end: var(--mfd-space-stack-sm);\n  text-align: start;\n}\n\n.mfd-table__head,\n.mfd-table__cell {\n  border-block-end: 1px solid var(--mfd-color-border-subtle);\n  overflow-wrap: anywhere;\n  padding: var(--mfd-space-stack-sm) var(--mfd-space-inline-md);\n  text-align: start;\n  vertical-align: middle;\n}\n\n.mfd-table__head {\n  color: var(--mfd-color-text-secondary);\n  font:\n    var(--mfd-typography-label-font-weight) var(--mfd-typography-label-font-size) /\n    var(--mfd-typography-label-line-height) var(--mfd-typography-label-font-family);\n  letter-spacing: var(--mfd-typography-label-letter-spacing);\n}\n\n.mfd-table__row {\n  min-height: var(--mfd-size-table-row);\n}\n\n.mfd-table__body .mfd-table__row:last-child .mfd-table__cell {\n  border-block-end: 0;\n}\n",
+      "type": "registry:ui",
+      "target": "@ui/table.css"
+    }
+  ],
+  "meta": {
+    "maturity": "experimental",
+    "version": "0.5.0",
+    "installation": {
+      "latest": "pnpm dlx shadcn@latest add @mflisikowski/table",
+      "snapshot": "pnpm dlx shadcn@latest add https://design-system.mflisikowski.dev/r/v/0.5.0/table.json"
+    }
+  },
+  "docs": "Compose native caption, header, body, row, heading, and cell primitives. Product sorting, filtering, and actions remain outside Table.",
+  "type": "registry:ui"
+}

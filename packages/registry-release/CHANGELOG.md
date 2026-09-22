@@ -1,5 +1,16 @@
 # @mflisikowski/registry-release
 
+## 0.5.0
+
+### Minor Changes
+
+- Complete the Client deletion and relationship-status filtering milestone for Reference CRM.
+
+### Patch Changes
+
+- Updated dependencies
+  - @mflisikowski/tokens@0.5.0
+
 ## 0.4.0
 
 ### Minor Changes

@@ -1,0 +1,37 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "page-header",
+  "title": "Page Header",
+  "description": "Structural page heading with breadcrumb, description, and responsive actions.",
+  "dependencies": [
+    "@mflisikowski/tokens@0.5.0",
+    "clsx@2.1.1"
+  ],
+  "registryDependencies": [
+    "https://design-system.mflisikowski.dev/r/v/0.5.0/breadcrumb.json"
+  ],
+  "files": [
+    {
+      "path": "registry/ui/page-header.tsx",
+      "content": "import { clsx } from \"clsx\";\nimport type { ComponentPropsWithoutRef, ReactNode } from \"react\";\n\nimport \"./page-header.css\";\n\nexport type PageHeaderProps = Omit<ComponentPropsWithoutRef<\"header\">, \"children\"> & {\n  breadcrumb: ReactNode;\n  title: ReactNode;\n  description?: ReactNode;\n  actions?: ReactNode;\n};\n\nexport function PageHeader({\n  actions,\n  breadcrumb,\n  className,\n  description,\n  title,\n  ...props\n}: PageHeaderProps) {\n  return (\n    <header {...props} className={clsx(\"mfd-page-header\", className)}>\n      {breadcrumb}\n      <div className=\"mfd-page-header__main\">\n        <div className=\"mfd-page-header__copy\">\n          <h1>{title}</h1>\n          {description ? <p className=\"mfd-page-header__description\">{description}</p> : null}\n        </div>\n        {actions ? <div className=\"mfd-page-header__actions\">{actions}</div> : null}\n      </div>\n    </header>\n  );\n}\n",
+      "type": "registry:ui",
+      "target": "@ui/page-header.tsx"
+    },
+    {
+      "path": "registry/ui/page-header.css",
+      "content": ".mfd-page-header {\n  display: grid;\n  gap: var(--mfd-space-stack-md);\n  min-width: 0;\n}\n\n.mfd-page-header__main {\n  align-items: end;\n  display: flex;\n  gap: var(--mfd-space-group-gap);\n  justify-content: space-between;\n  min-width: 0;\n}\n\n.mfd-page-header__copy {\n  min-width: 0;\n}\n\n.mfd-page-header h1 {\n  margin: 0 0 var(--mfd-space-stack-sm);\n  overflow-wrap: anywhere;\n}\n\n.mfd-page-header__description {\n  color: var(--mfd-color-text-secondary);\n  margin: 0;\n  max-width: 48rem;\n}\n\n.mfd-page-header__actions {\n  align-items: center;\n  display: flex;\n  flex: 0 1 auto;\n  flex-wrap: wrap;\n  gap: var(--mfd-space-inline-md);\n  justify-content: flex-end;\n}\n\n@media (max-width: 40rem) {\n  .mfd-page-header__main {\n    align-items: stretch;\n    flex-direction: column;\n  }\n\n  .mfd-page-header__actions {\n    justify-content: flex-start;\n  }\n}\n",
+      "type": "registry:ui",
+      "target": "@ui/page-header.css"
+    }
+  ],
+  "meta": {
+    "maturity": "experimental",
+    "version": "0.5.0",
+    "installation": {
+      "latest": "pnpm dlx shadcn@latest add @mflisikowski/page-header",
+      "snapshot": "pnpm dlx shadcn@latest add https://design-system.mflisikowski.dev/r/v/0.5.0/page-header.json"
+    }
+  },
+  "docs": "PageHeader renders one page h1 with a Breadcrumb, optional description, and optional action region. Actions wrap below the title on narrow screens.",
+  "type": "registry:ui"
+}

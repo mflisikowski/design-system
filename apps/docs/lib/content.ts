@@ -352,6 +352,8 @@ export const documentationPages = [
       { depth: 3, id: "migration-from-020", label: "Migration from 0.2.0" },
       { depth: 2, id: "040-search-and-edit", label: "0.4.0 — Search and edit" },
       { depth: 3, id: "migration-from-030", label: "Migration from 0.3.0" },
+      { depth: 2, id: "050-deletion-and-filtering", label: "0.5.0 — Deletion and filtering" },
+      { depth: 3, id: "migration-from-040", label: "Migration from 0.4.0" },
       { depth: 2, id: "unreleased", label: "Unreleased" },
       { depth: 2, id: "release-model", label: "Release model" },
       { depth: 2, id: "maturity-transitions", label: "Maturity transitions" },

@@ -1,21 +1,21 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "mfd-design-system",
+  "homepage": "https://design-system.mflisikowski.dev",
   "items": [
     {
       "name": "registry-sample-label",
-      "type": "registry:lib",
       "title": "Registry Sample Label",
       "description": "Formatting support for the MFD registry distribution sample.",
       "dependencies": [],
       "registryDependencies": [],
       "files": [
         {
-          "path": "registry-sample-label.ts",
+          "path": "registry/ui/registry-sample-label.ts",
           "type": "registry:lib",
           "target": "@lib/registry-sample-label.ts"
         }
       ],
-      "docs": "Installed automatically with Registry Sample. It may also be installed directly when only the shared label formatter is needed.",
       "meta": {
         "maturity": "experimental",
         "version": "0.5.0",
@@ -24,11 +24,12 @@
           "latest": "pnpm dlx shadcn@latest add @mflisikowski/registry-sample-label",
           "snapshot": "pnpm dlx shadcn@latest add https://design-system.mflisikowski.dev/r/v/0.5.0/registry-sample-label.json"
         }
-      }
+      },
+      "docs": "Installed automatically with Registry Sample. It may also be installed directly when only the shared label formatter is needed.",
+      "type": "registry:lib"
     },
     {
       "name": "registry-sample",
-      "type": "registry:ui",
       "title": "Registry Sample",
       "description": "A minimal semantic component that proves the MFD registry distribution path.",
       "dependencies": [
@@ -40,12 +41,11 @@
       ],
       "files": [
         {
-          "path": "registry-sample.tsx",
+          "path": "registry/ui/registry-sample.tsx",
           "type": "registry:ui",
           "target": "@ui/registry-sample.tsx"
         }
       ],
-      "docs": "Import RegistrySample from the installed UI directory. The component is an experimental distribution proof, not a stable product primitive.",
       "meta": {
         "maturity": "experimental",
         "version": "0.5.0",
@@ -53,11 +53,12 @@
           "latest": "pnpm dlx shadcn@latest add @mflisikowski/registry-sample",
           "snapshot": "pnpm dlx shadcn@latest add https://design-system.mflisikowski.dev/r/v/0.5.0/registry-sample.json"
         }
-      }
+      },
+      "docs": "Import RegistrySample from the installed UI directory. The component is an experimental distribution proof, not a stable product primitive.",
+      "type": "registry:ui"
     },
     {
       "name": "button",
-      "type": "registry:ui",
       "title": "Button",
       "description": "Accessible action control with MFD variants, sizes, and loading behavior.",
       "dependencies": [
@@ -67,17 +68,16 @@
       "registryDependencies": [],
       "files": [
         {
-          "path": "button.tsx",
+          "path": "registry/ui/button.tsx",
           "type": "registry:ui",
           "target": "@ui/button.tsx"
         },
         {
-          "path": "button.css",
+          "path": "registry/ui/button.css",
           "type": "registry:ui",
           "target": "@ui/button.css"
         }
       ],
-      "docs": "Use Button for actions. Loading changes the visible and accessible label while preventing repeated activation.",
       "meta": {
         "maturity": "experimental",
         "version": "0.5.0",
@@ -85,11 +85,12 @@
           "latest": "pnpm dlx shadcn@latest add @mflisikowski/button",
           "snapshot": "pnpm dlx shadcn@latest add https://design-system.mflisikowski.dev/r/v/0.5.0/button.json"
         }
-      }
+      },
+      "docs": "Use Button for actions. Loading changes the visible and accessible label while preventing repeated activation.",
+      "type": "registry:ui"
     },
     {
       "name": "icon",
-      "type": "registry:ui",
       "title": "Icon and Icon Button",
       "description": "Approved Lucide icon map and accessible icon-only action control.",
       "dependencies": [
@@ -100,17 +101,16 @@
       "registryDependencies": [],
       "files": [
         {
-          "path": "icon.tsx",
+          "path": "registry/ui/icon.tsx",
           "type": "registry:ui",
           "target": "@ui/icon.tsx"
         },
         {
-          "path": "icon.css",
+          "path": "registry/ui/icon.css",
           "type": "registry:ui",
           "target": "@ui/icon.css"
         }
       ],
-      "docs": "Icons are decorative unless label is supplied. IconButton always requires a contextual label.",
       "meta": {
         "maturity": "experimental",
         "version": "0.5.0",
@@ -118,11 +118,12 @@
           "latest": "pnpm dlx shadcn@latest add @mflisikowski/icon",
           "snapshot": "pnpm dlx shadcn@latest add https://design-system.mflisikowski.dev/r/v/0.5.0/icon.json"
         }
-      }
+      },
+      "docs": "Icons are decorative unless label is supplied. IconButton always requires a contextual label.",
+      "type": "registry:ui"
     },
     {
       "name": "field",
-      "type": "registry:ui",
       "title": "Field",
       "description": "Accessible form-field composition for labels, descriptions, errors, and controls.",
       "dependencies": [
@@ -132,17 +133,16 @@
       "registryDependencies": [],
       "files": [
         {
-          "path": "field.tsx",
+          "path": "registry/ui/field.tsx",
           "type": "registry:ui",
           "target": "@ui/field.tsx"
         },
         {
-          "path": "field.css",
+          "path": "registry/ui/field.css",
           "type": "registry:ui",
           "target": "@ui/field.css"
         }
       ],
-      "docs": "Compose FieldLabel, optional FieldDescription, one compatible control, and FieldError. Field owns their accessible identifiers and invalid relationship.",
       "meta": {
         "maturity": "experimental",
         "version": "0.5.0",
@@ -150,11 +150,12 @@
           "latest": "pnpm dlx shadcn@latest add @mflisikowski/field",
           "snapshot": "pnpm dlx shadcn@latest add https://design-system.mflisikowski.dev/r/v/0.5.0/field.json"
         }
-      }
+      },
+      "docs": "Compose FieldLabel, optional FieldDescription, one compatible control, and FieldError. Field owns their accessible identifiers and invalid relationship.",
+      "type": "registry:ui"
     },
     {
       "name": "input",
-      "type": "registry:ui",
       "title": "Input",
       "description": "Density-aware native text input for use inside Field.",
       "dependencies": [
@@ -166,17 +167,16 @@
       ],
       "files": [
         {
-          "path": "input.tsx",
+          "path": "registry/ui/input.tsx",
           "type": "registry:ui",
           "target": "@ui/input.tsx"
         },
         {
-          "path": "input.css",
+          "path": "registry/ui/input.css",
           "type": "registry:ui",
           "target": "@ui/input.css"
         }
       ],
-      "docs": "Use Input inside Field. Native input properties and refs are forwarded; size maps to density-aware control tokens.",
       "meta": {
         "maturity": "experimental",
         "version": "0.5.0",
@@ -184,11 +184,12 @@
           "latest": "pnpm dlx shadcn@latest add @mflisikowski/input",
           "snapshot": "pnpm dlx shadcn@latest add https://design-system.mflisikowski.dev/r/v/0.5.0/input.json"
         }
-      }
+      },
+      "docs": "Use Input inside Field. Native input properties and refs are forwarded; size maps to density-aware control tokens.",
+      "type": "registry:ui"
     },
     {
       "name": "textarea",
-      "type": "registry:ui",
       "title": "Textarea",
       "description": "Density-aware native multiline text control for use inside Field.",
       "dependencies": [
@@ -201,12 +202,11 @@
       ],
       "files": [
         {
-          "path": "textarea.tsx",
+          "path": "registry/ui/textarea.tsx",
           "type": "registry:ui",
           "target": "@ui/textarea.tsx"
         }
       ],
-      "docs": "Use Textarea inside Field. Native textarea properties and refs are forwarded; size maps to density-aware control tokens.",
       "meta": {
         "maturity": "experimental",
         "version": "0.5.0",
@@ -214,11 +214,12 @@
           "latest": "pnpm dlx shadcn@latest add @mflisikowski/textarea",
           "snapshot": "pnpm dlx shadcn@latest add https://design-system.mflisikowski.dev/r/v/0.5.0/textarea.json"
         }
-      }
+      },
+      "docs": "Use Textarea inside Field. Native textarea properties and refs are forwarded; size maps to density-aware control tokens.",
+      "type": "registry:ui"
     },
     {
       "name": "search-field",
-      "type": "registry:ui",
       "title": "Search Field",
       "description": "Native search input with a predictable clear control and explicit events.",
       "dependencies": [
@@ -231,17 +232,16 @@
       ],
       "files": [
         {
-          "path": "search-field.tsx",
+          "path": "registry/ui/search-field.tsx",
           "type": "registry:ui",
           "target": "@ui/search-field.tsx"
         },
         {
-          "path": "search-field.css",
+          "path": "registry/ui/search-field.css",
           "type": "registry:ui",
           "target": "@ui/search-field.css"
         }
       ],
-      "docs": "Compose Search Field inside Field. Routing, debouncing, fetching, filtering, and result announcements remain application-owned.",
       "meta": {
         "maturity": "experimental",
         "version": "0.5.0",
@@ -249,11 +249,12 @@
           "latest": "pnpm dlx shadcn@latest add @mflisikowski/search-field",
           "snapshot": "pnpm dlx shadcn@latest add https://design-system.mflisikowski.dev/r/v/0.5.0/search-field.json"
         }
-      }
+      },
+      "docs": "Compose Search Field inside Field. Routing, debouncing, fetching, filtering, and result announcements remain application-owned.",
+      "type": "registry:ui"
     },
     {
       "name": "dialog",
-      "type": "registry:ui",
       "title": "Dialog",
       "description": "Compositional modal dialog with responsive full-screen presentation.",
       "dependencies": [
@@ -264,17 +265,16 @@
       "registryDependencies": [],
       "files": [
         {
-          "path": "dialog.tsx",
+          "path": "registry/ui/dialog.tsx",
           "type": "registry:ui",
           "target": "@ui/dialog.tsx"
         },
         {
-          "path": "dialog.css",
+          "path": "registry/ui/dialog.css",
           "type": "registry:ui",
           "target": "@ui/dialog.css"
         }
       ],
-      "docs": "Compose Dialog, Trigger, Content, Header, Title, Description, Body, Footer, and Close. Content becomes full screen below 640px.",
       "meta": {
         "maturity": "experimental",
         "version": "0.5.0",
@@ -282,11 +282,12 @@
           "latest": "pnpm dlx shadcn@latest add @mflisikowski/dialog",
           "snapshot": "pnpm dlx shadcn@latest add https://design-system.mflisikowski.dev/r/v/0.5.0/dialog.json"
         }
-      }
+      },
+      "docs": "Compose Dialog, Trigger, Content, Header, Title, Description, Body, Footer, and Close. Content becomes full screen below 640px.",
+      "type": "registry:ui"
     },
     {
       "name": "alert-dialog",
-      "type": "registry:ui",
       "title": "Alert Dialog",
       "description": "Modal confirmation with safe focus, explicit actions, and pending protection.",
       "dependencies": [
@@ -297,17 +298,16 @@
       "registryDependencies": [],
       "files": [
         {
-          "path": "alert-dialog.tsx",
+          "path": "registry/ui/alert-dialog.tsx",
           "type": "registry:ui",
           "target": "@ui/alert-dialog.tsx"
         },
         {
-          "path": "alert-dialog.css",
+          "path": "registry/ui/alert-dialog.css",
           "type": "registry:ui",
           "target": "@ui/alert-dialog.css"
         }
       ],
-      "docs": "Compose Root, Trigger, Content, Title, Description, Footer, Cancel, and Action. Control open state around domain actions and set pending to block repeated action and dismissal.",
       "meta": {
         "maturity": "experimental",
         "version": "0.5.0",
@@ -315,11 +315,12 @@
           "latest": "pnpm dlx shadcn@latest add @mflisikowski/alert-dialog",
           "snapshot": "pnpm dlx shadcn@latest add https://design-system.mflisikowski.dev/r/v/0.5.0/alert-dialog.json"
         }
-      }
+      },
+      "docs": "Compose Root, Trigger, Content, Title, Description, Footer, Cancel, and Action. Control open state around domain actions and set pending to block repeated action and dismissal.",
+      "type": "registry:ui"
     },
     {
       "name": "toast",
-      "type": "registry:ui",
       "title": "Toast",
       "description": "Polite success acknowledgement adapter with bounded visibility and queueing.",
       "dependencies": [
@@ -329,17 +330,16 @@
       "registryDependencies": [],
       "files": [
         {
-          "path": "toast.tsx",
+          "path": "registry/ui/toast.tsx",
           "type": "registry:ui",
           "target": "@ui/toast.tsx"
         },
         {
-          "path": "toast.css",
+          "path": "registry/ui/toast.css",
           "type": "registry:ui",
           "target": "@ui/toast.css"
         }
       ],
-      "docs": "Mount ToastViewport once, then call the MFD toast adapter. Success acknowledgement is polite, dismissible, and lasts four seconds by default.",
       "meta": {
         "maturity": "experimental",
         "version": "0.5.0",
@@ -347,11 +347,12 @@
           "latest": "pnpm dlx shadcn@latest add @mflisikowski/toast",
           "snapshot": "pnpm dlx shadcn@latest add https://design-system.mflisikowski.dev/r/v/0.5.0/toast.json"
         }
-      }
+      },
+      "docs": "Mount ToastViewport once, then call the MFD toast adapter. Success acknowledgement is polite, dismissible, and lasts four seconds by default.",
+      "type": "registry:ui"
     },
     {
       "name": "link",
-      "type": "registry:ui",
       "title": "Link",
       "description": "Semantic anchor styling for inline and standalone navigation.",
       "dependencies": [
@@ -362,17 +363,16 @@
       "registryDependencies": [],
       "files": [
         {
-          "path": "link.tsx",
+          "path": "registry/ui/link.tsx",
           "type": "registry:ui",
           "target": "@ui/link.tsx"
         },
         {
-          "path": "link.css",
+          "path": "registry/ui/link.css",
           "type": "registry:ui",
           "target": "@ui/link.css"
         }
       ],
-      "docs": "Link remains a native anchor and exposes a render seam for application routers. Inline links stay underlined; standalone navigation reveals its underline on hover and focus.",
       "meta": {
         "maturity": "experimental",
         "version": "0.5.0",
@@ -380,11 +380,12 @@
           "latest": "pnpm dlx shadcn@latest add @mflisikowski/link",
           "snapshot": "pnpm dlx shadcn@latest add https://design-system.mflisikowski.dev/r/v/0.5.0/link.json"
         }
-      }
+      },
+      "docs": "Link remains a native anchor and exposes a render seam for application routers. Inline links stay underlined; standalone navigation reveals its underline on hover and focus.",
+      "type": "registry:ui"
     },
     {
       "name": "breadcrumb",
-      "type": "registry:ui",
       "title": "Breadcrumb",
       "description": "Accessible ordered navigation for the current location hierarchy.",
       "dependencies": [
@@ -396,17 +397,16 @@
       ],
       "files": [
         {
-          "path": "breadcrumb.tsx",
+          "path": "registry/ui/breadcrumb.tsx",
           "type": "registry:ui",
           "target": "@ui/breadcrumb.tsx"
         },
         {
-          "path": "breadcrumb.css",
+          "path": "registry/ui/breadcrumb.css",
           "type": "registry:ui",
           "target": "@ui/breadcrumb.css"
         }
       ],
-      "docs": "Compose Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbLink, BreadcrumbSeparator, and BreadcrumbCurrent. The final item is not a link and carries aria-current=page.",
       "meta": {
         "maturity": "experimental",
         "version": "0.5.0",
@@ -414,11 +414,12 @@
           "latest": "pnpm dlx shadcn@latest add @mflisikowski/breadcrumb",
           "snapshot": "pnpm dlx shadcn@latest add https://design-system.mflisikowski.dev/r/v/0.5.0/breadcrumb.json"
         }
-      }
+      },
+      "docs": "Compose Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbLink, BreadcrumbSeparator, and BreadcrumbCurrent. The final item is not a link and carries aria-current=page.",
+      "type": "registry:ui"
     },
     {
       "name": "page-header",
-      "type": "registry:ui",
       "title": "Page Header",
       "description": "Structural page heading with breadcrumb, description, and responsive actions.",
       "dependencies": [
@@ -430,17 +431,16 @@
       ],
       "files": [
         {
-          "path": "page-header.tsx",
+          "path": "registry/ui/page-header.tsx",
           "type": "registry:ui",
           "target": "@ui/page-header.tsx"
         },
         {
-          "path": "page-header.css",
+          "path": "registry/ui/page-header.css",
           "type": "registry:ui",
           "target": "@ui/page-header.css"
         }
       ],
-      "docs": "PageHeader renders one page h1 with a Breadcrumb, optional description, and optional action region. Actions wrap below the title on narrow screens.",
       "meta": {
         "maturity": "experimental",
         "version": "0.5.0",
@@ -448,11 +448,12 @@
           "latest": "pnpm dlx shadcn@latest add @mflisikowski/page-header",
           "snapshot": "pnpm dlx shadcn@latest add https://design-system.mflisikowski.dev/r/v/0.5.0/page-header.json"
         }
-      }
+      },
+      "docs": "PageHeader renders one page h1 with a Breadcrumb, optional description, and optional action region. Actions wrap below the title on narrow screens.",
+      "type": "registry:ui"
     },
     {
       "name": "alert",
-      "type": "registry:ui",
       "title": "Alert",
       "description": "Persistent danger or success feedback with optional urgent live semantics.",
       "dependencies": [
@@ -462,17 +463,16 @@
       "registryDependencies": [],
       "files": [
         {
-          "path": "alert.tsx",
+          "path": "registry/ui/alert.tsx",
           "type": "registry:ui",
           "target": "@ui/alert.tsx"
         },
         {
-          "path": "alert.css",
+          "path": "registry/ui/alert.css",
           "type": "registry:ui",
           "target": "@ui/alert.css"
         }
       ],
-      "docs": "Compose AlertTitle, AlertDescription, and at most one AlertAction. Set live only for dynamically inserted urgent failures.",
       "meta": {
         "maturity": "experimental",
         "version": "0.5.0",
@@ -480,11 +480,12 @@
           "latest": "pnpm dlx shadcn@latest add @mflisikowski/alert",
           "snapshot": "pnpm dlx shadcn@latest add https://design-system.mflisikowski.dev/r/v/0.5.0/alert.json"
         }
-      }
+      },
+      "docs": "Compose AlertTitle, AlertDescription, and at most one AlertAction. Set live only for dynamically inserted urgent failures.",
+      "type": "registry:ui"
     },
     {
       "name": "empty-state",
-      "type": "registry:ui",
       "title": "Empty State",
       "description": "Compositional empty-content pattern with a required visible title.",
       "dependencies": [
@@ -494,17 +495,16 @@
       "registryDependencies": [],
       "files": [
         {
-          "path": "empty-state.tsx",
+          "path": "registry/ui/empty-state.tsx",
           "type": "registry:ui",
           "target": "@ui/empty-state.tsx"
         },
         {
-          "path": "empty-state.css",
+          "path": "registry/ui/empty-state.css",
           "type": "registry:ui",
           "target": "@ui/empty-state.css"
         }
       ],
-      "docs": "Use EmptyStateTitle for the state meaning, optional description, and no more than one primary and one secondary action.",
       "meta": {
         "maturity": "experimental",
         "version": "0.5.0",
@@ -512,11 +512,12 @@
           "latest": "pnpm dlx shadcn@latest add @mflisikowski/empty-state",
           "snapshot": "pnpm dlx shadcn@latest add https://design-system.mflisikowski.dev/r/v/0.5.0/empty-state.json"
         }
-      }
+      },
+      "docs": "Use EmptyStateTitle for the state meaning, optional description, and no more than one primary and one secondary action.",
+      "type": "registry:ui"
     },
     {
       "name": "table",
-      "type": "registry:ui",
       "title": "Table",
       "description": "Native semantic table primitives for ordinary tabular data.",
       "dependencies": [
@@ -526,17 +527,16 @@
       "registryDependencies": [],
       "files": [
         {
-          "path": "table.tsx",
+          "path": "registry/ui/table.tsx",
           "type": "registry:ui",
           "target": "@ui/table.tsx"
         },
         {
-          "path": "table.css",
+          "path": "registry/ui/table.css",
           "type": "registry:ui",
           "target": "@ui/table.css"
         }
       ],
-      "docs": "Compose native caption, header, body, row, heading, and cell primitives. Product sorting, filtering, and actions remain outside Table.",
       "meta": {
         "maturity": "experimental",
         "version": "0.5.0",
@@ -544,11 +544,12 @@
           "latest": "pnpm dlx shadcn@latest add @mflisikowski/table",
           "snapshot": "pnpm dlx shadcn@latest add https://design-system.mflisikowski.dev/r/v/0.5.0/table.json"
         }
-      }
+      },
+      "docs": "Compose native caption, header, body, row, heading, and cell primitives. Product sorting, filtering, and actions remain outside Table.",
+      "type": "registry:ui"
     },
     {
       "name": "badge",
-      "type": "registry:ui",
       "title": "Badge",
       "description": "Non-interactive status label with semantic tone and density-aware size.",
       "dependencies": [
@@ -558,17 +559,16 @@
       "registryDependencies": [],
       "files": [
         {
-          "path": "badge.tsx",
+          "path": "registry/ui/badge.tsx",
           "type": "registry:ui",
           "target": "@ui/badge.tsx"
         },
         {
-          "path": "badge.css",
+          "path": "registry/ui/badge.css",
           "type": "registry:ui",
           "target": "@ui/badge.css"
         }
       ],
-      "docs": "Use Badge for visible status text. Tone never replaces the status label and Badge is not interactive.",
       "meta": {
         "maturity": "experimental",
         "version": "0.5.0",
@@ -576,11 +576,12 @@
           "latest": "pnpm dlx shadcn@latest add @mflisikowski/badge",
           "snapshot": "pnpm dlx shadcn@latest add https://design-system.mflisikowski.dev/r/v/0.5.0/badge.json"
         }
-      }
+      },
+      "docs": "Use Badge for visible status text. Tone never replaces the status label and Badge is not interactive.",
+      "type": "registry:ui"
     },
     {
       "name": "select",
-      "type": "registry:ui",
       "title": "Select",
       "description": "Accessible single-value selection with keyboard navigation and pending state.",
       "dependencies": [
@@ -591,17 +592,16 @@
       "registryDependencies": [],
       "files": [
         {
-          "path": "select.tsx",
+          "path": "registry/ui/select.tsx",
           "type": "registry:ui",
           "target": "@ui/select.tsx"
         },
         {
-          "path": "select.css",
+          "path": "registry/ui/select.css",
           "type": "registry:ui",
           "target": "@ui/select.css"
         }
       ],
-      "docs": "Compose Select.Root, Trigger, Value, Icon, Content, and Item for one predefined value. Loading makes only the select read-only and busy.",
       "meta": {
         "maturity": "experimental",
         "version": "0.5.0",
@@ -609,11 +609,12 @@
           "latest": "pnpm dlx shadcn@latest add @mflisikowski/select",
           "snapshot": "pnpm dlx shadcn@latest add https://design-system.mflisikowski.dev/r/v/0.5.0/select.json"
         }
-      }
+      },
+      "docs": "Compose Select.Root, Trigger, Value, Icon, Content, and Item for one predefined value. Loading makes only the select read-only and busy.",
+      "type": "registry:ui"
     },
     {
       "name": "radio-group",
-      "type": "registry:ui",
       "title": "Radio Group",
       "description": "Single-value radio selection with conventional and rich card presentations.",
       "dependencies": [
@@ -624,17 +625,16 @@
       "registryDependencies": [],
       "files": [
         {
-          "path": "radio-group.tsx",
+          "path": "registry/ui/radio-group.tsx",
           "type": "registry:ui",
           "target": "@ui/radio-group.tsx"
         },
         {
-          "path": "radio-group.css",
+          "path": "registry/ui/radio-group.css",
           "type": "registry:ui",
           "target": "@ui/radio-group.css"
         }
       ],
-      "docs": "Compose RadioGroup.Root with RadioGroup.Item and RadioGroup.Indicator for one value. RadioCard adds rich label, description, and preview content without changing radio semantics.",
       "meta": {
         "maturity": "experimental",
         "version": "0.5.0",
@@ -642,7 +642,9 @@
           "latest": "pnpm dlx shadcn@latest add @mflisikowski/radio-group",
           "snapshot": "pnpm dlx shadcn@latest add https://design-system.mflisikowski.dev/r/v/0.5.0/radio-group.json"
         }
-      }
+      },
+      "docs": "Compose RadioGroup.Root with RadioGroup.Item and RadioGroup.Indicator for one value. RadioCard adds rich label, description, and preview content without changing radio semantics.",
+      "type": "registry:ui"
     }
   ]
 }

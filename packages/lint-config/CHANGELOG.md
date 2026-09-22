@@ -1,5 +1,11 @@
 # @mflisikowski/lint-config
 
+## 0.5.0
+
+### Minor Changes
+
+- Complete the Client deletion and relationship-status filtering milestone for Reference CRM.
+
 ## 0.4.0
 
 ### Minor Changes

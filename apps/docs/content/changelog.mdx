@@ -95,10 +95,38 @@ latest registry channel or its immutable `/r/v/0.4.0/search-field.json` URL. Sea
 input behavior only; query routing, fetching, debounce, result announcements, and ClientForm
 orchestration remain application-owned.
 
+## 0.5.0 — Deletion and filtering
+
+The fifth immutable MFD Design System release completes the approved version 1 scope with safe
+deletion flows, independent Client Relationship Status, and combined Client filtering.
+
+- Project and Client deletion are typed, non-optimistic, and dependency-safe. Projects are never
+  cascaded from a Client; blocked, stale, failed, and successful outcomes preserve domain data,
+  focus, and retryable recovery.
+- Client Relationship Status is reversible and independent from Project Status. Reference CRM
+  owns the contextual Select, Badge mapping, cache reconciliation, and persistent failure feedback.
+- Search and relationship status combine through canonical `q` and `status` URL parameters with
+  AND semantics, criterion-aware counts and No results feedback, immediate status changes, and
+  atomic filter clearing.
+- The coordinated package version is `0.5.0`; the complete immutable registry snapshot is
+  available under `/r/v/0.5.0/`. Registry items remain explicitly `experimental`.
+
+### Migration from 0.4.0
+
+Existing 0.4.0 consumers require no changes. The 0.4.0 package and registry snapshot remain
+available, and the Search Field, Appearance, Client editing, Projects, and Add Client contracts
+are not silently changed by this release.
+
+To adopt the completed milestone, update the coordinated `@mflisikowski/tokens` and
+`@mflisikowski/lint-config` packages to `0.5.0` and use the latest registry channel or an
+immutable `/r/v/0.5.0/{item}.json` URL. Deletion orchestration, Client Relationship Status,
+filter URL state, and Project Status remain Reference CRM application patterns; no new public
+registry component owns those domain concerns.
+
 ## Unreleased
 
-The next planned milestone is `0.5.0`, covering safe deletion flows and relationship-status
-filtering.
+The next planned milestone is `1.0.0`, subject to stable public APIs, complete quality gates, and
+validation by a second real consumer beyond Reference CRM.
 
 ## Release model
 
