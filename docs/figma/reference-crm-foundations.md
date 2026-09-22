@@ -26,6 +26,7 @@ published instances in DS Reference CRM.
 | Toast | Container / Status icon / Message / Dismiss | Tone: Success | Runtime notes specify polite status semantics, four-second duration, at most three visible items, and queueing. |
 | Badge | Container / Label | Tone: Neutral, Accent, Warning, Success, Danger; Size: Small, Medium | Non-interactive visible status text. Tone never carries meaning alone; Project Status maps Planned to neutral, Active to accent, On hold to warning, and Completed to success. |
 | Select | Root / Trigger / Value / Icon / Content / Item | Size: Small, Medium, Large; Disabled; Read only; Invalid; Loading | Contextual accessible name includes the affected Project. Loading keeps the trigger focused, makes only the control read-only, and replaces the disclosure affordance with progress. Escape closes without committing. |
+| Radio Group | Root / Item / Indicator; optional Radio Card / Preview / Label / Description | Orientation: Horizontal, Vertical; Disabled; Read only; Loading; Selected | One-value selection uses native radio semantics and roving focus. Selected and focus-visible states are not color-only; each option keeps a 44 px effective target. |
 
 ## Reference CRM frames
 

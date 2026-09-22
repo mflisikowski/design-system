@@ -1,0 +1,36 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "icon",
+  "title": "Icon and Icon Button",
+  "description": "Approved Lucide icon map and accessible icon-only action control.",
+  "dependencies": [
+    "@mflisikowski/tokens@0.3.0",
+    "clsx@2.1.1",
+    "lucide-react@1.47.0"
+  ],
+  "registryDependencies": [],
+  "files": [
+    {
+      "path": "registry/ui/icon.tsx",
+      "content": "import { clsx } from \"clsx\";\nimport {\n  ChevronDown,\n  CircleAlert,\n  CircleCheck,\n  Ellipsis,\n  type LucideIcon,\n  Plus,\n  Search,\n  Trash2,\n  Users,\n  X,\n} from \"lucide-react\";\nimport type { ComponentPropsWithRef } from \"react\";\n\nimport \"./icon.css\";\n\nconst iconMap = {\n  plus: Plus,\n  close: X,\n  success: CircleCheck,\n  error: CircleAlert,\n  users: Users,\n  search: Search,\n  ellipsis: Ellipsis,\n  \"chevron-down\": ChevronDown,\n  trash: Trash2,\n} as const satisfies Record<string, LucideIcon>;\n\nexport type IconName = keyof typeof iconMap;\n\nexport type IconProps = Omit<ComponentPropsWithRef<\"svg\">, \"children\"> & {\n  name: IconName;\n  size?: \"sm\" | \"md\" | \"lg\";\n  label?: string;\n};\n\nexport function Icon({ className, label, name, size = \"md\", ...props }: IconProps) {\n  const Glyph = iconMap[name];\n\n  return (\n    <Glyph\n      {...props}\n      aria-hidden={label ? undefined : true}\n      aria-label={label}\n      className={clsx(\"mfd-icon\", className)}\n      data-size={size}\n      role={label ? \"img\" : undefined}\n      strokeWidth={2}\n    />\n  );\n}\n\nexport type IconButtonProps = Omit<ComponentPropsWithRef<\"button\">, \"aria-label\"> & {\n  label: string;\n  size?: \"sm\" | \"md\" | \"lg\";\n};\n\nexport function IconButton({\n  children,\n  className,\n  label,\n  size = \"md\",\n  type = \"button\",\n  ...props\n}: IconButtonProps) {\n  return (\n    <button\n      {...props}\n      aria-label={label}\n      className={clsx(\"mfd-icon-button\", className)}\n      data-size={size}\n      type={type}\n    >\n      {children}\n    </button>\n  );\n}\n",
+      "type": "registry:ui",
+      "target": "@ui/icon.tsx"
+    },
+    {
+      "path": "registry/ui/icon.css",
+      "content": ".mfd-icon {\n  flex: none;\n  height: var(--mfd-icon-size-md);\n  width: var(--mfd-icon-size-md);\n}\n\n.mfd-icon[data-size=\"sm\"] {\n  height: var(--mfd-icon-size-sm);\n  width: var(--mfd-icon-size-sm);\n}\n\n.mfd-icon[data-size=\"lg\"] {\n  height: var(--mfd-icon-size-lg);\n  width: var(--mfd-icon-size-lg);\n}\n\n.mfd-icon-button {\n  align-items: center;\n  background: transparent;\n  border: 1px solid transparent;\n  border-radius: var(--mfd-radius-control);\n  color: var(--mfd-color-text-primary);\n  cursor: pointer;\n  display: inline-flex;\n  justify-content: center;\n  min-height: var(--mfd-size-hit-target-minimum);\n  min-width: var(--mfd-size-hit-target-minimum);\n  touch-action: manipulation;\n}\n\n.mfd-icon-button[data-size=\"sm\"] > .mfd-icon {\n  height: var(--mfd-icon-size-sm);\n  width: var(--mfd-icon-size-sm);\n}\n\n.mfd-icon-button[data-size=\"lg\"] > .mfd-icon {\n  height: var(--mfd-icon-size-lg);\n  width: var(--mfd-icon-size-lg);\n}\n\n@media (hover: hover) {\n  .mfd-icon-button:hover:not(:disabled) {\n    background: var(--mfd-color-bg-subtle);\n  }\n}\n\n.mfd-icon-button:focus-visible {\n  outline: 2px solid var(--mfd-color-border-focus);\n  outline-offset: 2px;\n}\n\n.mfd-icon-button:disabled {\n  cursor: not-allowed;\n  opacity: 0.55;\n}\n",
+      "type": "registry:ui",
+      "target": "@ui/icon.css"
+    }
+  ],
+  "meta": {
+    "maturity": "experimental",
+    "version": "0.3.0",
+    "installation": {
+      "latest": "pnpm dlx shadcn@latest add @mflisikowski/icon",
+      "snapshot": "pnpm dlx shadcn@latest add https://design-system.mflisikowski.dev/r/v/0.3.0/icon.json"
+    }
+  },
+  "docs": "Icons are decorative unless label is supplied. IconButton always requires a contextual label.",
+  "type": "registry:ui"
+}

@@ -84,6 +84,64 @@ test("exposes the authenticated shell and deterministic client table", async ({
   );
 });
 
+test("changes appearance axes independently and preserves them before hydration", async ({
+  page,
+}) => {
+  await page.goto("/sign-in");
+  await page.getByRole("button", { name: "Continue as demo manager" }).click();
+  await expect(page.getByRole("heading", { level: 1, name: "Clients" })).toBeVisible();
+  await page.goto("/settings/appearance");
+
+  const root = page.locator("html");
+  await expect(root).toHaveAttribute("data-brand", "atlas");
+  await expect(root).toHaveAttribute("data-color-scheme", "system");
+  await expect(root).toHaveAttribute("data-density", "comfortable");
+
+  const bloom = page.getByRole("radio", { name: /Bloom/ });
+  await bloom.click();
+  await expect(root).toHaveAttribute("data-brand", "bloom");
+  await expect(bloom).toBeFocused();
+
+  const dark = page.getByRole("radio", { name: /Dark/ });
+  await dark.click();
+  await expect(dark).toBeChecked();
+  await expect(root).toHaveAttribute("data-color-scheme", "dark");
+  const compact = page.getByRole("radio", { name: /Compact/ });
+  await compact.click();
+  await expect(compact).toBeChecked();
+  await expect(root).toHaveAttribute("data-density", "compact");
+  await expect(root).toHaveAttribute("data-brand", "bloom");
+  for (const name of ["Brand", "Color scheme", "Density"]) {
+    await expect(page.getByRole("radiogroup", { name })).not.toHaveAttribute("aria-busy", "true");
+  }
+
+  const reloadResponse = await page.reload();
+  const serverHtml = await reloadResponse?.text();
+  expect(serverHtml).toContain('data-brand="bloom"');
+  expect(serverHtml).toContain('data-color-scheme="dark"');
+  expect(serverHtml).toContain('data-density="compact"');
+  await expect(page.getByRole("heading", { level: 1, name: "Appearance" })).toBeVisible();
+  await expect(root).toHaveAttribute("data-brand", "bloom");
+  await expect(root).toHaveAttribute("data-color-scheme", "dark");
+  await expect(root).toHaveAttribute("data-density", "compact");
+});
+
+test("falls back independently for invalid appearance cookies", async ({ page }) => {
+  await page.goto("/sign-in");
+  const baseURL = new URL(page.url());
+  await page.context().addCookies([
+    { name: "mfd-demo-brand", value: "invalid", url: baseURL.origin },
+    { name: "mfd-color-scheme", value: "dark", url: baseURL.origin },
+    { name: "mfd-density", value: "invalid", url: baseURL.origin },
+  ]);
+
+  await page.reload();
+  const root = page.locator("html");
+  await expect(root).toHaveAttribute("data-brand", "atlas");
+  await expect(root).toHaveAttribute("data-color-scheme", "dark");
+  await expect(root).toHaveAttribute("data-density", "comfortable");
+});
+
 test("opens the same client details state from the table and a direct URL", async ({ page }) => {
   await page.goto("/sign-in");
   await page.getByRole("button", { name: "Continue as demo manager" }).click();

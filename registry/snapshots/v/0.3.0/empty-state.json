@@ -1,0 +1,35 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "empty-state",
+  "title": "Empty State",
+  "description": "Compositional empty-content pattern with a required visible title.",
+  "dependencies": [
+    "@mflisikowski/tokens@0.3.0",
+    "clsx@2.1.1"
+  ],
+  "registryDependencies": [],
+  "files": [
+    {
+      "path": "registry/ui/empty-state.tsx",
+      "content": "import { clsx } from \"clsx\";\nimport type { ComponentPropsWithoutRef } from \"react\";\n\nimport \"./empty-state.css\";\n\nexport function EmptyState({ className, ...props }: ComponentPropsWithoutRef<\"section\">) {\n  return <section {...props} className={clsx(\"mfd-empty-state\", className)} />;\n}\n\nexport function EmptyStateIcon({ className, ...props }: ComponentPropsWithoutRef<\"div\">) {\n  return <div {...props} aria-hidden=\"true\" className={clsx(\"mfd-empty-state__icon\", className)} />;\n}\n\nexport function EmptyStateTitle({ className, ...props }: ComponentPropsWithoutRef<\"h2\">) {\n  return <h2 {...props} className={clsx(\"mfd-empty-state__title\", className)} />;\n}\n\nexport function EmptyStateDescription({ className, ...props }: ComponentPropsWithoutRef<\"p\">) {\n  return <p {...props} className={clsx(\"mfd-empty-state__description\", className)} />;\n}\n\nexport function EmptyStateActions({ className, ...props }: ComponentPropsWithoutRef<\"div\">) {\n  return <div {...props} className={clsx(\"mfd-empty-state__actions\", className)} />;\n}\n",
+      "type": "registry:ui",
+      "target": "@ui/empty-state.tsx"
+    },
+    {
+      "path": "registry/ui/empty-state.css",
+      "content": ".mfd-empty-state {\n  align-items: center;\n  background: var(--mfd-color-bg-surface);\n  border: 1px solid var(--mfd-color-border-subtle);\n  border-radius: var(--mfd-radius-surface);\n  display: flex;\n  flex-direction: column;\n  gap: var(--mfd-space-stack-sm);\n  padding: var(--mfd-space-section) var(--mfd-space-stack-md);\n  text-align: center;\n}\n\n.mfd-empty-state__icon {\n  color: var(--mfd-color-accent-text);\n  display: grid;\n  place-items: center;\n}\n\n.mfd-empty-state__title {\n  font:\n    var(--mfd-typography-title-font-weight) var(--mfd-typography-title-font-size) /\n    var(--mfd-typography-title-line-height) var(--mfd-typography-title-font-family);\n  letter-spacing: var(--mfd-typography-title-letter-spacing);\n  margin: 0;\n}\n\n.mfd-empty-state__description {\n  color: var(--mfd-color-text-secondary);\n  margin: 0;\n  max-width: 36rem;\n}\n\n.mfd-empty-state__actions {\n  display: flex;\n  flex-wrap: wrap;\n  gap: var(--mfd-space-inline-sm);\n  justify-content: center;\n  margin-block-start: var(--mfd-space-stack-sm);\n}\n",
+      "type": "registry:ui",
+      "target": "@ui/empty-state.css"
+    }
+  ],
+  "meta": {
+    "maturity": "experimental",
+    "version": "0.3.0",
+    "installation": {
+      "latest": "pnpm dlx shadcn@latest add @mflisikowski/empty-state",
+      "snapshot": "pnpm dlx shadcn@latest add https://design-system.mflisikowski.dev/r/v/0.3.0/empty-state.json"
+    }
+  },
+  "docs": "Use EmptyStateTitle for the state meaning, optional description, and no more than one primary and one secondary action.",
+  "type": "registry:ui"
+}

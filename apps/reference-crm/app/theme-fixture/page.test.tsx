@@ -4,14 +4,21 @@ import path from "node:path";
 import { contrastPairs, resolvedThemeContexts } from "@mflisikowski/tokens/runtime";
 import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
+
+vi.mock("next/headers", () => ({
+  cookies: async () => ({
+    get: () => undefined,
+  }),
+}));
 
 import RootLayout from "../layout";
 import ThemeFixturePage from "./page";
 
 describe("runtime theme fixture", () => {
-  it("renders the initial system preference on independent root attributes", () => {
-    const markup = renderToStaticMarkup(createElement(RootLayout, null, createElement("div")));
+  it("renders the initial system preference on independent root attributes", async () => {
+    const layout = await RootLayout({ children: createElement("div") });
+    const markup = renderToStaticMarkup(layout);
 
     expect(markup).toContain(
       '<html lang="en" data-brand="atlas" data-color-scheme="system" data-density="comfortable">',

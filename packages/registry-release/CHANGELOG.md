@@ -1,5 +1,16 @@
 # @mflisikowski/registry-release
 
+## 0.3.0
+
+### Minor Changes
+
+- Add independent appearance axes and the public Radio Group contract for the Appearance tracer.
+
+### Patch Changes
+
+- Updated dependencies
+  - @mflisikowski/tokens@0.3.0
+
 ## 0.2.0
 
 ### Minor Changes

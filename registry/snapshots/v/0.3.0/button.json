@@ -1,0 +1,35 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "button",
+  "title": "Button",
+  "description": "Accessible action control with MFD variants, sizes, and loading behavior.",
+  "dependencies": [
+    "@mflisikowski/tokens@0.3.0",
+    "clsx@2.1.1"
+  ],
+  "registryDependencies": [],
+  "files": [
+    {
+      "path": "registry/ui/button.tsx",
+      "content": "\"use client\";\n\nimport { clsx } from \"clsx\";\nimport type { ComponentPropsWithRef } from \"react\";\n\nimport \"./button.css\";\n\nexport type ButtonProps = ComponentPropsWithRef<\"button\"> & {\n  variant?: \"accent\" | \"neutral\" | \"outline\" | \"ghost\" | \"danger\";\n  size?: \"sm\" | \"md\" | \"lg\";\n  loading?: boolean;\n  loadingLabel?: string;\n};\n\nexport function Button({\n  \"aria-busy\": ariaBusy,\n  \"aria-disabled\": ariaDisabled,\n  children,\n  className,\n  disabled,\n  loading = false,\n  loadingLabel = \"Loading\",\n  onClick,\n  size = \"md\",\n  type = \"button\",\n  variant = \"accent\",\n  ...props\n}: ButtonProps) {\n  return (\n    <button\n      {...props}\n      aria-busy={loading || ariaBusy || undefined}\n      aria-disabled={loading || ariaDisabled || undefined}\n      className={clsx(\"mfd-button\", className)}\n      data-size={size}\n      data-variant={variant}\n      disabled={disabled}\n      onClick={(event) => {\n        if (loading) {\n          event.preventDefault();\n          event.stopPropagation();\n          return;\n        }\n        onClick?.(event);\n      }}\n      type={type}\n    >\n      {loading ? (\n        <>\n          <span aria-hidden=\"true\" className=\"mfd-button__spinner\" />\n          {loadingLabel}\n        </>\n      ) : (\n        children\n      )}\n    </button>\n  );\n}\n",
+      "type": "registry:ui",
+      "target": "@ui/button.tsx"
+    },
+    {
+      "path": "registry/ui/button.css",
+      "content": ".mfd-button {\n  align-items: center;\n  background: var(--mfd-color-accent-solid);\n  border: 1px solid transparent;\n  border-radius: var(--mfd-radius-control);\n  color: var(--mfd-color-accent-on-solid);\n  cursor: pointer;\n  display: inline-flex;\n  font:\n    var(--mfd-typography-label-font-weight) var(--mfd-typography-label-font-size) /\n    var(--mfd-typography-label-line-height) var(--mfd-typography-label-font-family);\n  gap: var(--mfd-space-inline-sm);\n  justify-content: center;\n  letter-spacing: var(--mfd-typography-label-letter-spacing);\n  min-height: max(var(--mfd-size-control-height-md), var(--mfd-size-hit-target-minimum));\n  padding-inline: var(--mfd-space-inline-lg);\n  touch-action: manipulation;\n}\n\n.mfd-button[data-size=\"sm\"] {\n  min-height: max(var(--mfd-size-control-height-sm), var(--mfd-size-hit-target-minimum));\n  padding-inline: var(--mfd-space-inline-md);\n}\n\n.mfd-button[data-size=\"lg\"] {\n  min-height: max(var(--mfd-size-control-height-lg), var(--mfd-size-hit-target-minimum));\n}\n\n.mfd-button[data-variant=\"neutral\"] {\n  background: var(--mfd-color-bg-subtle);\n  border-color: var(--mfd-color-border-default);\n  color: var(--mfd-color-text-primary);\n}\n\n.mfd-button[data-variant=\"outline\"] {\n  background: var(--mfd-color-bg-canvas);\n  border-color: var(--mfd-color-border-strong);\n  color: var(--mfd-color-text-primary);\n}\n\n.mfd-button[data-variant=\"ghost\"] {\n  background: transparent;\n  color: var(--mfd-color-text-primary);\n}\n\n.mfd-button[data-variant=\"danger\"] {\n  background: var(--mfd-color-status-danger-solid);\n  color: var(--mfd-color-text-inverse);\n}\n\n@media (hover: hover) {\n  .mfd-button:hover:not(:disabled) {\n    background: var(--mfd-color-accent-solid-hover);\n  }\n\n  .mfd-button[data-variant=\"neutral\"]:hover:not(:disabled),\n  .mfd-button[data-variant=\"outline\"]:hover:not(:disabled),\n  .mfd-button[data-variant=\"ghost\"]:hover:not(:disabled) {\n    background: var(--mfd-color-bg-elevated);\n  }\n}\n\n.mfd-button:focus-visible {\n  outline: 2px solid var(--mfd-color-border-focus);\n  outline-offset: 2px;\n}\n\n.mfd-button:active:not(:disabled) {\n  transform: scale(var(--mfd-motion-scale-pressed));\n}\n\n.mfd-button:disabled {\n  cursor: not-allowed;\n  opacity: 0.55;\n}\n\n.mfd-button__spinner {\n  animation: mfd-button-spin var(--mfd-motion-duration-slow) linear infinite;\n  border: 2px solid currentColor;\n  border-block-start-color: transparent;\n  border-radius: var(--mfd-radius-pill);\n  height: var(--mfd-icon-size-sm);\n  width: var(--mfd-icon-size-sm);\n}\n\n@keyframes mfd-button-spin {\n  to {\n    transform: rotate(1turn);\n  }\n}\n\n@media (prefers-reduced-motion: reduce) {\n  .mfd-button {\n    transition: none;\n  }\n\n  .mfd-button:active:not(:disabled) {\n    transform: none;\n  }\n\n  .mfd-button__spinner {\n    animation-duration: 1.5s;\n  }\n}\n\n@media (forced-colors: active) {\n  .mfd-button {\n    border-color: ButtonText;\n  }\n}\n",
+      "type": "registry:ui",
+      "target": "@ui/button.css"
+    }
+  ],
+  "meta": {
+    "maturity": "experimental",
+    "version": "0.3.0",
+    "installation": {
+      "latest": "pnpm dlx shadcn@latest add @mflisikowski/button",
+      "snapshot": "pnpm dlx shadcn@latest add https://design-system.mflisikowski.dev/r/v/0.3.0/button.json"
+    }
+  },
+  "docs": "Use Button for actions. Loading changes the visible and accessible label while preventing repeated activation.",
+  "type": "registry:ui"
+}

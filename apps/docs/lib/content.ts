@@ -283,6 +283,16 @@ export const documentationPages = [
     load: () => import("../content/components/select.mdx"),
   },
   {
+    slug: "components/radio-group",
+    href: "/components/radio-group",
+    source: "components/radio-group.mdx",
+    title: "Radio Group",
+    description: "Single-value selection with conventional and rich card presentations.",
+    section: "Components",
+    headings: publicComponentHeadings,
+    load: () => import("../content/components/radio-group.mdx"),
+  },
+  {
     slug: "patterns",
     href: "/patterns",
     source: "patterns.mdx",

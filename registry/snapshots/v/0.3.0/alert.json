@@ -1,0 +1,35 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "alert",
+  "title": "Alert",
+  "description": "Persistent danger or success feedback with optional urgent live semantics.",
+  "dependencies": [
+    "@mflisikowski/tokens@0.3.0",
+    "clsx@2.1.1"
+  ],
+  "registryDependencies": [],
+  "files": [
+    {
+      "path": "registry/ui/alert.tsx",
+      "content": "import { clsx } from \"clsx\";\nimport type { ComponentPropsWithoutRef } from \"react\";\n\nimport \"./alert.css\";\n\nexport type AlertProps = ComponentPropsWithoutRef<\"div\"> & {\n  tone?: \"danger\" | \"success\";\n  live?: boolean;\n};\n\nexport function Alert({ className, live = false, tone = \"danger\", ...props }: AlertProps) {\n  return (\n    <div\n      {...props}\n      className={clsx(\"mfd-alert\", className)}\n      data-tone={tone}\n      role={live ? \"alert\" : undefined}\n    />\n  );\n}\n\nexport function AlertTitle({ className, ...props }: ComponentPropsWithoutRef<\"h2\">) {\n  return <h2 {...props} className={clsx(\"mfd-alert__title\", className)} />;\n}\n\nexport function AlertDescription({ className, ...props }: ComponentPropsWithoutRef<\"div\">) {\n  return <div {...props} className={clsx(\"mfd-alert__description\", className)} />;\n}\n\nexport function AlertAction({ className, ...props }: ComponentPropsWithoutRef<\"div\">) {\n  return <div {...props} className={clsx(\"mfd-alert__action\", className)} />;\n}\n",
+      "type": "registry:ui",
+      "target": "@ui/alert.tsx"
+    },
+    {
+      "path": "registry/ui/alert.css",
+      "content": ".mfd-alert {\n  background: var(--mfd-color-status-danger-bg);\n  border: 1px solid var(--mfd-color-status-danger-border);\n  border-radius: var(--mfd-radius-surface);\n  color: var(--mfd-color-status-danger-text);\n  display: grid;\n  gap: var(--mfd-space-stack-xs);\n  padding: var(--mfd-space-stack-md);\n}\n\n.mfd-alert[data-tone=\"success\"] {\n  background: var(--mfd-color-status-success-bg);\n  border-color: var(--mfd-color-status-success-border);\n  color: var(--mfd-color-status-success-text);\n}\n\n.mfd-alert__title {\n  font:\n    var(--mfd-typography-heading-font-weight) var(--mfd-typography-heading-font-size) /\n    var(--mfd-typography-heading-line-height) var(--mfd-typography-heading-font-family);\n  letter-spacing: var(--mfd-typography-heading-letter-spacing);\n  margin: 0;\n}\n\n.mfd-alert__description > :first-child,\n.mfd-alert__description > :last-child {\n  margin-block: 0;\n}\n\n.mfd-alert__action {\n  margin-block-start: var(--mfd-space-stack-sm);\n}\n",
+      "type": "registry:ui",
+      "target": "@ui/alert.css"
+    }
+  ],
+  "meta": {
+    "maturity": "experimental",
+    "version": "0.3.0",
+    "installation": {
+      "latest": "pnpm dlx shadcn@latest add @mflisikowski/alert",
+      "snapshot": "pnpm dlx shadcn@latest add https://design-system.mflisikowski.dev/r/v/0.3.0/alert.json"
+    }
+  },
+  "docs": "Compose AlertTitle, AlertDescription, and at most one AlertAction. Set live only for dynamically inserted urgent failures.",
+  "type": "registry:ui"
+}

@@ -9,6 +9,8 @@ export default defineConfig({
   optimizeDeps: {
     include: [
       "@base-ui/react/alert-dialog",
+      "@base-ui/react/radio-group",
+      "@base-ui/react/radio",
       "@base-ui/react/select",
       "lucide-react",
       "react",

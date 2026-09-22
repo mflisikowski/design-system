@@ -1,0 +1,87 @@
+import {
+  RadioCard,
+  RadioGroup,
+  RadioGroupIndicator,
+  RadioGroupItem,
+  RadioGroupRoot,
+} from "../../../../registry/ui/radio-group";
+import { Installation, LiveExample, MaturityNotice } from "@/components/docs/component-documentation";
+import { publicComponentDocumentation } from "@/lib/public-component-docs";
+
+<MaturityNotice introduced="0.3.0" status="experimental" />
+
+## Installation
+
+<Installation {...publicComponentDocumentation.radioGroup.installation} />
+
+## Purpose
+
+Radio Group chooses exactly one value from a small set. Base UI supplies the roving focus and
+keyboard behavior while MFD owns the compositional API, presentation, touch target, and selected
+state contract.
+
+## Examples
+
+<LiveExample label="Color scheme Radio Group">
+  <RadioGroupRoot aria-label="Color scheme" defaultValue="system">
+    <label>
+      <RadioGroupItem value="system">
+        <RadioGroupIndicator />
+      </RadioGroupItem>
+      System
+    </label>
+    <RadioCard description="Always use the light palette." value="light">Light</RadioCard>
+    <RadioCard description="Always use the dark palette." value="dark">Dark</RadioCard>
+  </RadioGroupRoot>
+</LiveExample>
+
+## Anatomy
+
+The conventional composition uses `RadioGroup.Root`, `RadioGroupItem`, and `RadioGroupIndicator`.
+`RadioCard` is a separate rich-option composition built from the same radio item contract. A card
+may add a description or a visual preview, but it remains one radio selection semantic.
+
+## API
+
+`RadioGroup.Root` supports controlled or uncontrolled values plus `name`, `required`, `disabled`,
+`readOnly`, `loading`, `orientation="horizontal" | "vertical"`, and compatible ARIA properties.
+`RadioGroupItem` accepts a stable primitive `value`, while `RadioGroupIndicator` forwards the
+indicator properties. `RadioCard` accepts `value`, visible children, and optional `description`
+and `preview` content.
+
+## States
+
+Selected radios use a filled indicator and a non-color-only state. Focus-visible state remains
+visible. Loading makes the group read-only and busy. Disabled and read-only groups preserve their
+accessible semantics. Horizontal groups wrap and become stacked below 640px.
+
+## Accessibility
+
+Put each group in a native `fieldset` with a visible `legend`, or provide an equivalent accessible
+name. Each option keeps a visible text label and description. RadioCard previews are hidden from
+assistive technology and never carry the option's meaning alone. Every option and card provides an
+effective 44px touch target.
+
+## Keyboard behavior
+
+Tab enters the group and leaves it as one tab stop. Arrow keys move and select within the group;
+Space selects the focused option. Values cannot be deselected, and a group never becomes a
+multi-select control.
+
+## Figma specification
+
+Anatomy is `Radio Group / Root / Item / Indicator` for the conventional control and
+`Radio Card / Preview / Label / Description` for the rich composition. Properties are Orientation:
+Horizontal, Vertical; Disabled; Read only; Loading; and Selected. Selected and focus-visible states
+must remain identifiable without color alone, and options keep a 44px effective target.
+
+## Content guidance
+
+Use short, mutually exclusive labels for a small set of stable values. Use descriptions when an
+option needs consequences explained. Do not use RadioCard as a segmented control, icon-only picker,
+or multiple-selection control.
+
+## Related patterns
+
+Appearance settings composes three independently labelled Radio Groups. Theme Preview shows the
+active values but is non-interactive and does not own selection state.

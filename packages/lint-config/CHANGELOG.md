@@ -1,5 +1,11 @@
 # @mflisikowski/lint-config
 
+## 0.3.0
+
+### Minor Changes
+
+- Add independent appearance axes and the public Radio Group contract for the Appearance tracer.
+
 ## 0.2.0
 
 ### Minor Changes

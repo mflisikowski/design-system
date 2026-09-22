@@ -17,6 +17,7 @@
     "alert-dialog",
     "toast",
     "badge",
-    "select"
+    "select",
+    "radio-group"
   ]
 }
