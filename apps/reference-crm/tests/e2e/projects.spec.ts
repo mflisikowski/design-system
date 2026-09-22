@@ -176,7 +176,9 @@ test("keeps project deletion open through infrastructure failure and retry", asy
   await expect(page.getByText("Website refresh", { exact: true })).toBeHidden();
 });
 
-test("removes a stale project confirmation and focuses the surviving fallback", async ({ page }) => {
+test("removes a stale project confirmation and focuses the surviving fallback", async ({
+  page,
+}) => {
   await signIn(page);
   await page.goto("/clients/client_northstar?demoProjectDeleteState=not-found");
 
@@ -186,9 +188,132 @@ test("removes a stale project confirmation and focuses the surviving fallback", 
   await expect(page.getByRole("alertdialog", { name: "Delete Website refresh?" })).toBeHidden();
   await expect(page.getByText("Website refresh", { exact: true })).toBeHidden();
   await expect(page.getByRole("button", { name: "Delete Brand system" })).toBeFocused();
+  await expect(page.getByRole("heading", { name: "Project is no longer available" })).toBeVisible();
+});
+
+test("blocks Client deletion while Projects exist and explains the dependency", async ({
+  page,
+}) => {
+  await signIn(page);
+  await page.goto("/clients/client_northstar");
+  await expect(page.getByRole("table", { name: "Projects" })).toBeVisible();
+
+  await page.getByRole("button", { name: "Delete client" }).click();
+
+  await expect(page.getByRole("alertdialog", { name: "Delete Northstar Studio?" })).toBeHidden();
   await expect(
-    page.getByRole("heading", { name: "Project is no longer available" }),
-  ).toBeVisible();
+    page.getByRole("alert").filter({ hasText: "Client cannot be deleted yet" }),
+  ).toContainText("2 Projects still belong to Northstar Studio");
+  await expect(page.getByRole("heading", { level: 1, name: "Northstar Studio" })).toBeVisible();
+
+  await page.reload();
+  await expect(page.getByRole("heading", { level: 1, name: "Northstar Studio" })).toBeVisible();
+  await expect(page.getByText("Website refresh", { exact: true })).toBeVisible();
+});
+
+test("deletes an empty Client only after Projects are removed and focuses the list heading", async ({
+  page,
+}) => {
+  await signIn(page);
+  await page.goto("/clients/client_northstar");
+  await expect(page.getByRole("table", { name: "Projects" })).toBeVisible();
+
+  for (const projectName of ["Website refresh", "Brand system"]) {
+    const deleteProject = page.getByRole("button", { name: `Delete ${projectName}` });
+    await deleteProject.click();
+    const confirmation = page.getByRole("alertdialog", { name: `Delete ${projectName}?` });
+    await expect(confirmation).toBeVisible();
+    await page.getByRole("button", { name: "Delete project" }).click();
+    await expect(page.getByText(projectName, { exact: true })).toBeHidden();
+  }
+
+  const deleteClient = page.getByRole("button", { name: "Delete client" });
+  await deleteClient.click();
+  const confirmation = page.getByRole("alertdialog", { name: "Delete Northstar Studio?" });
+  await expect(confirmation).toBeVisible();
+  await expect(page.getByRole("button", { name: "Cancel" })).toBeFocused();
+  await page.getByRole("button", { name: "Cancel" }).click();
+  await expect(confirmation).toBeHidden();
+  await expect(deleteClient).toBeFocused();
+
+  await deleteClient.click();
+  await page.getByRole("button", { name: "Delete client" }).last().click();
+
+  await expect(page).toHaveURL(/\/clients$/);
+  const clientsHeading = page.getByRole("heading", { level: 1, name: "Clients" });
+  await expect(clientsHeading).toBeFocused();
+  await expect(page.getByText("Client deleted", { exact: true })).toBeAttached();
+  await expect(page.getByRole("cell", { exact: true, name: "Northstar Studio" })).toBeHidden();
+
+  await page.reload();
+  await expect(page.getByRole("cell", { exact: true, name: "Northstar Studio" })).toBeHidden();
+});
+
+test("keeps Client deletion open through failure and handles a stale Client", async ({ page }) => {
+  await signIn(page);
+  await page.goto("/clients/client_lumen?demoClientDeleteState=error-once");
+  await expect(page.getByRole("heading", { level: 1, name: "Lumen Works" })).toBeVisible();
+
+  await page.getByRole("button", { name: "Delete client" }).click();
+  const confirmation = page.getByRole("alertdialog", { name: "Delete Lumen Works?" });
+  await page.getByRole("button", { name: "Delete client" }).last().click();
+  await expect(confirmation).toContainText("Client could not be deleted");
+  await page.getByRole("button", { name: "Try again" }).click();
+  await expect(page).toHaveURL(/\/clients$/);
+  await expect(page.getByText("Client deleted", { exact: true })).toBeAttached();
+
+  await page.goto("/clients");
+  page.once("dialog", (dialog) => void dialog.accept());
+  await page.getByRole("button", { name: "Reset demo data" }).click();
+  await expect(page.getByRole("cell", { exact: true, name: "Lumen Works" })).toBeVisible();
+
+  await page.goto("/clients/client_lumen?demoClientDeleteState=not-found");
+  await expect(page.getByRole("heading", { level: 1, name: "Lumen Works" })).toBeVisible();
+  await page.getByRole("button", { name: "Delete client" }).click();
+  await page.getByRole("button", { name: "Delete client" }).last().click();
+  await expect(page).toHaveURL(/\/clients$/);
+  await expect(page.getByText("Client is no longer available", { exact: true })).toBeAttached();
+});
+
+test("closes an unsafe Client confirmation when a Project appears on the server", async ({
+  page,
+}) => {
+  await signIn(page);
+  await page.goto(
+    "/clients/client_lumen?demoProjectState=empty&demoClientDeleteState=has-projects",
+  );
+  await expect(page.getByRole("heading", { level: 1, name: "Lumen Works" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "No projects yet" })).toBeVisible();
+
+  await page.getByRole("button", { name: "Delete client" }).click();
+  await page.getByRole("button", { name: "Delete client" }).last().click();
+
+  await expect(page.getByRole("alertdialog", { name: "Delete Lumen Works?" })).toBeHidden();
+  await expect(
+    page.getByRole("alert").filter({ hasText: "Client cannot be deleted yet" }),
+  ).toContainText("1 Project still belongs to Lumen Works");
+  await expect(page.getByRole("heading", { level: 1, name: "Lumen Works" })).toBeVisible();
+});
+
+test("protects every Client deletion dismissal path while pending", async ({ page }) => {
+  await signIn(page);
+  await page.goto("/clients/client_lumen?demoClientDeleteState=slow");
+  await expect(page.getByRole("heading", { level: 1, name: "Lumen Works" })).toBeVisible();
+
+  await page.getByRole("button", { name: "Delete client" }).click();
+  const confirmation = page.getByRole("alertdialog", { name: "Delete Lumen Works?" });
+  await page.getByRole("button", { name: "Delete client" }).last().click();
+  await expect(confirmation).toHaveAttribute("aria-busy", "true");
+  await expect(page.getByRole("button", { name: "Cancel" })).toBeDisabled();
+  await expect(page.getByRole("button", { name: "Deleting client" })).toHaveAttribute(
+    "aria-disabled",
+    "true",
+  );
+  await page.keyboard.press("Escape");
+  await expect(confirmation).toBeVisible();
+  await page.locator(".mfd-alert-dialog__backdrop").click({ force: true });
+  await expect(confirmation).toBeVisible();
+  await expect(page).toHaveURL(/\/clients\/.+/);
 });
 
 test("blocks every project deletion dismissal path while pending", async ({ page }) => {
@@ -214,6 +339,30 @@ test("blocks every project deletion dismissal path while pending", async ({ page
 });
 
 for (const { brand, colorScheme, density } of resolvedThemeContexts) {
+  test(`keeps blocked Client deletion accessible in ${brand} ${colorScheme} ${density}`, async ({
+    page,
+    makeAxeBuilder,
+  }) => {
+    await signIn(page);
+    await page.goto("/clients/client_northstar");
+    await expect(page.getByRole("table", { name: "Projects" })).toBeVisible();
+    await page.locator("html").evaluate(
+      (element, theme) => {
+        element.dataset.brand = theme.brand;
+        element.dataset.colorScheme = theme.colorScheme;
+        element.dataset.density = theme.density;
+      },
+      { brand, colorScheme, density },
+    );
+
+    await page.getByRole("button", { name: "Delete client" }).click();
+    await expect(
+      page.getByRole("alert").filter({ hasText: "Client cannot be deleted yet" }),
+    ).toBeVisible();
+    const scan = await makeAxeBuilder().include(".client-details-page").analyze();
+    expect(scan.violations).toEqual([]);
+  });
+
   test(`keeps Project deletion accessible in ${brand} ${colorScheme} ${density}`, async ({
     page,
     makeAxeBuilder,

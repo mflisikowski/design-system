@@ -37,6 +37,17 @@
   justify-content: space-between;
 }
 
+.client-details-card__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--mfd-space-inline-sm);
+  justify-content: flex-end;
+}
+
+.client-details-card__actions > .mfd-alert {
+  flex-basis: 100%;
+}
+
 .client-details-card h2 {
   font:
     var(--mfd-typography-title-font-weight) var(--mfd-typography-title-font-size) /
@@ -215,6 +226,11 @@
 }
 
 @media (max-width: 40rem) {
+  .client-details-card__actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
   .projects-section__heading {
     align-items: stretch;
     flex-direction: column;

@@ -1,5 +1,9 @@
 import { ClientDetailExperience } from "@/features/clients/client-detail";
-import type { ClientDetailScenario, ClientUpdateScenario } from "@/features/clients/repository";
+import type {
+  ClientDeleteScenario,
+  ClientDetailScenario,
+  ClientUpdateScenario,
+} from "@/features/clients/repository";
 import type {
   ProjectCreateScenario,
   ProjectDeleteScenario,
@@ -10,6 +14,7 @@ import type {
 type ClientDetailsPageProps = Readonly<{
   params: Promise<{ clientId: string }>;
   searchParams: Promise<{
+    demoClientDeleteState?: string;
     demoDetailState?: string;
     demoEditState?: string;
     demoProjectCreateState?: string;
@@ -23,6 +28,7 @@ export default async function ClientDetailsPage({ params, searchParams }: Client
   const [
     { clientId },
     {
+      demoClientDeleteState,
       demoDetailState,
       demoEditState,
       demoProjectCreateState,
@@ -32,6 +38,14 @@ export default async function ClientDetailsPage({ params, searchParams }: Client
     },
   ] = await Promise.all([params, searchParams]);
   const scenario: ClientDetailScenario = demoDetailState === "error" ? "error" : "default";
+  const deleteScenario: ClientDeleteScenario =
+    demoClientDeleteState === "error" ||
+    demoClientDeleteState === "error-once" ||
+    demoClientDeleteState === "has-projects" ||
+    demoClientDeleteState === "not-found" ||
+    demoClientDeleteState === "slow"
+      ? demoClientDeleteState
+      : "default";
   const updateScenario: ClientUpdateScenario =
     demoEditState === "error" || demoEditState === "error-once" || demoEditState === "slow"
       ? demoEditState
@@ -63,6 +77,7 @@ export default async function ClientDetailsPage({ params, searchParams }: Client
       projectDeleteScenario={projectDeleteScenario}
       projectScenario={projectScenario}
       projectStatusScenario={projectStatusScenario}
+      deleteScenario={deleteScenario}
       scenario={scenario}
       updateScenario={updateScenario}
     />

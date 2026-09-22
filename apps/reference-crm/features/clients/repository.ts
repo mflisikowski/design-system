@@ -12,7 +12,23 @@ export type ClientListScenario = "default" | "empty" | "error" | "slow-search" |
 export type ClientDetailScenario = "default" | "error";
 export type ClientCreateScenario = "default" | "error" | "error-once" | "slow";
 export type ClientUpdateScenario = "default" | "error" | "error-once" | "slow";
+export type ClientDeleteScenario =
+  | "default"
+  | "error"
+  | "error-once"
+  | "has-projects"
+  | "not-found"
+  | "slow";
 export type ClientFieldErrors = Partial<Record<keyof CreateClientInput, string>>;
+export type ClientDeleteOutcome =
+  | Readonly<{ outcome: "deleted"; clientId: string }>
+  | Readonly<{
+      clientId: string;
+      code: "CLIENT_HAS_PROJECTS";
+      outcome: "blocked";
+      projectCount: number;
+    }>
+  | Readonly<{ clientId: string; code: "NOT_FOUND"; outcome: "not-found" }>;
 export type ClientListOptions = Readonly<{
   query?: string;
   scenario?: ClientListScenario;
@@ -27,6 +43,7 @@ export type ClientRepository = Readonly<{
     input: UpdateClientInput,
     scenario?: ClientUpdateScenario,
   ) => Promise<Client>;
+  deleteClient: (id: string, scenario?: ClientDeleteScenario) => Promise<ClientDeleteOutcome>;
   reset: () => Promise<readonly Client[]>;
 }>;
 
@@ -99,6 +116,58 @@ export function createHttpClientRepository(origin = ""): ClientRepository {
         }),
         clientSchema,
       );
+    },
+    async deleteClient(id, scenario = "default") {
+      const query = scenario === "default" ? "" : `?scenario=${scenario}`;
+      const response = await fetch(`${origin}/api/clients/${encodeURIComponent(id)}${query}`, {
+        method: "DELETE",
+      });
+      const body = (await response.json().catch(() => undefined)) as
+        | {
+            clientId?: string;
+            code?: string;
+            message?: string;
+            outcome?: string;
+            projectCount?: number;
+          }
+        | undefined;
+
+      if (response.status === 409 && body?.code === "CLIENT_HAS_PROJECTS") {
+        if (
+          body.projectCount === undefined ||
+          !Number.isInteger(body.projectCount) ||
+          body.projectCount < 1
+        ) {
+          throw new ClientRepositoryError("The client response was invalid.", 502);
+        }
+        return {
+          clientId: id,
+          code: "CLIENT_HAS_PROJECTS",
+          outcome: "blocked",
+          projectCount: body.projectCount,
+        };
+      }
+
+      if (response.status === 404) {
+        return {
+          clientId: id,
+          code: "NOT_FOUND",
+          outcome: "not-found",
+        };
+      }
+
+      if (!response.ok) {
+        throw new ClientRepositoryError(
+          body?.message ?? "The client request failed.",
+          response.status,
+        );
+      }
+
+      if (body?.outcome !== "deleted" || body.clientId !== id) {
+        throw new ClientRepositoryError("The client response was invalid.", 502);
+      }
+
+      return { outcome: "deleted", clientId: id };
     },
     async reset() {
       return parseResponse(

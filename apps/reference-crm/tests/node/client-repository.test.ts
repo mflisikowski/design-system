@@ -4,6 +4,8 @@ import { afterAll, afterEach, beforeAll, describe, expect, it } from "vitest";
 import { createClientHandlers, createMemoryClientStorage } from "../../features/clients/mock-api";
 import { createHttpClientRepository } from "../../features/clients/repository";
 import { deterministicClients } from "../../features/clients/seed";
+import { createMemoryProjectStorage } from "../../features/projects/mock-api";
+import { deterministicProjects } from "../../features/projects/seed";
 import { mockServer } from "../msw/server";
 
 beforeAll(() => mockServer.listen({ onUnhandledRequest: "error" }));
@@ -195,5 +197,70 @@ describe("ClientRepository", () => {
       name: "ClientRepositoryError",
       status: 503,
     });
+  });
+
+  it("deletes an empty client without touching project storage", async () => {
+    const clientStorage = createMemoryClientStorage([deterministicClients[2]]);
+    const projectStorage = createMemoryProjectStorage([deterministicProjects[2]]);
+    mockServer.use(...createClientHandlers(clientStorage, 0, undefined, projectStorage));
+
+    const repository = createHttpClientRepository("http://localhost");
+
+    await expect(repository.deleteClient(deterministicClients[2].id)).resolves.toEqual({
+      outcome: "deleted",
+      clientId: deterministicClients[2].id,
+    });
+    await expect(repository.list()).resolves.toEqual([]);
+    expect(projectStorage.read()).toEqual([deterministicProjects[2]]);
+  });
+
+  it("returns the current project dependency count without cascading client deletion", async () => {
+    const clientStorage = createMemoryClientStorage([deterministicClients[0]]);
+    const projectStorage = createMemoryProjectStorage(deterministicProjects);
+    mockServer.use(...createClientHandlers(clientStorage, 0, undefined, projectStorage));
+
+    const repository = createHttpClientRepository("http://localhost");
+
+    await expect(repository.deleteClient(deterministicClients[0].id)).resolves.toEqual({
+      code: "CLIENT_HAS_PROJECTS",
+      outcome: "blocked",
+      clientId: deterministicClients[0].id,
+      projectCount: 2,
+    });
+    expect(clientStorage.read()).toEqual([deterministicClients[0]]);
+    expect(projectStorage.read()).toEqual(deterministicProjects);
+  });
+
+  it("returns a typed stale outcome for a missing client", async () => {
+    const clientStorage = createMemoryClientStorage([deterministicClients[1]]);
+    const projectStorage = createMemoryProjectStorage([]);
+    mockServer.use(...createClientHandlers(clientStorage, 0, undefined, projectStorage));
+
+    const repository = createHttpClientRepository("http://localhost");
+
+    await expect(repository.deleteClient("client_missing")).resolves.toEqual({
+      code: "NOT_FOUND",
+      outcome: "not-found",
+      clientId: "client_missing",
+    });
+    expect(clientStorage.read()).toEqual([deterministicClients[1]]);
+  });
+
+  it("keeps the client and its projects when deletion fails with infrastructure error", async () => {
+    const clientStorage = createMemoryClientStorage([deterministicClients[1]]);
+    const projectStorage = createMemoryProjectStorage([]);
+    mockServer.use(...createClientHandlers(clientStorage, 0, undefined, projectStorage));
+
+    const repository = createHttpClientRepository("http://localhost");
+
+    await expect(
+      repository.deleteClient(deterministicClients[1].id, "error"),
+    ).rejects.toMatchObject({
+      message: "The client could not be deleted. Try again.",
+      name: "ClientRepositoryError",
+      status: 503,
+    });
+    expect(clientStorage.read()).toEqual([deterministicClients[1]]);
+    expect(projectStorage.read()).toEqual([]);
   });
 });

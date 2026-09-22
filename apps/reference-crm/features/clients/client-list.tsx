@@ -28,6 +28,7 @@ import {
 } from "@/components/ui/table";
 import { AddClientDialog } from "./add-client-dialog";
 import { ClientRowActions } from "./client-row-actions";
+import { clientDeletionAnnouncementStorageKey } from "./deletion-feedback";
 import type { Client } from "./model";
 import { clientQueryKeys } from "./query-keys";
 import {
@@ -149,6 +150,7 @@ export function ClientList({
   const searchParams = useSearchParams();
   const queryClient = useQueryClient();
   const announcementSequence = useRef(0);
+  const clientsHeadingRef = useRef<HTMLHeadingElement>(null);
   const debounceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [announcement, setAnnouncement] = useState<{ id: number; message: string } | null>(null);
   const [lastSuccessfulClients, setLastSuccessfulClients] = useState<
@@ -196,6 +198,20 @@ export function ClientList({
     },
     [],
   );
+
+  useEffect(() => {
+    const deletionAnnouncement = window.sessionStorage.getItem(
+      clientDeletionAnnouncementStorageKey,
+    );
+    if (!deletionAnnouncement) {
+      return;
+    }
+
+    window.sessionStorage.removeItem(clientDeletionAnnouncementStorageKey);
+    announcementSequence.current += 1;
+    setAnnouncement({ id: announcementSequence.current, message: deletionAnnouncement });
+    queueMicrotask(() => clientsHeadingRef.current?.focus());
+  }, []);
 
   function scheduleQuery(nextValue: string) {
     setInputQuery(nextValue);
@@ -357,7 +373,9 @@ export function ClientList({
       <div className="page-heading">
         <div>
           <p className="eyebrow">Client relationships</p>
-          <h1 id="clients-title">Clients</h1>
+          <h1 id="clients-title" ref={clientsHeadingRef} tabIndex={-1}>
+            Clients
+          </h1>
           <p className="supporting-copy">
             Browse fictional organizations and their primary contacts.
           </p>

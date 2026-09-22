@@ -9,6 +9,8 @@ import {
 import { clientMatchesSearch, normalizeClientSearchQuery } from "./search";
 import { deterministicClients } from "./seed";
 
+import type { ProjectStorage } from "../projects/mock-api";
+
 const clientsStorageKey = "mfd-demo-clients";
 const defaultLatency = 350;
 
@@ -54,9 +56,11 @@ export function createClientHandlers(
   storage: ClientStorage,
   latency = defaultLatency,
   onReset?: () => void,
+  projectStorage?: ProjectStorage,
 ) {
   let failNextCreate = true;
   let failNextUpdate = true;
+  let failNextDelete = true;
 
   return [
     http.get("*/api/clients", async ({ request }) => {
@@ -186,6 +190,53 @@ export function createClientHandlers(
       nextClients[clientIndex] = updatedClient;
       storage.write(nextClients);
       return HttpResponse.json(updatedClient);
+    }),
+    http.delete("*/api/clients/:clientId", async ({ params, request }) => {
+      const scenario = new URL(request.url).searchParams.get("scenario");
+      await delay(scenario === "slow" ? 1500 : latency);
+
+      const clientId = String(params.clientId);
+      const existingClients = readOrSeed(storage);
+      const clientExists = existingClients.some((client) => client.id === clientId);
+
+      if (!clientExists) {
+        return HttpResponse.json(
+          { code: "NOT_FOUND", message: "Client was not found." },
+          { status: 404 },
+        );
+      }
+
+      if (scenario === "error" || (scenario === "error-once" && failNextDelete)) {
+        failNextDelete = false;
+        return HttpResponse.json(
+          { message: "The client could not be deleted. Try again." },
+          { status: 503 },
+        );
+      }
+
+      if (scenario === "not-found") {
+        storage.write(existingClients.filter((client) => client.id !== clientId));
+        return HttpResponse.json(
+          { code: "NOT_FOUND", message: "Client was not found." },
+          { status: 404 },
+        );
+      }
+
+      const projectCount =
+        projectStorage?.read()?.filter((project) => project.clientId === clientId).length ?? 0;
+      if (scenario === "has-projects" || projectCount > 0) {
+        return HttpResponse.json(
+          {
+            code: "CLIENT_HAS_PROJECTS",
+            message: "Delete the client projects before deleting this client.",
+            projectCount: Math.max(projectCount, scenario === "has-projects" ? 1 : 0),
+          },
+          { status: 409 },
+        );
+      }
+
+      storage.write(existingClients.filter((client) => client.id !== clientId));
+      return HttpResponse.json({ clientId, outcome: "deleted" });
     }),
     http.post("*/api/clients/reset", async () => {
       await delay(latency);

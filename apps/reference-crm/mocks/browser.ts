@@ -11,8 +11,11 @@ export function startMockApi() {
     const clientStorage = createBrowserClientStorage(window.localStorage);
     const projectStorage = createBrowserProjectStorage(window.localStorage);
     const worker = setupWorker(
-      ...createClientHandlers(clientStorage, undefined, () =>
-        projectStorage.write(deterministicProjects),
+      ...createClientHandlers(
+        clientStorage,
+        undefined,
+        () => projectStorage.write(deterministicProjects),
+        projectStorage,
       ),
       ...createProjectHandlers(projectStorage, clientStorage),
     );

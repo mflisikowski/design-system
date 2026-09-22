@@ -1,9 +1,19 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
 import { Alert, AlertAction, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import {
   Breadcrumb,
   BreadcrumbCurrent,
@@ -31,15 +41,23 @@ import type {
   ProjectListScenario,
   ProjectStatusScenario,
 } from "../projects/repository";
+import { projectQueryKeys } from "../projects/query-keys";
+import { createHttpProjectRepository } from "../projects/repository";
 import { ClientQueryProvider } from "./client-experience";
+import { clientDeletionAnnouncementStorageKey } from "./deletion-feedback";
 import { EditClientDialog } from "./edit-client-dialog";
 import { clientQueryKeys } from "./query-keys";
-import type { ClientDetailScenario, ClientUpdateScenario } from "./repository";
+import type {
+  ClientDeleteScenario,
+  ClientDetailScenario,
+  ClientUpdateScenario,
+} from "./repository";
 import { ClientRepositoryError, createHttpClientRepository } from "./repository";
 
 import "./client-detail.css";
 
 const clientRepository = createHttpClientRepository();
+const projectRepository = createHttpProjectRepository();
 const dateFormatter = new Intl.DateTimeFormat("en-US", {
   dateStyle: "medium",
   timeZone: "UTC",
@@ -51,6 +69,7 @@ type ClientDetailExperienceProps = Readonly<{
   projectDeleteScenario: ProjectDeleteScenario;
   projectScenario: ProjectListScenario;
   projectStatusScenario: ProjectStatusScenario;
+  deleteScenario: ClientDeleteScenario;
   scenario: ClientDetailScenario;
   updateScenario: ClientUpdateScenario;
 }>;
@@ -68,6 +87,175 @@ function DetailBreadcrumb({ current }: Readonly<{ current: string }>) {
         </BreadcrumbItem>
       </BreadcrumbList>
     </Breadcrumb>
+  );
+}
+
+type DeleteClientControlProps = Readonly<{
+  clientId: string;
+  clientName: string;
+  deleteScenario: ClientDeleteScenario;
+  onAnnouncement: (message: string) => void;
+  projectScenario: ProjectListScenario;
+}>;
+
+function DeleteClientControl({
+  clientId,
+  clientName,
+  deleteScenario,
+  onAnnouncement,
+  projectScenario,
+}: DeleteClientControlProps) {
+  const queryClient = useQueryClient();
+  const router = useRouter();
+  const cancelButtonRef = useRef<HTMLButtonElement>(null);
+  const deleteButtonRef = useRef<HTMLButtonElement>(null);
+  const previousProjectCount = useRef<number | undefined>(undefined);
+  const [deleteOpen, setDeleteOpen] = useState(false);
+  const [deleteFailure, setDeleteFailure] = useState<string | null>(null);
+  const [blockedProjectCount, setBlockedProjectCount] = useState<number | null>(null);
+  const projects = useQuery({
+    queryFn: () => projectRepository.listByClient(clientId, projectScenario),
+    queryKey: projectQueryKeys.byClient(clientId, projectScenario),
+  });
+  const projectCount = projects.data?.length;
+  const deleteClient = useMutation({
+    mutationFn: () => clientRepository.deleteClient(clientId, deleteScenario),
+    onError: (error) => {
+      setDeleteFailure(
+        error instanceof Error ? error.message : "The client could not be deleted. Try again.",
+      );
+    },
+    onSuccess: (outcome) => {
+      if (outcome.outcome === "blocked") {
+        setDeleteOpen(false);
+        setDeleteFailure(null);
+        setBlockedProjectCount(outcome.projectCount);
+        onAnnouncement(
+          `Client deletion blocked because ${outcome.projectCount} ${outcome.projectCount === 1 ? "Project remains" : "Projects remain"}`,
+        );
+        queueMicrotask(() => deleteButtonRef.current?.focus());
+        return;
+      }
+
+      queryClient.removeQueries({ queryKey: ["clients", "detail", clientId] });
+      queryClient.setQueriesData<readonly { id: string }[]>(
+        { queryKey: ["clients", "list"] },
+        (clients) => clients?.filter((client) => client.id !== clientId),
+      );
+      queryClient.removeQueries({ queryKey: ["projects", "client", clientId] });
+      void queryClient.invalidateQueries({
+        queryKey: clientQueryKeys.all,
+        refetchType: "inactive",
+      });
+
+      window.sessionStorage.setItem(
+        clientDeletionAnnouncementStorageKey,
+        outcome.outcome === "not-found" ? "Client is no longer available" : "Client deleted",
+      );
+      router.push("/clients");
+    },
+  });
+
+  useEffect(() => {
+    if (
+      blockedProjectCount !== null &&
+      projectCount === 0 &&
+      previousProjectCount.current !== undefined &&
+      previousProjectCount.current > 0
+    ) {
+      // oxlint-disable-next-line react/set-state-in-effect -- project deletion is external query state that clears stale guidance.
+      setBlockedProjectCount(null);
+    }
+    previousProjectCount.current = projectCount;
+  }, [blockedProjectCount, projectCount]);
+
+  function openDeleteDialog() {
+    if (projectCount && projectCount > 0) {
+      setBlockedProjectCount(projectCount);
+      onAnnouncement(
+        `Client deletion blocked because ${projectCount} ${projectCount === 1 ? "Project remains" : "Projects remain"}`,
+      );
+      return;
+    }
+
+    setDeleteFailure(null);
+    setDeleteOpen(true);
+  }
+
+  return (
+    <>
+      <Button
+        disabled={!projects.isSuccess}
+        loading={projects.isPending}
+        loadingLabel="Checking projects"
+        onClick={openDeleteDialog}
+        ref={deleteButtonRef}
+        variant="danger"
+      >
+        Delete client
+      </Button>
+      {blockedProjectCount !== null ? (
+        <Alert live tone="danger">
+          <AlertTitle>Client cannot be deleted yet</AlertTitle>
+          <AlertDescription>
+            {blockedProjectCount}{" "}
+            {blockedProjectCount === 1 ? "Project still belongs" : "Projects still belong"} to{" "}
+            {clientName}. Delete the Project{blockedProjectCount === 1 ? "" : "s"} below first, then
+            try again.
+          </AlertDescription>
+        </Alert>
+      ) : null}
+      <AlertDialog
+        onOpenChange={(open) => {
+          if (!open && !deleteClient.isPending) {
+            setDeleteFailure(null);
+            setDeleteOpen(false);
+          }
+        }}
+        open={deleteOpen}
+        pending={deleteClient.isPending}
+      >
+        <AlertDialogContent finalFocus={deleteButtonRef} initialFocus={cancelButtonRef}>
+          <AlertDialogTitle>Delete {clientName}?</AlertDialogTitle>
+          <AlertDialogDescription>
+            This will permanently remove {clientName}. This action cannot be undone.
+          </AlertDialogDescription>
+          {deleteFailure ? (
+            <Alert live tone="danger">
+              <AlertTitle>Client could not be deleted</AlertTitle>
+              <AlertDescription>{deleteFailure}</AlertDescription>
+              <AlertAction>
+                <Button
+                  loading={deleteClient.isPending}
+                  loadingLabel="Retrying"
+                  onClick={() => deleteClient.mutate()}
+                  variant="outline"
+                >
+                  Try again
+                </Button>
+              </AlertAction>
+            </Alert>
+          ) : null}
+          <AlertDialogFooter>
+            <AlertDialogCancel ref={cancelButtonRef} render={<Button variant="outline" />}>
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => deleteClient.mutate()}
+              render={
+                <Button
+                  loading={deleteClient.isPending}
+                  loadingLabel="Deleting client"
+                  variant="danger"
+                />
+              }
+            >
+              Delete client
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </>
   );
 }
 
@@ -90,6 +278,7 @@ export function ClientDetailExperience({
   projectDeleteScenario,
   projectScenario,
   projectStatusScenario,
+  deleteScenario,
   scenario,
   updateScenario,
 }: ClientDetailExperienceProps) {
@@ -101,6 +290,7 @@ export function ClientDetailExperience({
         projectDeleteScenario={projectDeleteScenario}
         projectScenario={projectScenario}
         projectStatusScenario={projectStatusScenario}
+        deleteScenario={deleteScenario}
         scenario={scenario}
         updateScenario={updateScenario}
       />
@@ -115,6 +305,7 @@ function ClientDetailContent({
   projectDeleteScenario,
   projectScenario,
   projectStatusScenario,
+  deleteScenario,
   scenario,
   updateScenario,
 }: ClientDetailExperienceProps) {
@@ -227,11 +418,20 @@ function ClientDetailContent({
             <h2 id="client-contact-title">Primary contact</h2>
             <span className="client-details-status">{record.relationshipStatus}</span>
           </div>
-          <EditClientDialog
-            client={record}
-            onAnnouncement={announce}
-            updateScenario={updateScenario}
-          />
+          <div className="client-details-card__actions">
+            <EditClientDialog
+              client={record}
+              onAnnouncement={announce}
+              updateScenario={updateScenario}
+            />
+            <DeleteClientControl
+              clientId={clientId}
+              clientName={record.organizationName}
+              deleteScenario={deleteScenario}
+              onAnnouncement={announce}
+              projectScenario={projectScenario}
+            />
+          </div>
         </div>
         <dl className="client-details-data">
           <div>
