@@ -85,6 +85,37 @@ test("keeps the project table usable at a narrow viewport", async ({ page }) => 
   await expect(page.getByRole("columnheader", { name: "Project" })).toBeVisible();
   await expect(page.getByRole("columnheader", { name: "Status" })).toBeVisible();
   expect(
-    await page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth),
+    await page.evaluate(
+      () => document.documentElement.scrollWidth > document.documentElement.clientWidth,
+    ),
   ).toBe(false);
+});
+
+test("changes project status with keyboard feedback and keeps the failure recoverable", async ({
+  page,
+}) => {
+  await signIn(page);
+  await page.goto("/clients/client_northstar");
+
+  const status = page.getByRole("combobox", { name: "Status for Website refresh" });
+  await status.click();
+  await expect(page.getByRole("option", { name: "Planned" })).toBeVisible();
+  await page.keyboard.press("ArrowDown");
+  await page.keyboard.press("Enter");
+
+  await expect(page.getByText("Project status updated", { exact: true })).toBeVisible();
+  await expect(status).toContainText("On hold");
+
+  await page.goto("/clients/client_northstar?demoProjectStatusState=error-once");
+  const retryableStatus = page.getByRole("combobox", { name: "Status for Website refresh" });
+  await retryableStatus.click();
+  await page.getByRole("option", { name: "Completed" }).click();
+
+  await expect(page.locator(".mfd-alert[role='alert']")).toContainText(
+    "Project status could not be updated",
+  );
+  await expect(retryableStatus).toContainText("On hold");
+  await page.getByRole("button", { name: "Try again" }).click();
+  await expect(page.getByText("Project status updated", { exact: true })).toBeVisible();
+  await expect(retryableStatus).toContainText("Completed");
 });

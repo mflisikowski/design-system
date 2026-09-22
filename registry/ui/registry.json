@@ -510,6 +510,71 @@
           "snapshot": "pnpm dlx shadcn@latest add https://design-system.mflisikowski.dev/r/v/0.2.0/table.json"
         }
       }
+    },
+    {
+      "name": "badge",
+      "type": "registry:ui",
+      "title": "Badge",
+      "description": "Non-interactive status label with semantic tone and density-aware size.",
+      "dependencies": [
+        "@mflisikowski/tokens@0.2.0",
+        "clsx@2.1.1"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "badge.tsx",
+          "type": "registry:ui",
+          "target": "@ui/badge.tsx"
+        },
+        {
+          "path": "badge.css",
+          "type": "registry:ui",
+          "target": "@ui/badge.css"
+        }
+      ],
+      "docs": "Use Badge for visible status text. Tone never replaces the status label and Badge is not interactive.",
+      "meta": {
+        "maturity": "experimental",
+        "version": "0.2.0",
+        "installation": {
+          "latest": "pnpm dlx shadcn@latest add @mflisikowski/badge",
+          "snapshot": "pnpm dlx shadcn@latest add https://design-system.mflisikowski.dev/r/v/0.2.0/badge.json"
+        }
+      }
+    },
+    {
+      "name": "select",
+      "type": "registry:ui",
+      "title": "Select",
+      "description": "Accessible single-value selection with keyboard navigation and pending state.",
+      "dependencies": [
+        "@base-ui/react@1.8.0",
+        "@mflisikowski/tokens@0.2.0",
+        "clsx@2.1.1"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "select.tsx",
+          "type": "registry:ui",
+          "target": "@ui/select.tsx"
+        },
+        {
+          "path": "select.css",
+          "type": "registry:ui",
+          "target": "@ui/select.css"
+        }
+      ],
+      "docs": "Compose Select.Root, Trigger, Value, Icon, Content, and Item for one predefined value. Loading makes only the select read-only and busy.",
+      "meta": {
+        "maturity": "experimental",
+        "version": "0.2.0",
+        "installation": {
+          "latest": "pnpm dlx shadcn@latest add @mflisikowski/select",
+          "snapshot": "pnpm dlx shadcn@latest add https://design-system.mflisikowski.dev/r/v/0.2.0/select.json"
+        }
+      }
     }
   ]
 }

@@ -512,6 +512,71 @@
       },
       "docs": "Compose native caption, header, body, row, heading, and cell primitives. Product sorting, filtering, and actions remain outside Table.",
       "type": "registry:ui"
+    },
+    {
+      "name": "badge",
+      "title": "Badge",
+      "description": "Non-interactive status label with semantic tone and density-aware size.",
+      "dependencies": [
+        "@mflisikowski/tokens@0.2.0",
+        "clsx@2.1.1"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "registry/ui/badge.tsx",
+          "type": "registry:ui",
+          "target": "@ui/badge.tsx"
+        },
+        {
+          "path": "registry/ui/badge.css",
+          "type": "registry:ui",
+          "target": "@ui/badge.css"
+        }
+      ],
+      "meta": {
+        "maturity": "experimental",
+        "version": "0.2.0",
+        "installation": {
+          "latest": "pnpm dlx shadcn@latest add @mflisikowski/badge",
+          "snapshot": "pnpm dlx shadcn@latest add https://design-system.mflisikowski.dev/r/v/0.2.0/badge.json"
+        }
+      },
+      "docs": "Use Badge for visible status text. Tone never replaces the status label and Badge is not interactive.",
+      "type": "registry:ui"
+    },
+    {
+      "name": "select",
+      "title": "Select",
+      "description": "Accessible single-value selection with keyboard navigation and pending state.",
+      "dependencies": [
+        "@base-ui/react@1.8.0",
+        "@mflisikowski/tokens@0.2.0",
+        "clsx@2.1.1"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "registry/ui/select.tsx",
+          "type": "registry:ui",
+          "target": "@ui/select.tsx"
+        },
+        {
+          "path": "registry/ui/select.css",
+          "type": "registry:ui",
+          "target": "@ui/select.css"
+        }
+      ],
+      "meta": {
+        "maturity": "experimental",
+        "version": "0.2.0",
+        "installation": {
+          "latest": "pnpm dlx shadcn@latest add @mflisikowski/select",
+          "snapshot": "pnpm dlx shadcn@latest add https://design-system.mflisikowski.dev/r/v/0.2.0/select.json"
+        }
+      },
+      "docs": "Compose Select.Root, Trigger, Value, Icon, Content, and Item for one predefined value. Loading makes only the select read-only and busy.",
+      "type": "registry:ui"
     }
   ]
 }

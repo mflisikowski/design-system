@@ -2,7 +2,12 @@ import { delay, HttpResponse, http } from "msw";
 
 import type { ClientStorage } from "../clients/mock-api";
 import { deterministicClients } from "../clients/seed";
-import { createProjectInputSchema, type Project, projectsSchema } from "./model";
+import {
+  createProjectInputSchema,
+  type Project,
+  projectStatusUpdateSchema,
+  projectsSchema,
+} from "./model";
 import { deterministicProjects } from "./seed";
 
 const projectsStorageKey = "mfd-demo-projects";
@@ -56,7 +61,9 @@ function readClients(storage: ClientStorage) {
   return structuredClone(deterministicClients);
 }
 
-function validationResponse(error: { issues: readonly { path: PropertyKey[]; message: string }[] }) {
+function validationResponse(error: {
+  issues: readonly { path: PropertyKey[]; message: string }[];
+}) {
   const fieldErrors = Object.fromEntries(
     error.issues.map((issue) => [issue.path[0], issue.message]),
   );
@@ -72,6 +79,7 @@ export function createProjectHandlers(
   latency = defaultLatency,
 ) {
   let failNextCreate = true;
+  let failNextStatusUpdate = true;
 
   return [
     http.get("*/api/clients/:clientId/projects", async ({ params, request }) => {
@@ -130,6 +138,45 @@ export function createProjectHandlers(
       const existingProjects = readOrSeed(projectStorage);
       projectStorage.write([project, ...existingProjects]);
       return HttpResponse.json(project, { status: 201 });
+    }),
+    http.patch("*/api/clients/:clientId/projects/:projectId", async ({ params, request }) => {
+      const scenario = new URL(request.url).searchParams.get("scenario");
+      await delay(latency);
+
+      if (!readClients(clientStorage).some((client) => client.id === params.clientId)) {
+        return HttpResponse.json({ message: "Client was not found." }, { status: 404 });
+      }
+
+      if (scenario === "error" || (scenario === "error-once" && failNextStatusUpdate)) {
+        failNextStatusUpdate = false;
+        return HttpResponse.json(
+          { message: "The project status could not be saved. Try again." },
+          { status: 503 },
+        );
+      }
+
+      const parsed = projectStatusUpdateSchema.safeParse(await request.json());
+      if (!parsed.success) {
+        return validationResponse(parsed.error);
+      }
+
+      const existingProjects = readOrSeed(projectStorage);
+      const projectIndex = existingProjects.findIndex(
+        (project) => project.id === params.projectId && project.clientId === params.clientId,
+      );
+      if (projectIndex < 0) {
+        return HttpResponse.json({ message: "Project was not found." }, { status: 404 });
+      }
+
+      const updatedProject: Project = {
+        ...existingProjects[projectIndex],
+        status: parsed.data.status,
+        updatedAt: new Date().toISOString(),
+      };
+      const nextProjects = [...existingProjects];
+      nextProjects[projectIndex] = updatedProject;
+      projectStorage.write(nextProjects);
+      return HttpResponse.json(updatedProject);
     }),
   ];
 }

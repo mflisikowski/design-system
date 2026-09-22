@@ -24,6 +24,8 @@ published instances in DS Reference CRM.
 | Dialog | Backdrop / Content / Header / Title / Description / Body / Footer / Close | Size: Small, Medium, Large; Pending | Below 640 px, the same Content is full screen. Header and Footer remain visible while Body scrolls; pending blocks every close request. |
 | Alert Dialog | Backdrop / Content / Title / Description / Footer / Cancel / Action | Pending | Destructive contexts place initial focus on Cancel. Escape cancels, backdrop never dismisses, and pending blocks Action, Cancel, Escape, and other close requests. |
 | Toast | Container / Status icon / Message / Dismiss | Tone: Success | Runtime notes specify polite status semantics, four-second duration, at most three visible items, and queueing. |
+| Badge | Container / Label | Tone: Neutral, Accent, Warning, Success, Danger; Size: Small, Medium | Non-interactive visible status text. Tone never carries meaning alone; Project Status maps Planned to neutral, Active to accent, On hold to warning, and Completed to success. |
+| Select | Root / Trigger / Value / Icon / Content / Item | Size: Small, Medium, Large; Disabled; Read only; Invalid; Loading | Contextual accessible name includes the affected Project. Loading keeps the trigger focused, makes only the control read-only, and replaces the disclosure affordance with progress. Escape closes without committing. |
 
 ## Reference CRM frames
 
@@ -42,6 +44,12 @@ Add client. Duplicate email maps to Contact email. Server failure uses a persist
 again. Submitting marks the form busy, disables every control and close path, and replaces the
 submit label with `Saving client`. Success returns to the populated Clients frame with the created
 row first, Add client focused, and the polite `Client added` Toast.
+
+The second-tracer Project frame is specified in Atlas and Bloom, light and dark, comfortable and
+compact contexts. The populated frame includes Project and Status columns, with Updated omitted at
+320 px. Show Planned, Active, On hold, and Completed as visible Badge labels; the status Select is
+named for its Project. Annotate keyboard opening, arrow-key movement, Escape cancellation, pending
+focus retention, success announcement, and persistent failure recovery.
 
 ## Review gate
 

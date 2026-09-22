@@ -1,0 +1,69 @@
+import {
+  SelectContent,
+  SelectIcon,
+  SelectItem,
+  SelectRoot,
+  SelectTrigger,
+  SelectValue,
+} from "../../../../registry/ui/select";
+import { Installation, LiveExample, MaturityNotice } from "@/components/docs/component-documentation";
+import { publicComponentDocumentation } from "@/lib/public-component-docs";
+
+<MaturityNotice introduced="0.2.0" status="experimental" />
+
+## Installation
+
+<Installation {...publicComponentDocumentation.select.installation} />
+
+## Purpose
+
+Select chooses one predefined value through a compositional trigger and popup. Base UI supplies the behavior foundation while MFD owns the public contract, styling, and loading behavior.
+
+## Examples
+
+<LiveExample label="Project status Select">
+  <SelectRoot defaultValue="planned" items={[{ label: "Planned", value: "planned" }, { label: "Active", value: "active" }, { label: "On hold", value: "on-hold" }, { label: "Completed", value: "completed" }]}>
+    <SelectTrigger aria-label="Project status">
+      <SelectValue />
+      <SelectIcon />
+    </SelectTrigger>
+    <SelectContent>
+      <SelectItem value="planned">Planned</SelectItem>
+      <SelectItem value="active">Active</SelectItem>
+      <SelectItem value="on-hold">On hold</SelectItem>
+      <SelectItem value="completed">Completed</SelectItem>
+    </SelectContent>
+  </SelectRoot>
+</LiveExample>
+
+## Anatomy
+
+Select composes `Root`, `Trigger`, `Value`, `Icon`, `Content`, and `Item`. Content owns the portal, positioning, popup, and list implementation.
+
+## API
+
+`Root` supports controlled or uncontrolled primitive values plus `name`, `required`, `disabled`, `readOnly`, and `loading`. `Trigger` supports `size="sm" | "md" | "lg"` and `loading`. `Value`, `Icon`, `Content`, and `Item` forward their compatible Base UI properties.
+
+## States
+
+The control supports small, medium, and large sizes, disabled, read-only, invalid through the surrounding Field contract, and loading. Loading makes only this Select read-only, exposes `aria-busy`, and retains trigger focus.
+
+## Accessibility
+
+Standalone Selects receive a contextual accessible name that includes the affected entity. Field supplies a visible label when the control is part of a form. Items retain visible text labels and the popup keeps listbox semantics.
+
+## Keyboard behavior
+
+Enter or Space opens the popup. Arrow keys move through items, Enter commits the highlighted item, and Escape closes without committing a new value. Tab leaves the trigger and does not enter the popup as a separate tab stop.
+
+## Figma specification
+
+Anatomy is `Select / Trigger / Value / Icon / Content / Item`. Properties are Size: Small, Medium, Large; Disabled; Read only; Loading; and Invalid. Loading replaces the disclosure affordance with progress without changing the accessible name.
+
+## Content guidance
+
+Use short, stable labels for a finite set of predefined values. Use a Combobox contract for large or searchable option sets rather than extending Select.
+
+## Related patterns
+
+ProjectTable composes a contextual Project Status Select with a mapped Badge. Field composes a visible label, description, error, and Select when a form needs them.

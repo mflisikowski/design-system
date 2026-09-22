@@ -25,7 +25,11 @@ import { ToastViewport } from "@/components/ui/toast";
 import { startMockApi } from "@/mocks/browser";
 
 import { ProjectList } from "../projects/project-list";
-import type { ProjectCreateScenario, ProjectListScenario } from "../projects/repository";
+import type {
+  ProjectCreateScenario,
+  ProjectListScenario,
+  ProjectStatusScenario,
+} from "../projects/repository";
 import { ClientQueryProvider } from "./client-experience";
 import { clientQueryKeys } from "./query-keys";
 import type { ClientDetailScenario } from "./repository";
@@ -43,6 +47,7 @@ type ClientDetailExperienceProps = Readonly<{
   clientId: string;
   projectCreateScenario: ProjectCreateScenario;
   projectScenario: ProjectListScenario;
+  projectStatusScenario: ProjectStatusScenario;
   scenario: ClientDetailScenario;
 }>;
 
@@ -79,6 +84,7 @@ export function ClientDetailExperience({
   clientId,
   projectCreateScenario,
   projectScenario,
+  projectStatusScenario,
   scenario,
 }: ClientDetailExperienceProps) {
   return (
@@ -87,6 +93,7 @@ export function ClientDetailExperience({
         clientId={clientId}
         projectCreateScenario={projectCreateScenario}
         projectScenario={projectScenario}
+        projectStatusScenario={projectStatusScenario}
         scenario={scenario}
       />
       <ToastViewport />
@@ -98,6 +105,7 @@ function ClientDetailContent({
   clientId,
   projectCreateScenario,
   projectScenario,
+  projectStatusScenario,
   scenario,
 }: ClientDetailExperienceProps) {
   const [ready, setReady] = useState(false);
@@ -132,6 +140,7 @@ function ClientDetailContent({
           clientId={clientId}
           createScenario={projectCreateScenario}
           scenario={projectScenario}
+          statusScenario={projectStatusScenario}
           waitingForApi={!ready}
         />
       </section>
@@ -236,6 +245,7 @@ function ClientDetailContent({
         clientId={clientId}
         createScenario={projectCreateScenario}
         scenario={projectScenario}
+        statusScenario={projectStatusScenario}
         waitingForApi={!ready}
       />
     </section>

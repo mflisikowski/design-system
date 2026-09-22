@@ -14,6 +14,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -36,6 +37,7 @@ import { Field, FieldDescription, FieldError, FieldLabel } from "@/components/ui
 import { Icon, IconButton } from "@/components/ui/icon";
 import { Input } from "@/components/ui/input";
 import { Link } from "@/components/ui/link";
+import { Select } from "@/components/ui/select";
 import {
   Table,
   TableBody,
@@ -162,6 +164,55 @@ test("form controls expose labels, descriptions, and validation errors", async (
       "Use the client organization, not the contact. Organization name is required.",
     );
   await expect.element(page.getByRole("textbox", { name: "Notes" })).toBeInTheDocument();
+});
+
+test("status Badge tones and Select keyboard behavior remain explicit", async () => {
+  function Fixture() {
+    const [status, setStatus] = useState("planned");
+    return (
+      <>
+        <div aria-label="Project status badges">
+          <Badge tone="neutral">Planned</Badge>
+          <Badge tone="accent">Active</Badge>
+          <Badge tone="warning">On hold</Badge>
+          <Badge tone="success">Completed</Badge>
+        </div>
+        <Select.Root
+          items={[
+            { label: "Planned", value: "planned" },
+            { label: "Active", value: "active" },
+            { label: "On hold", value: "on-hold" },
+            { label: "Completed", value: "completed" },
+          ]}
+          onValueChange={(value) => value && setStatus(value)}
+          value={status}
+        >
+          <Select.Trigger aria-label="Project status">
+            <Select.Value />
+            <Select.Icon />
+          </Select.Trigger>
+          <Select.Content>
+            <Select.Item value="planned">Planned</Select.Item>
+            <Select.Item value="active">Active</Select.Item>
+            <Select.Item value="on-hold">On hold</Select.Item>
+            <Select.Item value="completed">Completed</Select.Item>
+          </Select.Content>
+        </Select.Root>
+      </>
+    );
+  }
+
+  render(<Fixture />);
+
+  await expect
+    .element(page.getByText("On hold", { exact: true }))
+    .toHaveAttribute("data-tone", "warning");
+
+  const trigger = page.getByRole("combobox", { name: "Project status" });
+  await trigger.click();
+  await expect.element(page.getByRole("option", { name: "Planned" })).toBeInTheDocument();
+  await userEvent.keyboard("{ArrowDown}{ArrowDown}{Enter}");
+  await expect.element(trigger).toHaveTextContent("On hold⌄");
 });
 
 test("dialog manages modal focus and restores it to the trigger", async () => {

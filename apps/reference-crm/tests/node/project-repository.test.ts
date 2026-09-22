@@ -1,12 +1,12 @@
 import { afterAll, afterEach, beforeAll, describe, expect, it } from "vitest";
-
+import { createClientHandlers, createMemoryClientStorage } from "../../features/clients/mock-api";
+import { deterministicClients } from "../../features/clients/seed";
 import {
   createMemoryProjectStorage,
   createProjectHandlers,
 } from "../../features/projects/mock-api";
-import { createMemoryClientStorage, createClientHandlers } from "../../features/clients/mock-api";
+import type { Project } from "../../features/projects/model";
 import { createHttpProjectRepository } from "../../features/projects/repository";
-import { deterministicClients } from "../../features/clients/seed";
 import { deterministicProjects } from "../../features/projects/seed";
 import { mockServer } from "../msw/server";
 
@@ -146,5 +146,45 @@ describe("ProjectRepository", () => {
       },
       status: 422,
     });
+  });
+
+  it("updates every project status and persists the returned timestamp", async () => {
+    const clientStorage = createMemoryClientStorage(deterministicClients);
+    const projectStorage = createMemoryProjectStorage(deterministicProjects);
+    mockServer.use(
+      ...createClientHandlers(clientStorage),
+      ...createProjectHandlers(projectStorage, clientStorage, 0),
+    );
+
+    const repository = createHttpProjectRepository("http://localhost");
+    let project: Project = deterministicProjects[0];
+
+    for (const status of ["planned", "on-hold", "completed", "active"] as const) {
+      project = await repository.updateStatus("client_northstar", project.id, status);
+      expect(project.status).toBe(status);
+    }
+
+    await expect(repository.listByClient("client_northstar")).resolves.toContainEqual(project);
+  });
+
+  it("keeps the confirmed status when a status update fails", async () => {
+    const clientStorage = createMemoryClientStorage(deterministicClients);
+    const projectStorage = createMemoryProjectStorage(deterministicProjects);
+    mockServer.use(
+      ...createClientHandlers(clientStorage),
+      ...createProjectHandlers(projectStorage, clientStorage, 0),
+    );
+
+    const repository = createHttpProjectRepository("http://localhost");
+
+    await expect(
+      repository.updateStatus("client_northstar", deterministicProjects[0].id, "on-hold", "error"),
+    ).rejects.toMatchObject({
+      message: "The project status could not be saved. Try again.",
+      status: 503,
+    });
+    await expect(repository.listByClient("client_northstar")).resolves.toContainEqual(
+      deterministicProjects[0],
+    );
   });
 });

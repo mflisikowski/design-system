@@ -46,6 +46,10 @@ export const createProjectInputSchema = z
   })
   .refine(validateProjectDates, { message: projectTimelineMessage, path: ["dueDate"] });
 
+export const projectStatusUpdateSchema = z.object({
+  status: projectStatusSchema,
+});
+
 export type ProjectStatus = z.infer<typeof projectStatusSchema>;
 export type Project = z.infer<typeof projectSchema>;
 export type CreateProjectInput = z.infer<typeof createProjectInputSchema>;

@@ -1,0 +1,54 @@
+import { Badge } from "../../../../registry/ui/badge";
+import { Installation, LiveExample, MaturityNotice } from "@/components/docs/component-documentation";
+import { publicComponentDocumentation } from "@/lib/public-component-docs";
+
+<MaturityNotice introduced="0.2.0" status="experimental" />
+
+## Installation
+
+<Installation {...publicComponentDocumentation.badge.installation} />
+
+## Purpose
+
+Badge presents a short, non-interactive status label with a semantic tone. It never makes meaning depend on color alone.
+
+## Examples
+
+<LiveExample label="Project statuses">
+  <Badge tone="neutral">Planned</Badge>{" "}
+  <Badge tone="accent">Active</Badge>{" "}
+  <Badge tone="warning">On hold</Badge>{" "}
+  <Badge tone="success">Completed</Badge>
+</LiveExample>
+
+## Anatomy
+
+Badge is a single non-interactive `span` with visible text and a tone-specific semantic treatment.
+
+## API
+
+`tone` accepts `neutral`, `accent`, `warning`, `success`, or `danger`. `size` accepts `sm` or `md`. Native `span` properties are forwarded.
+
+## States
+
+Every tone remains a subtle background, border, and text treatment. Badge does not expose loading, disabled, selected, or interactive states.
+
+## Accessibility
+
+Visible text is the status cue. Badge does not add live-region or interactive semantics and is not a replacement for a form control label.
+
+## Keyboard behavior
+
+Badge is not focusable. If a status can be changed, place a named Select beside or around the Badge according to the product pattern.
+
+## Figma specification
+
+Anatomy is `Badge / Label`. Properties are Tone: Neutral, Accent, Warning, Success, Danger and Size: Small, Medium. Color and iconography are never the only status cue.
+
+## Content guidance
+
+Use concise, stable status labels such as `Planned`, `Active`, `On hold`, and `Completed`.
+
+## Related patterns
+
+ProjectTable maps Project Status to Badge tone while the contextual Select owns status changes.

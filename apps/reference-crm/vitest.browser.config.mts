@@ -9,6 +9,7 @@ export default defineConfig({
   optimizeDeps: {
     include: [
       "@base-ui/react/alert-dialog",
+      "@base-ui/react/select",
       "lucide-react",
       "react",
       "react-dom/client",

@@ -169,13 +169,8 @@
   -webkit-line-clamp: 2;
 }
 
-.project-status {
-  background: var(--mfd-color-bg-subtle);
-  border: 1px solid var(--mfd-color-border-subtle);
-  border-radius: var(--mfd-radius-pill);
-  display: inline-block;
-  padding: var(--mfd-space-inline-xs) var(--mfd-space-inline-sm);
-  white-space: nowrap;
+.project-table-surface .mfd-select__trigger {
+  min-width: min(100%, 10rem);
 }
 
 .project-form__fields {

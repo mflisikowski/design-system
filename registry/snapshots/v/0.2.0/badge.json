@@ -1,0 +1,35 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "badge",
+  "title": "Badge",
+  "description": "Non-interactive status label with semantic tone and density-aware size.",
+  "dependencies": [
+    "@mflisikowski/tokens@0.2.0",
+    "clsx@2.1.1"
+  ],
+  "registryDependencies": [],
+  "files": [
+    {
+      "path": "registry/ui/badge.tsx",
+      "content": "import { clsx } from \"clsx\";\nimport type { ComponentPropsWithRef } from \"react\";\n\nimport \"./badge.css\";\n\nexport type BadgeTone = \"neutral\" | \"accent\" | \"warning\" | \"success\" | \"danger\";\n\nexport type BadgeProps = ComponentPropsWithRef<\"span\"> & {\n  tone?: BadgeTone;\n  size?: \"sm\" | \"md\";\n};\n\nexport function Badge({ className, size = \"md\", tone = \"neutral\", ...props }: BadgeProps) {\n  return (\n    <span {...props} className={clsx(\"mfd-badge\", className)} data-size={size} data-tone={tone} />\n  );\n}\n",
+      "type": "registry:ui",
+      "target": "@ui/badge.tsx"
+    },
+    {
+      "path": "registry/ui/badge.css",
+      "content": ".mfd-badge {\n  align-items: center;\n  border: 1px solid var(--mfd-color-border-subtle);\n  border-radius: var(--mfd-radius-pill);\n  display: inline-flex;\n  font:\n    var(--mfd-typography-caption-font-weight) var(--mfd-typography-caption-font-size) /\n    var(--mfd-typography-caption-line-height) var(--mfd-typography-caption-font-family);\n  gap: var(--mfd-space-inline-xs);\n  max-inline-size: 100%;\n  padding: var(--mfd-space-inline-xs) var(--mfd-space-inline-sm);\n  vertical-align: middle;\n  white-space: nowrap;\n}\n\n.mfd-badge[data-size=\"sm\"] {\n  font-size: var(--mfd-typography-caption-font-size);\n  padding-block: 0;\n}\n\n.mfd-badge[data-tone=\"neutral\"] {\n  background: var(--mfd-color-bg-subtle);\n  color: var(--mfd-color-text-primary);\n}\n\n.mfd-badge[data-tone=\"accent\"] {\n  background: var(--mfd-color-accent-bg);\n  border-color: var(--mfd-color-accent-border);\n  color: var(--mfd-color-accent-text);\n}\n\n.mfd-badge[data-tone=\"warning\"] {\n  background: var(--mfd-color-status-warning-bg);\n  border-color: var(--mfd-color-status-warning-border);\n  color: var(--mfd-color-status-warning-text);\n}\n\n.mfd-badge[data-tone=\"success\"] {\n  background: var(--mfd-color-status-success-bg);\n  border-color: var(--mfd-color-status-success-border);\n  color: var(--mfd-color-status-success-text);\n}\n\n.mfd-badge[data-tone=\"danger\"] {\n  background: var(--mfd-color-status-danger-bg);\n  border-color: var(--mfd-color-status-danger-border);\n  color: var(--mfd-color-status-danger-text);\n}\n",
+      "type": "registry:ui",
+      "target": "@ui/badge.css"
+    }
+  ],
+  "meta": {
+    "maturity": "experimental",
+    "version": "0.2.0",
+    "installation": {
+      "latest": "pnpm dlx shadcn@latest add @mflisikowski/badge",
+      "snapshot": "pnpm dlx shadcn@latest add https://design-system.mflisikowski.dev/r/v/0.2.0/badge.json"
+    }
+  },
+  "docs": "Use Badge for visible status text. Tone never replaces the status label and Badge is not interactive.",
+  "type": "registry:ui"
+}

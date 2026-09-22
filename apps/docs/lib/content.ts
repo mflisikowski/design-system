@@ -183,6 +183,16 @@ export const documentationPages = [
     load: () => import("../content/components/alert.mdx"),
   },
   {
+    slug: "components/badge",
+    href: "/components/badge",
+    source: "components/badge.mdx",
+    title: "Badge",
+    description: "Non-interactive status label with semantic tones.",
+    section: "Components",
+    headings: publicComponentHeadings,
+    load: () => import("../content/components/badge.mdx"),
+  },
+  {
     slug: "components/empty-state",
     href: "/components/empty-state",
     source: "components/empty-state.mdx",
@@ -261,6 +271,16 @@ export const documentationPages = [
     section: "Components",
     headings: publicComponentHeadings,
     load: () => import("../content/components/toast.mdx"),
+  },
+  {
+    slug: "components/select",
+    href: "/components/select",
+    source: "components/select.mdx",
+    title: "Select",
+    description: "Keyboard-accessible single-value selection with pending behavior.",
+    section: "Components",
+    headings: publicComponentHeadings,
+    load: () => import("../content/components/select.mdx"),
   },
   {
     slug: "patterns",

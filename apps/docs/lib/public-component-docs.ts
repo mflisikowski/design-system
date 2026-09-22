@@ -30,6 +30,7 @@ export const publicComponentDocumentation = {
     "@mflisikowski/tokens@0.2.0",
     "clsx@2.1.1",
   ]),
+  badge: component("badge", commonDependencies),
   button: component("button", commonDependencies),
   emptyState: component("empty-state", commonDependencies),
   field: component("field", commonDependencies),
@@ -45,4 +46,5 @@ export const publicComponentDocumentation = {
   toast: component("toast", ["@mflisikowski/tokens@0.2.0", "sonner@2.0.8"]),
   breadcrumb: component("breadcrumb", commonDependencies, ["@mflisikowski/link"]),
   pageHeader: component("page-header", commonDependencies, ["@mflisikowski/breadcrumb"]),
+  select: component("select", ["@base-ui/react@1.8.0", "@mflisikowski/tokens@0.2.0", "clsx@2.1.1"]),
 } as const;

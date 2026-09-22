@@ -3,12 +3,14 @@ import type { ZodType } from "zod";
 import {
   type CreateProjectInput,
   type Project,
+  type ProjectStatus,
   projectSchema,
   projectsSchema,
 } from "./model";
 
 export type ProjectListScenario = "default" | "empty" | "error";
 export type ProjectCreateScenario = "default" | "error" | "error-once" | "slow";
+export type ProjectStatusScenario = "default" | "error" | "error-once";
 export type ProjectFieldErrors = Partial<Record<keyof CreateProjectInput, string>>;
 
 export type ProjectRepository = Readonly<{
@@ -17,6 +19,12 @@ export type ProjectRepository = Readonly<{
     clientId: string,
     input: CreateProjectInput,
     scenario?: ProjectCreateScenario,
+  ) => Promise<Project>;
+  updateStatus: (
+    clientId: string,
+    projectId: string,
+    status: ProjectStatus,
+    scenario?: ProjectStatusScenario,
   ) => Promise<Project>;
 }>;
 
@@ -64,6 +72,20 @@ export function createHttpProjectRepository(origin = ""): ProjectRepository {
           headers: { "content-type": "application/json" },
           method: "POST",
         }),
+        projectSchema,
+      );
+    },
+    async updateStatus(clientId, projectId, status, scenario = "default") {
+      const query = scenario === "default" ? "" : `?scenario=${scenario}`;
+      return parseResponse(
+        await fetch(
+          `${origin}/api/clients/${encodeURIComponent(clientId)}/projects/${encodeURIComponent(projectId)}${query}`,
+          {
+            body: JSON.stringify({ status }),
+            headers: { "content-type": "application/json" },
+            method: "PATCH",
+          },
+        ),
         projectSchema,
       );
     },
